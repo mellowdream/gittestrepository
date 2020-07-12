@@ -1,0 +1,67 @@
+
+REFRESHIE.NG
+
+12 July 2020 @ 7:34pm
+
+
+1) Setup ENV
+https://www.electronjs.org/docs/tutorial/development-environment#developer-environment
+
+
+2) Install latest electron
+npm i -D electron@latest
++ electron@9.1.0
+
+
+3) $ npm install --save-dev electron
+
+
+
+===========================================================================
+
+
+BETTER WAY WITH FORGE
+
+npm install -g electron-forge
+electron-forge init my-new-app
+cd my-new-app
+npm start
+https://www.npmjs.com/package/electron-forge
+
+
+
+electron-forge init ref--template=typescript-webpack
+
+
+=========>> WORKS
+ npx create-electron-app my-new-app --template=typescript-webpack
+- Initializing Project Directory
+GêÜ Initializing Project Directory
+- Initializing Git Repository
+GêÜ Initializing Git Repository
+- Locating custom template: "typescript-webpack"
+GêÜ Locating custom template: "typescript-webpack"
+- Copying Starter Files
+GêÜ Copying Starter Files
+- Initializing NPM Module
+GêÜ Initializing NPM Module
+- Setting up Forge configuration
+GêÜ Setting up Forge configuration
+- Setting up TypeScript configuration
+GêÜ Setting up TypeScript configuration
+- Installing Template Dependencies
+GêÜ Installing Template Dependencies
+- Installing NPM Dependencies
+
+[Creates WEBPACK build etc..
+Not using for now]
+
+
+
+
+EXISTING PROJECT :
+npx @electron-forge/cli import
+[Finally this was done]
+
+
+> electron-forge start

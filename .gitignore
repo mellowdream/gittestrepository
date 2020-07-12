@@ -1,0 +1,28 @@
+
+# folders
+/thinkdj
+/node_modules
+
+# laravel
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+
+# editors etc
+.git/
+/.idea
+/.vagrant
+
+# misc
+Homestead.json
+Homestead.yaml
+npm-debug.log
+
+# files
+.env
+*.dmg
+*.exe
+*.zip
+
+out/

@@ -9,6 +9,9 @@
 /* Begin scoping function*/
 ////(function() {
 
+let config = require('./../config.json');
+const path = require('path');
+
 var basePath = window.getDirname();
 
 var audioElement = document.createElement('audio');
@@ -32,7 +35,7 @@ $(document).ready( function() {
     let splashDelay = 2000;
     let elIntro = $("#intro");
     /* IF first time OR Splash is enabled, show splash */
-    if( (parseInt(localStorage.opt_splash)===1) || (parseInt(localStorage.timesOpened)<=1) ) {
+    if( (parseInt(localStorage.opt_splash)>=1) || (parseInt(localStorage.timesOpened)<=1) ) {
         elIntro.css('display','flex').fadeIn(500).delay(splashDelay-1000).fadeOut(500);
     }
     activityAnimation(1000);
@@ -735,7 +738,7 @@ function startBreak(type="short",forced="no") {
     /* Create new FSModal */
     breakModalWindow = new BrowserWindow({
         title: "Break @ " + appName,
-        icon: __dirname + "/assets/refico.ico",
+        icon: __dirname + "/assets/ico/tray.ico",
         width: optWid,
         height: optHt,
         fullscreen: localStorage.isFullscreen,
@@ -767,10 +770,16 @@ function startBreak(type="short",forced="no") {
         breakCleanup();
     });
 
-    breakModalWindow.loadURL('file://' + basePath + '/break.html');
+    //breakModalWindow.loadURL('file://' + basePath + '/break.html');
+    breakModalWindow.loadFile( getPathTo( 'break.html' ) );
 
 }
 
+/* HELPER FUNCTIONS */
+function getPathTo(filename) {
+    if(filename.startsWith('/')) return __dirname + filename;
+    return path.join(__dirname, filename);
+}
 
 /* Handle change in options */
 $(function() {
@@ -918,3 +927,10 @@ jQuery(document).ready( function($) {
 
 
 } );
+
+jQuery(document).ready(
+    function() {
+        $(".app-title").html(config.name);
+        $(".app-tagline").html(config.tagline)
+    }
+);

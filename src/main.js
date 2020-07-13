@@ -10,7 +10,7 @@ let config = require('./config.json');
 /* Internal state/var */
 let __state = {
   forceQuit: false,
-  debugMode: true,
+  developerMode: true,
   isTimerRunning: 1,
   basePath: __dirname,
   icoTray: getPathTo(config.icons.find(i => i.id==='tray').asset),
@@ -83,7 +83,7 @@ function createMainWindow () {
 
   /* Open the DevTools? */
   /* modes: 'right' | 'bottom' | 'undocked' | 'detach' */
-  if(__state.debugMode) mainWindow.webContents.openDevTools({ mode: "detach" } )
+  if(__state.developerMode) mainWindow.webContents.openDevTools({ mode: "detach" } )
 
 }
 
@@ -118,35 +118,36 @@ function setTrayMenu() {
   mainTray = new Tray(__state.icoTray);
   mainTray.setToolTip(config.name);
 
-  let contextMenu = Menu.buildFromTemplate([
-    { label: 'Show App',
-      click: function() {
+  let menuItems = [
+    {
+      label: 'Show App',
+      click: function () {
         showMainWindow();
       }
     },
     {
       label: 'Restart',
-      click: function() {
+      click: function () {
         sendToRenderer("restart");
       }
     },
     {
       label: 'Pause/Resume',
-      click: function() {
+      click: function () {
         sendToRenderer("toggle");
       }
     },
-    { type: 'separator'},
+    {type: 'separator'},
     {
       label: 'Homepage',
       click: async () => {
-        await shell.openExternal( config.url || __state.urlFallback)
+        await shell.openExternal(config.url || __state.urlFallback)
       },
     },
     {
       label: 'About ' + config.name,
       click: async () => {
-        await shell.openExternal(config.urlAbout? config.urlAbout : config.url ? config.url : __state.urlFallback )
+        await shell.openExternal(config.urlAbout ? config.urlAbout : config.url ? config.url : __state.urlFallback)
       },
     },
     {
@@ -155,11 +156,27 @@ function setTrayMenu() {
     {
       label: 'Quit',
       accelerator: 'Command+Q',
-      click: function() {
+      click: function () {
         app.exit(0);
       }
     }
-  ]);
+  ];
+  /* DEV MODE: Reload app */
+  if(__state.developerMode) {
+    menuItems.push(
+        {type: 'separator'},
+        {
+          label: 'Relaunch App [DEV]',
+          click: async () => {
+            app.exit()
+            app.relaunch();
+          },
+        },
+        {type: 'separator'},
+    )
+  }
+
+  let contextMenu = Menu.buildFromTemplate(menuItems);
   mainTray.setContextMenu(contextMenu);
 
   /* Events */

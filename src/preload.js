@@ -4,21 +4,14 @@
 // WHY ARE WE DOING THIS?
 // https://github.com/reZach/secure-electron-template/blob/master/docs/secureapps.md
 
+window.getDirname = function () { return __dirname }
+window.getConfig = function () { return require('./config.json') }
+window.getJQuery = function () { return require('jquery') }
 
-window.getConfig = function () {
-  return require('./config.json');
-}
-
-window.getJQuery = function () {
-  return require('jquery');
-}
-window.getDirname = function () {
-  return __dirname;
-}
-
+/* * /
 document.onreadystatechange = function () {
   if (document.readyState === "complete") {
-    //window.$ = window.jQuery = require('jquery');
+    window.$ = window.jQuery = require('jquery');
   }
 }
 
@@ -30,5 +23,5 @@ window.addEventListener('DOMContentLoaded', () => {
   for (const type of ['chrome', 'node', 'electron']) {
     replaceText(`${type}-version`, process.versions[type])
   }
-
 });
+/* */

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Refreshie</title>
+    <title class="app-title">Refreshie</title>
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="assets/fonts/ico/style.css"/>
 </head>
@@ -13,17 +13,18 @@
     <section class="cd-intro">
         <img src="assets/images/logo.png" alt="F5" class="logo-splash" />
         <div>
-            <h1>Refreshie</h1>
+            <h1 class="app-title">Refreshie</h1>
             <h1 class="cd-headline push">
-                <span>For fatigue-free</span>
-                <span class="cd-words-wrapper">
+                <span class="tagline">For fatigue-free</span>
+                <span class="cd-words-wrapper tagline">
                     <b class="is-visible">. . .</b>
                     <b>eyes</b>
                     <b>neck</b>
                     <b>mind</b>
                     <b>you!</b>
                 </span>
-            </h1></div>
+            </h1>
+        </div>
     </section>
     </div>
 
@@ -37,7 +38,7 @@
     </div>
 
     <h1 class="draggable appHeading">
-        Refreshie <span>Taking Back Control</span>
+        <span class="app-title">Refreshie</span> <span class="app-tagline tagline">Taking Back Control</span>
     </h1>
 
     <div id="main-container">
@@ -105,7 +106,9 @@
                 <div id="statis" class="">
                     <h3>Congratulations</h3>
                     <p id="meta_welcome">On your decision to improve your life <br><br></p>
-                    <p id="meta_hoursSaved">You have had <span id="times"></span> fatigue-free hour<span id="plural">s</span> since you started using Refreshie</p>
+                    <p id="meta_hoursSaved">You have had <span id="times"></span> fatigue-free hour<span id="plural">s</span> since you started using
+                        <span class="app-title">Refreshie</span>
+                    </p>
                 </div>
 
                 <nav class="cl-effect-5" style="text-align: center; padding-top: 10px">
@@ -154,7 +157,7 @@
                         You've skipped <span id="count_skipped">0</span> <span id="count_totalBreaks">0</span> breaks
                         <small><span id="percSkips"></span></small>
                     </li>
-                    <li><span class="icon icon-loader"></span>
+                    <li><span class="icon icon-pin-outline" style="font-weight: 600"></span>
                         App used <span id="count_opened">1 time</span>
                         <small>Since <span id="firstTouch"></span></small>
                     </li>
@@ -170,7 +173,7 @@
             <div id="app-settings" class="hidden hideable">
                 <table class="opTable">
                     <tr class="tabHighlight">
-                        <td colspan="2"><b class="icon icon-heart tabIco"></b> Bio</td>
+                        <td colspan="2"><b class="icon icon-layers tabIco"></b> Configuration</td>
                     </tr>
                     <tr>
                         <td>Short break every </td>
@@ -207,7 +210,7 @@
                     </tr>
                     <tr>
                         <td>Allow skipping</td>
-                        <td><input name="opt_allowSkips" id="opt_allowSkips" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_allowSkips" id="opt_allowSkips" type="checkbox" class="icheck" /></td>
                     </tr>
                     <!--<tr>
                         <td>Long break every</td>
@@ -215,34 +218,36 @@
                             1 Hour
                         </td>
                     </tr>-->
+                </table>
+                <table class="opTable second-opTable">
                     <tr class="tabHighlight">
-                        <td colspan="2"><b class="icon icon-reload tabIco"></b> App</td>
+                        <td colspan="2"><b class="icon icon-reload tabIco"></b> App Settings</td>
                     </tr>
                     <tr>
                         <td>Always on top</td>
-                        <td><input name="opt_alwaysOnTop" id="opt_alwaysOnTop" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_alwaysOnTop" id="opt_alwaysOnTop" type="checkbox" class="icheck" /></td>
                     </tr>
                     <tr>
                         <td>Start minimized</td>
-                        <td><input name="opt_startMinimized" id="opt_startMinimized" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_startMinimized" id="opt_startMinimized" type="checkbox" class="icheck" /></td>
                     </tr>
                     <tr>
                         <td>Auto-run at system startup
-                            <small style="display: block;padding-top: 6px;color:#777; font-weight: 300">For your own good, do not turn this off, grasshopper</small>
+                            <small style="padding-top: 6px;color:#777; font-weight: 300; display:none">For your own good, do not turn this off, grasshopper</small>
                         </td>
-                        <td><input name="opt_autoStart" id="opt_autoStart" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_autoStart" id="opt_autoStart" type="checkbox" class="icheck" /></td>
                     </tr>
                     <tr>
                         <td>Lock PC after a long break</td>
-                        <td><input name="opt_lockPC" id="opt_lockPC" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_lockPC" id="opt_lockPC" type="checkbox" class="icheck" /></td>
                     </tr>
                     <tr>
                         <td>Show app Splash Screen</td>
-                        <td><input name="opt_splash" id="opt_splash" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_splash" id="opt_splash" type="checkbox" class="icheck" /></td>
                     </tr>
                     <tr>
                         <td>Play sounds</td>
-                        <td><input name="opt_sounds" id="opt_sounds" type="checkbox" class="icheck"></td>
+                        <td><input name="opt_sounds" id="opt_sounds" type="checkbox" class="icheck" /></td>
                     </tr>
                 </table>
             </div>
@@ -284,7 +289,7 @@
                             <a href="#" title="Check me out on Twitter" class="" onclick="OpenURL('http://twitter.com/thinkdj')">@thinkdj</a>&nbsp;
                             <a href="#" title="Reach out via email" onclick="naughtyfication()" style="color:#888"><span class="icon-envelope"></span></a>
                         </h3>
-                        <p>Refreshie is a weekend pet project born from a need. <br/>
+                        <p><span class="app-title">Refreshie</span> is a weekend pet project born from a need. <br/>
                             <a href="#" onclick="OpenURL('http://im.think.dj/introducing-refreshie/?from=app')">Read on &rarr;</a></p>
                     </div>
                 </div>

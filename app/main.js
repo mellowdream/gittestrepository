@@ -1,36 +1,98 @@
-// Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-const path = require('path')
 
-function createWindow () {
+// Modules to control application lifecycle (main process)
+
+const { app, BrowserWindow, Menu, Tray, shell, ipcMain, ipcRenderer } = require('electron');
+const path = require('path');
+
+/* Read config JSON */
+let config = require('./config.json');
+
+/* Internal state/var */
+let __state = {
+  forceQuit: false,
+  debugMode: false,
+  isRunning: 1,
+  basePath: __dirname,
+  icoTray: getPathTo(config.icons.find(i => i.id==='tray').asset),
+  icoTrayPaused: getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
+}
+
+let mainWindow;
+let mainTray;
+
+function createMainWindow () {
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow( {
     width: 800,
-    height: 600,
+    height: 440,
+    useContentSize: false,
+    alwaysOnTop: false,
+    center: true,
+    movable: true,
+    maximizable: false,
+    minimizable: true,
+    resizable: false,
+    skipTaskbar: false,
+    title: config.name,
+    icon: __state.icoTray,
+    transparent: false,
+    frame: false,
+    fullscreen: false,
+    fullscreenable: true,
+    titleBarStyle: 'default',
+    show: true,
     webPreferences: {
       preload: getPathTo('preload.js'),
-      nodeIntegration: true, /* IMPORTANT */
+      nodeIntegration: true,
     }
   })
 
-  // and load the index.html of the app.
+  // index.html of the app.
   mainWindow.loadFile( getPathTo( 'index.html' ) );
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  /* Subscribe to events */
+  /* App Ready */
+  mainWindow.on('minimize', function() {
+    mainWindow.hide();
+  });
+  /* Close */
+  mainWindow.on('close', function(e) {
+    if(!__state.forceQuit) {
+      e.preventDefault();
+      mainWindow.hide();
+    }
+  });
+  /* Quit */
+  mainWindow.on('closed', function() {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    // delete mainMenu; delete mainTray; delete mainWindow;
+    app.quit();
+  });
+
+  /* Open the DevTools? */
+  if(__state.debugMode) mainWindow.webContents.openDevTools({ detach: true } )
+
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  createWindow()
+// app.whenReady() => This method will be called when Electron/Core has finished initialization,
+// and is ready to create browser windows. Some APIs can only be used after this event occurs.
+app.whenReady().then( () => {
 
+  /* CORE */
+  createMainWindow(); // create the main process' window
+  setTrayMenu(); // set the tray menu
+  ipcSubscriptions(); // inter-process communication subscriptions
+
+  /* Handle SPECIAL CASES */
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
+  });
+
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -40,10 +102,132 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
+
+function setTrayMenu() {
+
+  mainTray = new Tray(__state.icoTray);
+  mainTray.setToolTip(config.name);
+
+  let contextMenu = Menu.buildFromTemplate([
+    { label: 'Show App',
+      click: function() {
+        showMainWindow();
+      }
+    },
+    {
+      label: 'Restart',
+      click: function() {
+        sendToRenderer("restart");
+      }
+    },
+    {
+      label: 'Pause/Resume',
+      click: function() {
+        sendToRenderer("toggle");
+      }
+    },
+    { type: 'separator'},
+    {
+      label: 'About ' + config.name,
+      click: async () => {
+        await shell.openExternal(config.urlAbout? config.urlAbout : config.url )
+      },
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Quit',
+      accelerator: 'Command+Q',
+      click: function() {
+        app.exit(0);
+      }
+    }
+  ]);
+  mainTray.setContextMenu(contextMenu);
+
+  /* Events */
+  /* Show mainWindow on click/double-click of theTray */
+  mainTray.on('click',function() {
+    mainWindowVisibility('show');
+  });
+  mainTray.on('double-click',function() {
+    /* Windows-only */
+    mainWindowVisibility('toggle');
+  });
+
+}
+
+/* Inter-process Communication Subscriptions */
+function ipcSubscriptions() {
+  ipcMain.on('app-state-change', function (e, newState) {
+    switch (newState) {
+      case "toggle":
+      case "paused":
+      case "running":
+        /* Flip state, change Ico */
+        __state.isRunning = !!(1 - Number(__state.isRunning));
+        __state.isRunning ?
+            mainTray.setImage(__state.icoTray) :
+            mainTray.setImage(__state.icoTrayPaused);
+        break;
+      case "restart":
+        __state.isRunning = 1;
+        mainTray.setImage(__state.icoTray);
+        break;
+      default:
+        break;
+    }
+  })
+}
+
+
+function sendToRenderer(message, channel='channel-main-ipc') {
+  return mainWindow.webContents.send(channel, message);
+}
+
+
+/* Handle main window visibility */
+function mainWindowVisibility(state) {
+  let windowVisible = (mainWindow.isVisible() && !mainWindow.isMinimized());
+  switch(state) {
+    case 'show':
+      showMainWindow();
+      break;
+    case 'hide':
+      mainWindow.hide();
+      break;
+    case 'toggle':
+    default:
+      if(windowVisible) mainWindow.hide()
+      else { showMainWindow(); }
+      break;
+  }
+}
+function showMainWindow() {
+  let isMinimized = mainWindow.isMinimized(), isVisible = mainWindow.isVisible();
+  if(!isVisible) mainWindow.show();
+  if(isMinimized) mainWindow.restore();
+}
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+/* HELPER FUNCTIONS */
 function getPathTo(filename) {
   if(filename.startsWith('/')) return __dirname + filename;
   return path.join(__dirname, filename);
+}
+/* Lock Workstation */
+let lockPC = () => {
+  if(['win32','win64'].includes(process.platform)) {
+    const exec = require('child_process').exec;
+    const winLockCommand = "rundll32.exe user32.dll, LockWorkStation";
+    exec(winLockCommand);
+  }
+}
+let restartApp = () => {
+  const exec = require('child_process').exec;
+  exec(process.argv.join(' ')); /* Execute the command that was used to run the app*/
+  app.exit(0);
 }

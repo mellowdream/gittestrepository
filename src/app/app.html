@@ -10,43 +10,44 @@
 <div id="container" class="appBoxStyle">
 
     <div id="intro">
-
-        <section class="cd-intro">
-            <img src="assets/refico.png" alt="F5" class="refico"/>
-            <div><h1>Refreshie</h1>
-                <h1 class="cd-headline push">
-                    <span>For fatigue-free</span>
-                    <span class="cd-words-wrapper">
-				<b class="is-visible">. . .</b>
-                <b>eyes</b>
-				<b>neck</b>
-				<b>mind</b>
-				<b>you!</b>
-			</span>
-                </h1></div>
-        </section>
-
+    <section class="cd-intro">
+        <img src="assets/images/logo.png" alt="F5" class="logo-splash" />
+        <div>
+            <h1>Refreshie</h1>
+            <h1 class="cd-headline push">
+                <span>For fatigue-free</span>
+                <span class="cd-words-wrapper">
+                    <b class="is-visible">. . .</b>
+                    <b>eyes</b>
+                    <b>neck</b>
+                    <b>mind</b>
+                    <b>you!</b>
+                </span>
+            </h1></div>
+    </section>
     </div>
 
-    <div id="loadingAni">
+    <div id="loadingIndicator">
         <img src="assets/images/ripple.svg" alt=" "/>
     </div>
 
     <div class="notif-controls">
-        <a class="notif-move" title="Move"><i class="icon-contract"></i></a>
+        <a class="draggable" title="Move"><i class="icon-contract"></i></a>
         <a class="notif-minimize" onclick="minimizeWindow()" title="Minimize to Tray"><i class="icon-minus"></i></a>
     </div>
 
-    <h1>Refreshie <span>Taking Back Control</span></h1>
+    <h1 class="draggable appHeading">
+        Refreshie <span>Taking Back Control</span>
+    </h1>
 
     <div id="main-container">
 
         <ul class="form">
-            <li class="tabable isActive" aria-controls="app-info"><a href="#"><i class="icon-grid"></i>Info</a></li>
-            <li class="tabable" aria-controls="app-about"><a href="#"><i class="icon-sun"></i>Mode</a></li>
-            <li class="tabable" aria-controls="app-settings"><a href="#"><i class="icon-cog"></i>Settings</a></li>
-            <li class="tabable" aria-controls="app-stats"><a href="#"><i class="icon-heart"></i>Stats</a></li>
-            <li class="tabable" aria-controls="app-updates"><a href="#"><i class="icon-cloud-download"></i>Updates <em id="updatesCount">&bigstar;</em></a></li>
+            <li class="isTab isActive" aria-controls="app-info"><a href="#"><i class="icon-grid"></i>Info</a></li>
+            <li class="isTab" aria-controls="app-about"><a href="#"><i class="icon-sun"></i>Mode</a></li>
+            <li class="isTab" aria-controls="app-settings"><a href="#"><i class="icon-cog"></i>Settings</a></li>
+            <li class="isTab" aria-controls="app-stats"><a href="#"><i class="icon-heart"></i>Stats</a></li>
+            <li class="isTab" aria-controls="app-updates"><a href="#"><i class="icon-cloud-download"></i>Updates <em class="update-highlight" id="updatesCount">&bigstar;</em></a></li>
         </ul>
 
         <div id="content">
@@ -168,7 +169,7 @@
 
             <div id="app-settings" class="hidden hideable">
                 <table class="opTable">
-                    <tr class="tabHilight">
+                    <tr class="tabHighlight">
                         <td colspan="2"><b class="icon icon-heart tabIco"></b> Bio</td>
                     </tr>
                     <tr>
@@ -214,7 +215,7 @@
                             1 Hour
                         </td>
                     </tr>-->
-                    <tr class="tabHilight">
+                    <tr class="tabHighlight">
                         <td colspan="2"><b class="icon icon-reload tabIco"></b> App</td>
                     </tr>
                     <tr>
@@ -248,22 +249,25 @@
 
             <div id="app-about" class="hidden hideable monk-vs-sgt">
 
-                <div class="modeBlock">
-                    <input id="mode-sgt" type="radio" name="mode" value="sgt" class="radioImageSelect" data-image="assets/images/mode_sgt_trans.png" />
-                    <label for="mode-sgt">Sergeant</label>
-                    <h3 class="h3Mode">Sergeant Mode</h3>
-                    <nav class="cl-effect-5">
-                        <a href="#" id="demo-sgt"><span data-hover="Demo">Demo</span></a>
-                    </nav>
-                </div>
+                <div class="modes">
 
-                <div class="modeBlock">
-                    <input id="mode-monk" type="radio" name="mode" value="monk" class="radioImageSelect" data-image="assets/images/mode_monk_trans.png" />
-                    <label for="mode-monk">Monk</label>
-                    <h3 class="h3Mode">Monk Mode</h3>
-                    <nav class="cl-effect-5">
-                        <a href="#" id="demo-monk"><span data-hover="Demo">Demo</span></a>
-                    </nav>
+                    <div class="modeBlock">
+                        <input id="mode-sgt" type="radio" name="mode" value="sgt" class="radioImageSelect" data-image="assets/images/mode_sgt_trans.png" />
+                        <label for="mode-sgt">Sergeant</label>
+                        <h3 class="h3Mode">Sergeant Mode</h3>
+                        <nav class="cl-effect-5">
+                            <a href="#" id="demo-sgt"><span data-hover="Demo">Demo</span></a>
+                        </nav>
+                    </div>
+
+                    <div class="modeBlock">
+                        <input id="mode-monk" type="radio" name="mode" value="monk" class="radioImageSelect" data-image="assets/images/mode_monk_trans.png" />
+                        <label for="mode-monk">Monk</label>
+                        <h3 class="h3Mode">Monk Mode</h3>
+                        <nav class="cl-effect-5">
+                            <a href="#" id="demo-monk"><span data-hover="Demo">Demo</span></a>
+                        </nav>
+                    </div>
                 </div>
 
             </div>
@@ -305,22 +309,29 @@
 </div>
 </body>
 
-<script>window.$ = window.jQuery = require( __dirname + '/assets/js/jquery-1.12.2.min.js');</script>
+<script>
+    /*window.nodeRequire = require;
+    delete window.require;
+    delete window.exports;
+    delete window.module;*/
+    //window.$ = window.jQuery = require( __dirname + '/assets/js/jquery-1.12.2.min.js');
+    window.$ = window.jQuery = require('jquery');
+</script>
 <script src="assets/js/jquery.countdown.js"></script>
 <script src="assets/js/jquery-ajax-localstorage-cache.js"></script>
 <script src="assets/js/icheck.js"></script>
-<script src="assets/js/ui.js"></script>
 <script src="assets/js/splash.anim.js" id="script-splash-anim"></script>
+<script src="app.js"></script>
 <!--<script src="assets/js/vex.combined.min.js"></script>-->
 <script>
 
-    $(document).ready(function(){
+    $(document).ready(function() {
 
         $iCheckSelectors = "input.icheck";
 
         $($iCheckSelectors).iCheck({
-            checkboxClass: 'icheckbox_square-red',
-            radioClass: 'iradio_square-red',
+            checkboxClass: 'icheckbox_square',
+            radioClass: 'iradio_square',
             increaseArea: '20%'
         });
 
@@ -374,6 +385,8 @@
 
     $(document).ready(function(){
 
+        return;
+
         $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
 
         $updatesCached = true;
@@ -415,7 +428,7 @@
         });
 
         /* Check if server response is JSON */
-        function tryParseJSON (jsonString){
+        function tryParseJSON (jsonString) {
             try {
                 var o = JSON.parse(jsonString);
                 // Handle non-exception-throwing cases:

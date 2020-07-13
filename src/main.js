@@ -32,7 +32,7 @@ function createMainWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow( {
     width: 800,
-    height: 440,
+    height: 395,
     useContentSize: false,
     alwaysOnTop: false,
     center: true,
@@ -47,12 +47,12 @@ function createMainWindow () {
     frame: false,
     fullscreen: false,
     fullscreenable: true,
-    titleBarStyle: 'default',
+    titleBarStyle: "hidden",
     show: true,
     webPreferences: {
-      nodeIntegration: false, // default value from Electron v5+
-      contextIsolation: true, // protect against prototype pollution
-      enableRemoteModule: false, // turn off remote
+      nodeIntegration: true, // false: default value from Electron v5+
+      contextIsolation: false, // true: protect against prototype pollution
+      enableRemoteModule: true, // remote
       preload: getPathTo('preload.js'), // use a preload script
     }
   })

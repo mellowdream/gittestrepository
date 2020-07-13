@@ -9,9 +9,16 @@ window.getConfig = function () {
   return require('./config.json');
 }
 
+window.getJQuery = function () {
+  return require('jquery');
+}
+window.getDirname = function () {
+  return __dirname;
+}
+
 document.onreadystatechange = function () {
-  if (document.readyState == "complete") {
-    const $ = require('jquery');
+  if (document.readyState === "complete") {
+    //window.$ = window.jQuery = require('jquery');
   }
 }
 

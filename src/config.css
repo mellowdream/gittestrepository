@@ -1,5 +1,4 @@
 :root {
-    --color-primary: #94BA0B;/*ea4f35;*/
-    --color-secondary: #1890e3;
-    --main-padding: 15px;
+    --color-primary: #ea4f35;/* green: 94BA0B --- orange: ea4f35;*/
+    --color-secondary: #ea4f35; /* blue:1890e3 */
 }

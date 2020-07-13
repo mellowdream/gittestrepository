@@ -3,7 +3,7 @@
   "version": "2.1.0",
   "description": "Refreshie: Taking back control",
   "author": "thinkdj",
-  "homepage": "https://think.dj/",
+  "homepage": "https://think.dj/refreshie/",
   "license": "Private",
   "main": "app/main.js",
   "scripts": {

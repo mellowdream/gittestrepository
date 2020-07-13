@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Refreshie</title>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="assets/fonts/ico/style.css"/>
+</head>
+<body>
+<div id="container" class="appBoxStyle">
+
+    <div id="intro">
+
+        <section class="cd-intro">
+            <img src="assets/refico.png" alt="F5" class="refico"/>
+            <div><h1>Refreshie</h1>
+                <h1 class="cd-headline push">
+                    <span>For fatigue-free</span>
+                    <span class="cd-words-wrapper">
+				<b class="is-visible">. . .</b>
+                <b>eyes</b>
+				<b>neck</b>
+				<b>mind</b>
+				<b>you!</b>
+			</span>
+                </h1></div>
+        </section>
+
+    </div>
+
+    <div id="loadingAni">
+        <img src="assets/images/ripple.svg" alt=" "/>
+    </div>
+
+    <div class="notif-controls">
+        <a class="notif-move" title="Move"><i class="icon-contract"></i></a>
+        <a class="notif-minimize" onclick="minimizeWindow()" title="Minimize to Tray"><i class="icon-minus"></i></a>
+    </div>
+
+    <h1>Refreshie <span>Taking Back Control</span></h1>
+
+    <div id="main-container">
+
+        <ul class="form">
+            <li class="tabable isActive" aria-controls="app-info"><a href="#"><i class="icon-grid"></i>Info</a></li>
+            <li class="tabable" aria-controls="app-about"><a href="#"><i class="icon-sun"></i>Mode</a></li>
+            <li class="tabable" aria-controls="app-settings"><a href="#"><i class="icon-cog"></i>Settings</a></li>
+            <li class="tabable" aria-controls="app-stats"><a href="#"><i class="icon-heart"></i>Stats</a></li>
+            <li class="tabable" aria-controls="app-updates"><a href="#"><i class="icon-cloud-download"></i>Updates <em id="updatesCount">&bigstar;</em></a></li>
+        </ul>
+
+        <div id="content">
+
+            <div id="app-info" class="hideable">
+                <!--<img src="assets/gift.png" alt="" style="float:left; margin-right: 20px;"/>-->
+                <!--<p>On nodeJS <script>document.write(process.versions.node)</script>,</p>
+                <p>Chromium <script>document.write(process.versions.chrome)</script>,</p>-->
+                <!--
+                PROGRESSBAR implement
+                http://thecodeplayer.com/walkthrough/jquery-multi-step-form-with-progress-bar
+                OR
+                http://jsfiddle.net/wkwg4obe/3/
+                OR
+                http://lightningtgc.github.io/MProgress.js/
+                -->
+
+                <div class="dataBlock shortBreak">
+                    <div class="dbw">
+                        <div class="time">
+                            <span id="nextShortBreakInInject"><!-- Inject Time --></span>
+                        </div>
+                        <div class="info">
+                            <p>to next short break</p>
+                            <p class="meta-time">@ <span id="nextShortBreakAt">12:30 pm</span></p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="dataBlock">
+                    <div class="dbw">
+                        <div class="time">
+                            <span id="nextBreakInInject"><!-- Inject Time --></span>
+                        </div>
+                        <div class="info">
+                            <p>to next long break</p>
+                            <p class="meta-time">@ <span id="nextLongBreakAt">12:30 pm</span></p>
+                        </div>
+                        <div class="clearfix"></div>
+
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <p class="gb-time"><!--fffae3-->
+                    <a class="button-action restart" id="button-action-restart" title="Click to Restart"><i class="icon-reload"></i></a>
+                    <a class="button-action" id="button-action" title="Click to toggle">Running</a>
+                    <i class="icon icon-clock2 gbclo"></i>
+                    <span id="breakInfo"></span>
+                </p>
+
+
+                <div id="statis" class="">
+                    <h3>Congratulations</h3>
+                    <p id="meta_welcome">On your decision to improve your life <br><br></p>
+                    <p id="meta_hoursSaved">You have had <span id="times"></span> fatigue-free hour<span id="plural">s</span> since you started using Refreshie</p>
+                </div>
+
+                <nav class="cl-effect-5" style="text-align: center; padding-top: 10px">
+                    <a href="#" onclick="naughtyfication()"><i class="icon-heart"></i> <span data-hover="Give feedback">Give feedback</span></a>
+                    <a href="#" onclick="minimizeWindow()"><i class="icon-arrow-down"></i> <span data-hover="Minimize to Tray">Minimize to Tray</span></a>
+                    <a href="#" onclick="quitIt()"><i class="icon-power"></i> <span data-hover="Quit">Quit</span></a>
+                </nav>
+
+            </div>
+
+            <div id="app-stats" class="hidden hideable">
+
+                <!--<h3 style="text-transform: uppercase; color: #777; font-size: 13px;">Geeky Stuff</h3>-->
+
+                <div class="dataBlock shortBreak">
+                    <div class="dbw">
+                        <div class="time">
+                            <span id="count_longBreaks">1</span>
+                        </div>
+                        <div class="info">
+                            <p>Long Breaks</p>
+                            <p class="meta-time">Total</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="dataBlock">
+                    <div class="dbw">
+                        <div class="time">
+                            <span id="count_shortBreaks">2</span>
+                        </div>
+                        <div class="info">
+                            <p>Short Breaks</p>
+                            <p class="meta-time">Total</p>
+                        </div>
+                        <div class="clearfix"></div>
+
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <ul class="ululu">
+                    <li><span class="icon icon-trophy"></span>
+                        You've skipped <span id="count_skipped">0</span> <span id="count_totalBreaks">0</span> breaks
+                        <small><span id="percSkips"></span></small>
+                    </li>
+                    <li><span class="icon icon-loader"></span>
+                        App used <span id="count_opened">1 time</span>
+                        <small>Since <span id="firstTouch"></span></small>
+                    </li>
+                </ul>
+
+                <p class="gb-upd">
+                    App: v<b class="appVersion">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
+                &bull; --><a href="#" class="upd-btn" onclick="checkForUpdates()">Check for updates</a></small>
+                </p>
+
+            </div>
+
+            <div id="app-settings" class="hidden hideable">
+                <table class="opTable">
+                    <tr class="tabHilight">
+                        <td colspan="2"><b class="icon icon-heart tabIco"></b> Bio</td>
+                    </tr>
+                    <tr>
+                        <td>Short break every </td>
+                        <td>
+                            <select name="shortIntervalDD" id="shortIntervalDD">
+                                <option value="10">10 m</option>
+                                <option value="15">15 m</option>
+                                <option value="20">20 m</option>
+                                <option value="30">30 m</option>
+                                <option value=".5">30 s test</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Break duration</td>
+                        <td>
+                            <select name="shortBreakDuration" id="shortBreakDuration">
+                                <option value="05">5 s</option>
+                                <option value="10">10 s</option>
+                                <option value="15">15 s</option>
+                                <option value="20">20 s</option>
+                                <option value="30">30 s</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Short break cues for</td>
+                        <td>
+                            <select name="shortBreakWhat" id="shortBreakWhat">
+                                <option value="eyes">Eyes</option>
+                                <option  value="all">Eyes & Stretches</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Allow skipping</td>
+                        <td><input name="opt_allowSkips" id="opt_allowSkips" type="checkbox" class="icheck"></td>
+                    </tr>
+                    <!--<tr>
+                        <td>Long break every</td>
+                        <td>
+                            1 Hour
+                        </td>
+                    </tr>-->
+                    <tr class="tabHilight">
+                        <td colspan="2"><b class="icon icon-reload tabIco"></b> App</td>
+                    </tr>
+                    <tr>
+                        <td>Always on top</td>
+                        <td><input name="opt_alwaysOnTop" id="opt_alwaysOnTop" type="checkbox" class="icheck"></td>
+                    </tr>
+                    <tr>
+                        <td>Start minimized</td>
+                        <td><input name="opt_startMinimized" id="opt_startMinimized" type="checkbox" class="icheck"></td>
+                    </tr>
+                    <tr>
+                        <td>Auto-run at system startup
+                            <small style="display: block;padding-top: 6px;color:#777; font-weight: 300">For your own good, do not turn this off, grasshopper</small>
+                        </td>
+                        <td><input name="opt_autoStart" id="opt_autoStart" type="checkbox" class="icheck"></td>
+                    </tr>
+                    <tr>
+                        <td>Lock PC after a long break</td>
+                        <td><input name="opt_lockPC" id="opt_lockPC" type="checkbox" class="icheck"></td>
+                    </tr>
+                    <tr>
+                        <td>Show app Splash Screen</td>
+                        <td><input name="opt_splash" id="opt_splash" type="checkbox" class="icheck"></td>
+                    </tr>
+                    <tr>
+                        <td>Play sounds</td>
+                        <td><input name="opt_sounds" id="opt_sounds" type="checkbox" class="icheck"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="app-about" class="hidden hideable monk-vs-sgt">
+
+                <div class="modeBlock">
+                    <input id="mode-sgt" type="radio" name="mode" value="sgt" class="radioImageSelect" data-image="assets/images/mode_sgt_trans.png" />
+                    <label for="mode-sgt">Sergeant</label>
+                    <h3 class="h3Mode">Sergeant Mode</h3>
+                    <nav class="cl-effect-5">
+                        <a href="#" id="demo-sgt"><span data-hover="Demo">Demo</span></a>
+                    </nav>
+                </div>
+
+                <div class="modeBlock">
+                    <input id="mode-monk" type="radio" name="mode" value="monk" class="radioImageSelect" data-image="assets/images/mode_monk_trans.png" />
+                    <label for="mode-monk">Monk</label>
+                    <h3 class="h3Mode">Monk Mode</h3>
+                    <nav class="cl-effect-5">
+                        <a href="#" id="demo-monk"><span data-hover="Demo">Demo</span></a>
+                    </nav>
+                </div>
+
+            </div>
+
+            <div id="app-updates" class="hidden hideable">
+
+                <div class="author">
+                    <div class="clearfix"></div>
+                    <div id="auth-img">
+                        <img src="assets/images/@thinkdj.jpg" alt="">
+                    </div>
+                    <div id="auth-bio">
+                        <h3>By Deepak Thomas
+                            <a href="#" title="Check me out on Twitter" class="" onclick="OpenURL('http://twitter.com/thinkdj')">@thinkdj</a>&nbsp;
+                            <a href="#" title="Reach out via email" onclick="naughtyfication()" style="color:#888"><span class="icon-envelope"></span></a>
+                        </h3>
+                        <p>Refreshie is a weekend pet project born from a need. <br/>
+                            <a href="#" onclick="OpenURL('http://im.think.dj/introducing-refreshie/?from=app')">Read on &rarr;</a></p>
+                    </div>
+                </div>
+
+                <div id="uppBlock">
+                    <ul id="messageCenter"></ul>
+                </div>
+
+                <p class="gb-upd">
+                    App: v<b class="appVersion">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
+                &bull; --><a href="#" class="upd-btn" onclick="checkForUpdates()">Check for updates</a></small>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div style="clear:both"></div>
+
+</div>
+</body>
+
+<script>window.$ = window.jQuery = require( __dirname + '/assets/js/jquery-1.12.2.min.js');</script>
+<script src="assets/js/jquery.countdown.js"></script>
+<script src="assets/js/jquery-ajax-localstorage-cache.js"></script>
+<script src="assets/js/icheck.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/splash.anim.js" id="script-splash-anim"></script>
+<!--<script src="assets/js/vex.combined.min.js"></script>-->
+<script>
+
+    $(document).ready(function(){
+
+        $iCheckSelectors = "input.icheck";
+
+        $($iCheckSelectors).iCheck({
+            checkboxClass: 'icheckbox_square-red',
+            radioClass: 'iradio_square-red',
+            increaseArea: '20%'
+        });
+
+        /* Set Values */
+        $opts = ["opt_autoStart","opt_lockPC","opt_startMinimized","opt_sounds","opt_splash","opt_alwaysOnTop","opt_allowSkips"];
+        $.each( $opts, function( key, value ) {
+            $selector = $("#"+value);
+            if(0==$selector.length) return 0;
+            if(1==parseInt(localStorage[value])) $selector.iCheck('check');
+            else $selector.iCheck('uncheck');
+        });
+
+        $($iCheckSelectors).on('ifToggled', function(event){
+            activityAnimation(160);
+            $what = event.target.id;
+
+            if ($(this).is(":checked")){ localStorage[$what] = 1; }
+            else { localStorage[$what] = 0; }
+
+            switch($what) {
+                case "opt_autoStart":
+                    osAutorunAtStartup(parseInt(localStorage[$what]));
+                    break;
+            }
+
+        });
+
+    });
+    /*
+     LEARNING:
+     You can't use a variable in the dot notation, but you can use brackets notation:
+     localStorage[$what] = 1;
+     => localStorage.opt_lockPC = 1;
+    */
+
+    // In renderer process (web page).
+    const ipcRenderer = require('electron').ipcRenderer;
+
+    function checkForUpdates(){
+        activityAnimation(800);
+        console.log(ipcRenderer.sendSync('check-for-update','latest'));
+    }
+
+    function quitIt(){
+        return ipcRenderer.sendSync('force-quit', 'force-quit');
+    }
+
+    ipcRenderer.on('timer-changeReq-from-main', function (event, arg) {
+        timers(arg);
+    });
+
+    $(document).ready(function(){
+
+        $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
+
+        $updatesCached = true;
+        $updatesCachedTTL = 24*5;
+
+        $fallbackUpdates = [
+            {
+                "title":"Refreshie v1.0",
+                "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='OpenURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
+            }
+        ];
+
+        // Set defaults in case Web fetch fails:
+        $updates = $fallbackUpdates;
+
+        $updateSelctor = $("#messageCenter");
+
+        $webURL = ipcRenderer.sendSync('get-webURL');
+        console.log("Web URL Base: " + $webURL);
+
+        $.ajax({
+            url          : $webURL, /* 100 Posts: http://s.typicode.com/posts */
+            localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or OBJ that implements the Storage interface */
+            cacheTTL     : $updatesCachedTTL,
+            cacheKey     : '_ajax_upd_',
+            isCacheValid : true
+        }).done(function(response){
+            console.log("Updates received from server", response);
+            response = tryParseJSON(response);
+            if(response) {
+                $updates = response;
+            }
+        }).fail(function (jqXHR, textStatus) {
+            $updates = $fallbackUpdates;
+        }).complete( function() {
+            $.each($updates, function(index, item) {
+                $updateSelctor.append('<li><b><span class="icon icon-bubble"></span> '+item.title+'</b><span class="desc">'+item.desc+'</span></li>');
+            });
+        });
+
+        /* Check if server response is JSON */
+        function tryParseJSON (jsonString){
+            try {
+                var o = JSON.parse(jsonString);
+                // Handle non-exception-throwing cases:
+                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+                // but... JSON.parse(null) returns null, and typeof null === "object",
+                // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+                if (o && typeof o === "object") {
+                    return o;
+                }
+            }
+            catch (e) { }
+            return false;
+        };
+
+    });
+
+</script>
+<!-- That's all folks! -->
+</html>

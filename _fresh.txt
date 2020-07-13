@@ -81,3 +81,22 @@ We need to package your application before we can make it
 Making for the following targets: squirrel
 | Making for target: squirrel - On platform: win32 - For arch: x64
 
+
+
+npm install jquery --save
+<script>window.$ = window.jQuery = require('jquery');</script>
+<!-- If the require doesn't work, include first the jQuery file
+<script src="jquery-3.0.0.min.js"></script>-->
+<script>window.$ = window.jQuery = require('./jquery-3.0.0.min.js');</script>
+OR
+let win = new BrowserWindow({
+ webPreferences: {
+ nodeIntegration: false   } });
+ <head>
+ <script>
+ window.nodeRequire = require;
+ delete window.require;
+ delete window.exports; delete window.module;
+ </script>
+ <script type="text/javascript" src="jquery.js"></script>
+ </head>

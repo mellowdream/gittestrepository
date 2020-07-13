@@ -1,0 +1,11 @@
+{
+  "name": "Refreshie",
+  "description": "Taking back control",
+  "url": "https://think.dj/refreshie/",
+  "urlAbout":  "http://im.think.dj/introducing-refreshie/?from=app",
+  "version": "2.0.1",
+  "icons": [
+    { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
+    { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.ico" }
+  ]
+}

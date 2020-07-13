@@ -5,7 +5,7 @@
   "author": "thinkdj",
   "homepage": "https://think.dj/refreshie/",
   "license": "Private",
-  "main": "app/main.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -25,7 +25,8 @@
     "electron": "^9.1.0"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "jquery": "^3.5.1"
   },
   "config": {
     "forge": {

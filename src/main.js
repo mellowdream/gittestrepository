@@ -10,17 +10,24 @@ let config = require('./config.json');
 /* Internal state/var */
 let __state = {
   forceQuit: false,
-  debugMode: false,
-  isRunning: 1,
+  debugMode: true,
+  isTimerRunning: 1,
   basePath: __dirname,
   icoTray: getPathTo(config.icons.find(i => i.id==='tray').asset),
   icoTrayPaused: getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
+  urlFallback: "https://think.dj/refreshie/",
 }
 
-let mainWindow;
-let mainTray;
+
+let mainWindow = null;
+let mainTray = null;
 
 function createMainWindow () {
+
+  if (mainWindow!==null) {
+    mainWindowVisibility('show');
+    return false;
+  }
 
   // Create the browser window.
   mainWindow = new BrowserWindow( {
@@ -43,13 +50,15 @@ function createMainWindow () {
     titleBarStyle: 'default',
     show: true,
     webPreferences: {
-      preload: getPathTo('preload.js'),
-      nodeIntegration: true,
+      nodeIntegration: false, // default value from Electron v5+
+      contextIsolation: true, // protect against prototype pollution
+      enableRemoteModule: false, // turn off remote
+      preload: getPathTo('preload.js'), // use a preload script
     }
   })
 
   // index.html of the app.
-  mainWindow.loadFile( getPathTo( 'index.html' ) );
+  mainWindow.loadFile( getPathTo( 'app/app.html' ) );
 
   /* Subscribe to events */
   /* App Ready */
@@ -73,7 +82,8 @@ function createMainWindow () {
   });
 
   /* Open the DevTools? */
-  if(__state.debugMode) mainWindow.webContents.openDevTools({ detach: true } )
+  /* modes: 'right' | 'bottom' | 'undocked' | 'detach' */
+  if(__state.debugMode) mainWindow.webContents.openDevTools({ mode: "detach" } )
 
 }
 
@@ -128,9 +138,15 @@ function setTrayMenu() {
     },
     { type: 'separator'},
     {
+      label: 'Homepage',
+      click: async () => {
+        await shell.openExternal( config.url || __state.urlFallback)
+      },
+    },
+    {
       label: 'About ' + config.name,
       click: async () => {
-        await shell.openExternal(config.urlAbout? config.urlAbout : config.url )
+        await shell.openExternal(config.urlAbout? config.urlAbout : config.url ? config.url : __state.urlFallback )
       },
     },
     {
@@ -166,13 +182,13 @@ function ipcSubscriptions() {
       case "paused":
       case "running":
         /* Flip state, change Ico */
-        __state.isRunning = !!(1 - Number(__state.isRunning));
-        __state.isRunning ?
+        __state.isTimerRunning = !!(1 - Number(__state.isTimerRunning));
+        __state.isTimerRunning ?
             mainTray.setImage(__state.icoTray) :
             mainTray.setImage(__state.icoTrayPaused);
         break;
       case "restart":
-        __state.isRunning = 1;
+        __state.isTimerRunning = 1;
         mainTray.setImage(__state.icoTray);
         break;
       default:

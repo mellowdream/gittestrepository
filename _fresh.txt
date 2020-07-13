@@ -36,21 +36,21 @@ electron-forge init ref--template=typescript-webpack
 =========>> WORKS
  npx create-electron-app my-new-app --template=typescript-webpack
 - Initializing Project Directory
-GêÜ Initializing Project Directory
+? Initializing Project Directory
 - Initializing Git Repository
-GêÜ Initializing Git Repository
+? Initializing Git Repository
 - Locating custom template: "typescript-webpack"
-GêÜ Locating custom template: "typescript-webpack"
+? Locating custom template: "typescript-webpack"
 - Copying Starter Files
-GêÜ Copying Starter Files
+? Copying Starter Files
 - Initializing NPM Module
-GêÜ Initializing NPM Module
+? Initializing NPM Module
 - Setting up Forge configuration
-GêÜ Setting up Forge configuration
+? Setting up Forge configuration
 - Setting up TypeScript configuration
-GêÜ Setting up TypeScript configuration
+? Setting up TypeScript configuration
 - Installing Template Dependencies
-GêÜ Installing Template Dependencies
+? Installing Template Dependencies
 - Installing NPM Dependencies
 
 [Creates WEBPACK build etc..
@@ -65,3 +65,19 @@ npx @electron-forge/cli import
 
 
 > electron-forge start
+
+
+BUILD
+
+electron-forge make
+- Checking your system(node:4052) ExperimentalWarning: The fs.promises API is experimental
+? Checking your system
+(node:7752) ExperimentalWarning: The fs.promises API is experimental
+? Resolving Forge Config
+We need to package your application before we can make it
+? Preparing to Package Application for arch: x64
+? Preparing native dependencies
+? Packaging Application
+Making for the following targets: squirrel
+| Making for target: squirrel - On platform: win32 - For arch: x64
+

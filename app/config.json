@@ -1,4 +1,5 @@
 {
-  "firstName": "Deepak",
-  "lastName": "Jacob"
+  "name": "Refreshie",
+  "description": "Taking back control",
+  "version": "2.0.1"
 }

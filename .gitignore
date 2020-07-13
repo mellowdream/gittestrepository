@@ -3,6 +3,10 @@
 /thinkdj
 /node_modules
 
+# builds
+/out
+/dist
+
 # laravel
 /public/hot
 /public/storage
@@ -25,4 +29,3 @@ npm-debug.log
 *.exe
 *.zip
 
-out/

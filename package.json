@@ -29,7 +29,13 @@
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "asar": true,
+        "prune": true,
+        "dir": "app",
+        "out": "dist",
+        "overwrite": false
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",

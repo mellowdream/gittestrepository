@@ -4,6 +4,7 @@
   "description": "Taking back control",
   "url": "https://think.dj/refreshie/",
   "urlAbout":  "http://im.think.dj/introducing-refreshie/?from=app",
+  "urlUpdatesRESTEndpoint": "http://s.typicode.com/posts",
   "version": "2.0.1",
   "icons": [
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },

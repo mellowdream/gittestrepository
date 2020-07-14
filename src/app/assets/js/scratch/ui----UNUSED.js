@@ -16,7 +16,7 @@ const path = require('path');
 
 
 let audioElement = document.createElement('audio');
-audioElement.setAttribute('src', 'assets/sound/click.wav');
+audioElement.setAttribute('src', 'assets/sounds/click.wav');
 
 
 function removeJSorCSS(filename, filetype){
@@ -73,7 +73,7 @@ notifier.notify({
     subtitle: 'in 5 minutes',
     message: 'Hello from node, Mr. User!',
     icon: path.join(__dirname, '/assets/c.128.png'), // Absolute path (doesn't work on balloons)
-    sound: true,  ///Only Notification Center or Windows Toasters
+    sounds: true,  ///Only Notification Center or Windows Toasters
     wait: true, ////Wait with callback, until user action is taken against notification
     contentImage: path.join(__dirname, 'assets/fg.png'), // Absolute Path to Attached Image (Content Image)
     open: void 0 // URL to open on Click

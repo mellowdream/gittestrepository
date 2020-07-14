@@ -1,11 +1,12 @@
 
 # folders
-/thinkdj
 /node_modules
+/thinkdj
 
 # builds
 /out
 /dist
+/build
 
 # laravel
 /public/hot

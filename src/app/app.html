@@ -57,7 +57,7 @@
 
         <div id="content">
 
-            <div id="app-info" class="hideable">
+            <div id="app-info" class="isHideable">
                 <!--<img src="assets/gift.png" alt="" style="float:left; margin-right: 20px;"/>-->
                 <!--<p>On nodeJS <script>document.write(process.versions.node)</script>,</p>
                 <p>Chromium <script>document.write(process.versions.chrome)</script>,</p>-->
@@ -70,9 +70,9 @@
                 http://lightningtgc.github.io/MProgress.js/
                 -->
 
-                <div class="dataBlock shortBreak">
+                <div class="animated dataBlock shortBreak">
                     <div class="dbw">
-                        <div class="time">
+                        <div class="animated time">
                             <span id="nextShortBreakInInject"><!-- Inject Time --></span>
                         </div>
                         <div class="info">
@@ -83,9 +83,9 @@
                     </div>
                 </div>
 
-                <div class="dataBlock">
+                <div class="animated dataBlock">
                     <div class="dbw">
-                        <div class="time">
+                        <div class="animated time">
                             <span id="nextBreakInInject"><!-- Inject Time --></span>
                         </div>
                         <div class="info">
@@ -99,23 +99,25 @@
 
                 <div class="clearfix"></div>
 
-                <p class="hblock-time"><!--fffae3-->
-                    <a class="button-action restart" id="button-action-restart" title="Click to Restart"><i class="icon-reload"></i></a>
+                <p class="hblock-time">
+                    <span>
+                        <i class="icon icon-clock2 hblock-ico"></i>
+                        <span id="breakInfo"></span>
+                    </span>
                     <a class="button-action" id="button-action" title="Click to toggle">Running</a>
-                    <i class="icon icon-clock2 hblock-ico"></i>
-                    <span id="breakInfo"></span>
+                    <a class="button-action restart" id="button-action-restart" title="Click to Restart"><i class="icon-reload"></i></a>
                 </p>
 
 
-                <div id="stats" class="">
+                <div id="stats">
                     <h3>Congratulations</h3>
-                    <p id="meta_welcome">On your decision to improve your life <br><br></p>
+                    <p id="meta_welcome">On your decision to improve your life</p>
                     <p id="meta_hoursSaved">You have had <span id="times"></span> fatigue-free hour<span id="plural">s</span> since you started using
                         <span class="app-title">Refreshie</span>
                     </p>
                 </div>
 
-                <nav class="cl-effect-5 align-1">
+                <nav class="fx-text-slideIn align-1">
                     <a href="#" class="action-notification"><i class="icon-heart"></i> <span data-hover="Give feedback">Give feedback</span></a>
                     <a href="#" class="action-minimize"><i class="icon-arrow-down"></i> <span data-hover="Minimize to Tray">Minimize to Tray</span></a>
                     <a href="#" class="action-quit"><i class="icon-power"></i> <span data-hover="Quit">Quit</span></a>
@@ -123,7 +125,7 @@
 
             </div>
 
-            <div id="app-stats" class="hidden hideable">
+            <div id="app-stats" class="hidden isHideable">
 
                 <!--<h3 style="text-transform: uppercase; color: #777; font-size: 13px;">Geeky Stuff</h3>-->
 
@@ -174,7 +176,7 @@
 
             </div>
 
-            <div id="app-settings" class="hidden hideable">
+            <div id="app-settings" class="hidden isHideable">
                 <table class="opTable">
                     <tr class="tabHighlight">
                         <td colspan="2"><b class="icon icon-layers tabIco"></b> Configuration</td>
@@ -256,7 +258,7 @@
                 </table>
             </div>
 
-            <div id="app-about" class="hidden hideable monk-vs-sgt">
+            <div id="app-about" class="hidden isHideable monk-vs-sgt">
 
                 <div class="modes">
 
@@ -264,7 +266,7 @@
                         <input id="mode-sgt" type="radio" name="mode" value="sgt" class="radioImageSelect" data-image="assets/images/mode_sgt_trans.png" />
                         <label for="mode-sgt">Sergeant</label>
                         <h3 class="h3Mode">Sergeant Mode</h3>
-                        <nav class="cl-effect-5">
+                        <nav class="fx-text-slideIn">
                             <a href="#" id="demo-sgt"><span data-hover="Demo">Demo</span></a>
                         </nav>
                     </div>
@@ -273,7 +275,7 @@
                         <input id="mode-monk" type="radio" name="mode" value="monk" class="radioImageSelect" data-image="assets/images/mode_monk_trans.png" />
                         <label for="mode-monk">Monk</label>
                         <h3 class="h3Mode">Monk Mode</h3>
-                        <nav class="cl-effect-5">
+                        <nav class="fx-text-slideIn">
                             <a href="#" id="demo-monk"><span data-hover="Demo">Demo</span></a>
                         </nav>
                     </div>
@@ -281,7 +283,7 @@
 
             </div>
 
-            <div id="app-updates" class="hidden hideable">
+            <div id="app-updates" class="hidden isHideable">
 
                 <div class="author">
                     <div class="clearfix"></div>

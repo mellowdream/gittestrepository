@@ -40,6 +40,8 @@ body {
     overflow: hidden;
 }
 
+.animated { transition: all 0.25s ease-out; }
+
 .app-container {
     margin:0;
     padding: 30px 15px 15px 30px;
@@ -182,7 +184,7 @@ select {
 }
 
 
-/* isTab/Hideable */
+/* isTab/isHideable */
 .hidden {
     display: none;
 }
@@ -209,13 +211,14 @@ nav a {
 nav a:hover,nav a:focus {outline: none}
 
 /* Effect 5: same word slide in */
-.cl-effect-5 a {
+.fx-text-slideIn { }
+.fx-text-slideIn a {
     overflow: hidden;
     padding: 0 4px;
     height: 1em;
 }
 
-.cl-effect-5 a span {
+.fx-text-slideIn a span {
     position: relative;
     display: inline-block;
     -webkit-transition: -webkit-transform 0.3s;
@@ -223,7 +226,7 @@ nav a:hover,nav a:focus {outline: none}
     transition: transform 0.3s;
 }
 
-.cl-effect-5 a span::before {
+.fx-text-slideIn a span::before {
     position: absolute;
     top: 100%;
     content: attr(data-hover);
@@ -234,7 +237,7 @@ nav a:hover,nav a:focus {outline: none}
     transform: translate3d(0,0,0);
 }
 
-.cl-effect-5 a:hover span {
+.fx-text-slideIn a:hover span {
     -webkit-transform: translateY(-100%);
     -moz-transform: translateY(-100%);
     transform: translateY(-100%);
@@ -243,7 +246,14 @@ nav a:hover,nav a:focus {outline: none}
 
 /* Horizontal Grey Blocks */
 .hblock-time {
-    font-size: 15px; padding: 10px 0; text-align: center; background: #efefef;
+    font-size: 15px;
+    padding: 10px 0;
+    margin: 12px 0 0;
+    text-align: center;
+    background: #efefef; /* yellow: fffae3 */
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 .hblock-ico {margin: 0 5px 0 0; line-height: 22px;}
 
@@ -253,8 +263,6 @@ nav a:hover,nav a:focus {outline: none}
 .btn-update {float:right}
 
 .button-action {
-    margin: 0 10px 0 0;
-    float: right;
     padding: 1px 10px;
     line-height: 13px;
     text-align: center;
@@ -424,11 +432,20 @@ nav a:hover,nav a:focus {outline: none}
     width: 100%;
 }
 
-/* hideable = The tab-able sections */
-.hideable {
+/* isHideable = The tab-able sections */
+.isHideable {
     width: 100%;
     box-sizing: border-box;
+    animation: 0.7s cubic-bezier(0.55, 0.085, 0.68, 0.53) slide-in-bck-center;
+    animation: slide-in-bck-center 0.7s;
+    transition:all .3s ease
 }
+@keyframes slide-in-bck-center
+{
+    0%{-webkit-transform:translateZ(600px);transform:translateZ(600px);opacity:0}
+    to{-webkit-transform:translateZ(0);transform:translateZ(0);opacity:1}
+}
+
 .modes {
     display: grid;
     grid-template-columns: repeat(2,1fr);
@@ -467,16 +484,17 @@ ul.form {
     text-transform:uppercase;
     font-size:14px;
     color: #686868;
-    transition:all 0.25s ease-out;
     border-left: 3px solid transparent;
     display: flex;
     align-items: center;
+    transition: all 0.3s ease-out;
 }
 
 .form li a:hover {
     background: rgba(0,0,0,0.035);
     border-left-color: #ddd;
     color:var(--color-primary);
+    transition: all 0.3s ease-out;
 }
 .form li a:hover i {
     color:var(--color-primary);
@@ -523,17 +541,26 @@ box-shadow:  1px 1px 10px rgba(0, 0, 0, 0.1);
 
 /* Homepage Stats */
 #stats {
-    padding: 0 10px 0 104px;
-    margin: 0;
+    padding: 0 10px 0 110px;
+    margin: 20px 0 10px;
     background:transparent url(assets/images/badges/thumbup_s.png) no-repeat left center;
-    display: inline-block;
+    display: grid;
+    min-height: 96px;
+    align-items: center;
+    line-height: 1;
+}
+#stats h3, #stats p {
+    line-height: 1.45;
+    padding: 0;
+    margin: 0;
 }
 #stats.virgo {
     background: url(assets/images/badges/heart_s.png) no-repeat left center;
 }
 
 .align-1 {
-    text-align: center; padding-top: 10px
+    text-align: center;
+    padding-top: 10px
 }
 .f-w-600 {font-weight: 600}
 .col-dark {
@@ -780,6 +807,7 @@ xpush
 }
 .dataBlock .time.active.paused {
     border-color: goldenrod !important;
+    color: goldenrod;
 }
 .dataBlock .info {
     display: inline-block;

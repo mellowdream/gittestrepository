@@ -53,11 +53,11 @@ $(document).ready( function() {
 
 /* TABS */
 $(document).on('click', '.isTab', function () {
-    $active = $(this).attr('aria-controls');
+    let target = $(this).attr('aria-controls');
     if(!$(this).is(".isActive")) {
         if( ("undefined"!==audioElement) && (parseInt(localStorage.opt_sounds)) ) audioElement.play();
-        $('.hideable').hide();
-        $("#" + $active).fadeIn(165);
+        $('.isHideable').hide();
+        $("#" + target).fadeIn(200);
         $('.isTab').removeClass('isActive').attr("aria-selected", "false");
         $(this).attr('aria-selected', "true").addClass('isActive');
     }
@@ -557,7 +557,7 @@ function longBreakTimer() {
     longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
     shortBreakEvery = parseInt(localStorage.shortBreakInterval) || (20 * minutes);
 
-    let now = new Date.now();
+    let now = Date.now();
     nextBreakAt = new Date(now + longBreakEvery);
     setLongBreakHTML(nextBreakAt);
 
@@ -599,7 +599,7 @@ function longBreakTimer() {
                 console.log("No more short breaks for this session " + uniqueID);
             }
             else {
-                let now = new Date.now();
+                let now = Date.now();
                 if (shortBreaksElapsed === noOfShortBreaks) {
                     /* Last shortbreak for an hour */
                     /* So, next short break is after the long break */

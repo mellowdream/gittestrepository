@@ -15,7 +15,7 @@ const path = require('path');
 var basePath = window.getDirname();
 
 var audioElement = document.createElement('audio');
-audioElement.setAttribute('src', 'assets/sound/click.wav');
+audioElement.setAttribute('src', 'assets/sounds/click.wav');
 
 
 function removeJSorCSS(filename, filetype){
@@ -32,7 +32,7 @@ function removeJSorCSS(filename, filetype){
 }
 
 $(document).ready( function() {
-    let splashDelay = 2000;
+    let splashDelay = 4200;
     let elIntro = $("#intro");
     /* IF first time OR Splash is enabled, show splash */
     if( (parseInt(localStorage.opt_splash)>=1) || (parseInt(localStorage.timesOpened)<=1) ) {
@@ -72,7 +72,7 @@ notifier.notify({
     subtitle: 'in 5 minutes',
     message: 'Hello from node, Mr. User!',
     icon: path.join(__dirname, '/assets/c.128.png'), // Absolute path (doesn't work on balloons)
-    sound: true,  ///Only Notification Center or Windows Toasters
+    sounds: true,  ///Only Notification Center or Windows Toasters
     wait: true, ////Wait with callback, until user action is taken against notification
     contentImage: path.join(__dirname, 'assets/fg.png'), // Absolute Path to Attached Image (Content Image)
     open: void 0 // URL to open on Click
@@ -187,55 +187,61 @@ function GC() {
     longBreak = null;
     longBreak = function(){};
 
-    /* Create DOM */
+    /* (Re)Create DOM */
     reincarnate("nextShortBreakIn");
     reincarnate("nextBreakIn");
 
 }
 
-function init() {
+function initAppSetDefaults() {
 
-    $clearLocalStorageOnEachRun = false;
-
-    /* Set 1 for clearing cache / Debug Mode */
-    if($clearLocalStorageOnEachRun) {
-        localStorage.clear();
-        /* */
-        localStorage.longBreakInterval =  60 * seconds;
-        localStorage.shortBreakInterval = 20 * seconds;
-        localStorage.shortBreakDuration = 2 * seconds;
-        /* */
+    let defaultSettings = {
+        /* Defaults */
+        firstTouch: new Date(Date.now()),
+        longBreakInterval: 60 * minutes,
+        shortBreakInterval: 20 * minutes,
+        shortBreakDuration: 20 * seconds,
+        timesOpened: 0,
+        skippedCount: 0,
+        breakOngoing: 0,
+        breakType: 'short',
+        mode: 'monk',
+        count_shortBreaks: 0,
+        count_longBreaks: 0,
+        shortBreakWhat: "all",
+        /* Options */
+        opt_lockPC: 0,
+        opt_alwaysOnTop: 1,
+        opt_sounds: 1,
+        opt_splash: 0,
+        opt_autoStart: 1,
+        opt_startMinimized: 1,
+        opt_allowSkips: 1,
+        /* License */
+        uLicense: "Register for free at http://think.dj/refreshie",
+        uEmail: "Register for free at http://think.dj/refreshie",
     }
 
-    /* Set persistent variables [DEFAULTS] */
-    if(!localStorage.firstTouch) localStorage.firstTouch = new Date(Date.now());
-    if(!localStorage.longBreakInterval) localStorage.longBreakInterval = 60 * minutes;
-    if(!localStorage.shortBreakInterval) localStorage.shortBreakInterval = 20 * minutes;
-    if(!localStorage.shortBreakDuration) localStorage.shortBreakDuration = 20 * seconds;
-    if(!localStorage.timesOpened) localStorage.timesOpened = 0;
-    if(!localStorage.skippedCount) localStorage.skippedCount = 0;
-    if(!localStorage.breakOngoing) localStorage.breakOngoing = 0;
-    if(!localStorage.breakType) localStorage.breakType = 'short';
-    if(!localStorage.mode) localStorage.mode = 'monk';
-    if(!localStorage.count_shortBreaks) localStorage.count_shortBreaks = 0;
-    if(!localStorage.count_longBreaks) localStorage.count_longBreaks = 0;
-    if(!localStorage.shortBreakWhat) localStorage.shortBreakWhat = "all";
+    /* DEV Vars*/
+    devModeForTesting = false; /* Set true for clearing cache / Debug Mode */
+    if(devModeForTesting) {
+        localStorage.clear();
+        localStorage.longBreakInterval  = 60 * seconds;
+        localStorage.shortBreakInterval = 20 * seconds;
+        localStorage.shortBreakDuration =  2 * seconds;
+    }
 
-    if(!localStorage.opt_lockPC) localStorage.opt_lockPC = 0;
-    if(!localStorage.opt_alwaysOnTop) localStorage.opt_alwaysOnTop = 1;
-    if(!localStorage.opt_sounds) localStorage.opt_sounds = 1;
-    if(!localStorage.opt_splash) localStorage.opt_splash = 0;
-    if(!localStorage.opt_autoStart) localStorage.opt_autoStart = 1;
-    if(!localStorage.opt_startMinimized) localStorage.opt_startMinimized = 1;
-    if(!localStorage.opt_allowSkips) localStorage.opt_allowSkips = 1;
-
-    if(!localStorage.uLicense) localStorage.uLicense="Register for free at http://think.dj/refreshie";
-    if(!localStorage.uEmail) localStorage.uEmail="Register for free at http://think.dj/refreshie";
+    /* Set config persistent [DEFAULTS] */
+    for (const [key, value] of Object.entries(defaultSettings)) {
+        if(!localStorage[key]) {
+            localStorage[key] = value;
+        }
+    }
 
 }
 
 /* Init on APP start */
-init();
+initAppSetDefaults();
 
 
 function naughtyfication() {
@@ -265,24 +271,24 @@ function kFormatter(num) {
 }
 
 function pluralize(value) {
-    if(1==parseInt(value)) return "1 time";
-    return value+" times"
+    if(1===parseInt(value)) return "1 time";
+    return value + " times";
 }
 
 
-function setStats(){
+function setStats() {
 
     /* Init UI */
-    var count_longBreaks = parseInt(localStorage.count_longBreaks);
+    let count_longBreaks = parseInt(localStorage.count_longBreaks);
     $("#times").text(count_longBreaks);
     if(count_longBreaks) {
-        $("#statis").removeClass('virgo');
+        $("#stats").removeClass('virgo');
         $("#meta_welcome").hide();
         $("#meta_hoursSaved").show();
-        if(1==count_longBreaks) $("#plural").hide(); else $("#plural").show();
+        if(1===count_longBreaks) $("#plural").hide(); else $("#plural").show();
     }
     else {
-        $("#statis").addClass('virgo');
+        $("#stats").addClass('virgo');
         $("#meta_hoursSaved").hide();
         $("#meta_welcome").show();
     }
@@ -290,12 +296,10 @@ function setStats(){
     /* Set Statistics */
     $("#count_shortBreaks").text(kFormatter(localStorage.count_shortBreaks));
     $("#count_longBreaks").text(kFormatter(localStorage.count_longBreaks));
-
     $("#count_opened").text(pluralize(localStorage.timesOpened));
 
-
-    var skippedText = parseInt(localStorage.skippedCount);
-    if(0==skippedText) skippedText="none of the";
+    let skippedText = parseInt(localStorage.skippedCount);
+    if(!skippedText) skippedText="none of the";
     else skippedText = skippedText + " of ";
     $("#count_skipped").text(skippedText);
 
@@ -307,33 +311,32 @@ function setStats(){
 
     var skipPercAllowed = 15;
 
+    let el = $("#percSkips");
     switch(true) {
-        case (0==percSkips):
+        case (!percSkips):
             percSkipsText = "Don't break the streak!";
-            $("#percSkips").removeClass('red').addClass('green');
+            el.removeClass('red').addClass('green');
             break;
         case (percSkips<skipPercAllowed):
             percSkipsText = "Impressive!";
-            $("#percSkips").removeClass('red').addClass('green');
+            el.removeClass('red').addClass('green');
             break;
-        case (percSkips>=skipPercAllowed && percSkips<99):
-            $("#percSkips").removeClass('green').addClass('red');
+        case ( (percSkips>=skipPercAllowed) && (percSkips<99) ):
+            el.removeClass('green').addClass('red');
             percSkipsText = "You need to skip skipping breaks, skipper";
             break;
-        case (percSkips>98 && percSkips<101):
-            $("#percSkips").removeClass('green').addClass('red');
+        case ((percSkips>98) && (percSkips<101)):
+            el.removeClass('green').addClass('red');
             percSkipsText = "Why?";
             break;
         case (percSkips>100):
-            $("#percSkips").removeClass('green').addClass('red');
+            el.removeClass('green').addClass('red');
             percSkipsText = "U EVEN HUMAN?";
             break;
     }
-    $("#percSkips").text("That's a " + percSkips + "% skip-rate. " + percSkipsText);
-
-    if(0==totalBreaks) totalBreaks = '';
+    el.text("That's a " + percSkips + "% skip-rate. " + percSkipsText);
+    if(!totalBreaks) totalBreaks = '';
     $("#count_totalBreaks").text(totalBreaks);
-
 }
 
 function reverse(s){return s.split("").reverse().join("");}
@@ -343,11 +346,10 @@ if (typeof String.prototype.trim != 'function') {
     };
 }
 
-/* License - discontinued */
+/* License - deprecated/discontinued */
 function validateLicense(email,serial) {
     encEmail = reverse(btoa((email.trim())+"think.dj")).substring(0, licenseLength);
     console.log(encEmail);
-
     if(serial===encEmail) {
         return true;
     }
@@ -355,7 +357,6 @@ function validateLicense(email,serial) {
         return false;
     }
 }
-
 function checkLicense() {
     if( (licenseLength==localStorage.uLicense.length) && (validateLicense(localStorage.uEmail, localStorage.uLicense)) ) {
         console.log("App is Registered");
@@ -370,13 +371,13 @@ function checkLicense() {
 
 
 /* First time? */
-if(parseInt(localStorage.timesOpened)==0) {
+if(!parseInt(localStorage.timesOpened)) {
     console.log("Looks like you are a first timer :)");
     osAutorunAtStartup(1);
 }
 else {
-    /* If NOT Refreshie noob, honor his choice of app start we must */
-    if(1==parseInt(localStorage.opt_startMinimized))
+    /* If Nnot a Refreshie `noob`, honor his choice of app start, we must */
+    if(1===parseInt(localStorage.opt_startMinimized))
         minimizeWindow();
 }
 localStorage.timesOpened = parseInt(localStorage.timesOpened)+1;
@@ -388,20 +389,15 @@ localStorage.timesOpened = parseInt(localStorage.timesOpened)+1;
 * 10 MB per storage area in Internet Explorer;
 */
 function fract(n){ return Number(String(n).split('.')[1] || 0); }
-
 function localStore()
 {
     localStorage.uuid = fract(Math.random());
     console.log('localStorage=');console.log(localStorage);
 }
 
-
-/////////var shortBreakInterval = parseInt(localStorage.shortBreakInterval);
-
 /*
 * NOTE: BreakScreenDuration must always be lesser than BreakInterval
 */
-
 /*
 *
 *  NEW LOGIC
@@ -409,13 +405,12 @@ function localStore()
 *  Has one core timer that is for LongBreak
 *  Mode(%) of shortBreak is checked in the timer to display short breaks
 *
-* */
-
+*/
 
 function GUID(length=8) {
-    var result, i, j, result = '';
+    let i, j, result = '';
     for(j=0; j<length; j++) {
-        if( j == 8 || j == 12|| j == 16|| j == 20) result = result + '-';
+        if( j === 8 || j === 12|| j === 16|| j === 20) result = result + '-';
         i = Math.floor(Math.random()*16).toString(16).toUpperCase();
         result = result + i;
     }
@@ -423,8 +418,8 @@ function GUID(length=8) {
 }
 
 function humanizeTime(time) {
-    time = time/minutes;
-    var unit = " minutes";
+    time = (time/minutes);
+    let unit = " minutes";
     if(time<1) {
         time = time*60;
         unit = " seconds";
@@ -454,57 +449,53 @@ function reincarnate(id) {
 
 /* Define state and text */
 $state = 1;
-$stateText = [];
-$stateText[0] = "Paused";
-$stateText[1] = "Running";
+$stateText = [ "Paused", "Running" ];
 
-function timer_set_state_ui($statePassed=1) {
-    $("#button-action").text($stateText[$statePassed]);
-    console.log("Set UI to "+$stateText[$statePassed]);
+function timer_set_state_ui(state=1) {
+    $("#button-action").text($stateText[state]);
+    console.log("Set UI to "+$stateText[state]);
     /* Yellow Border for timer */
-    if("Running"==$stateText[$statePassed]){
-        $(".dataBlock .time").removeClass("paused");
-    }
-    else if("Paused"==$stateText[$statePassed]) {
-        $(".dataBlock .time").addClass("paused");
+    let el = $(".dataBlock .time");
+    switch (String($stateText[state]).toLowerCase()) {
+        case "running":
+            el.removeClass("paused");
+            break;
+        case "paused":
+        default:
+            el.addClass("paused");
+            break;
     }
 }
 
-function timers($doWhat="toggle") {
-
-    switch($doWhat) {
+function timers(action="toggle") {
+    let prefix = 'timer-';
+    switch(action) {
         case "restart":
             $state = 1;
             restart_longBreak();
             /* Ask mainProcess to change tray icon */
-            ipcRenderer.send('timer-trayIcoChangeReq-from-ui', "restart");
+            ipcRenderer.send('synchronous-messages', prefix+"restart");
             break;
         default:
             $state = 1 - $state;
             timer_set_state_ui($state);
-            $('#nextBreakIn').countdown($doWhat);
-            $("#nextShortBreakIn").countdown($doWhat);
+            $('#nextBreakIn').countdown(action);
+            $("#nextShortBreakIn").countdown(action);
             /* Ask mainProcess to change tray icon */
-            ipcRenderer.send('timer-trayIcoChangeReq-from-ui',$doWhat);
+            ipcRenderer.send('synchronous-messages', prefix+action);
             break;
     }
-
-    return 1;
-
+    return true;
 }
 
 function updateCountdownDOM(element,mins,secs) {
-    newHtml = null;
-    if(mins<1) {
-        newHtml = secs+' s';
-    }
-    else {
-        newHtml = mins+' m';
-    }
+    let newHtml = '';
+    (mins<1)?
+        newHtml = secs + ' s':
+        newHtml = mins + ' m';
     /* Redraw iff required */
     if(element.html()!==newHtml) {
         element.html(newHtml);
-        //console.log("changed to "+newHtml);
     }
 }
 
@@ -516,41 +507,36 @@ function setShortBreakHTML(nextShortBreakAt, last=0) {
 
     /*$('#nextShortBreakIn').countdown('stop');*/
 
-    NextShortBreakInSelector = $("#nextShortBreakIn");
+    nextShortBreakInSelector = $("#nextShortBreakIn");
 
-    NextShortBreakInSelector.countdown(nextShortBreakAt, function (event) {
+    nextShortBreakInSelector.countdown(nextShortBreakAt, function (event) {
         mins = parseInt(event.strftime('%M'));
         secs = parseInt(event.strftime('%S'));
-        updateCountdownDOM(NextShortBreakInSelector,mins,secs);
+        updateCountdownDOM(nextShortBreakInSelector,mins,secs);
     }).on('finish.countdown', function(event) {
         reincarnate("nextShortBreakIn");
     });
-
     /* Decide color */
     if(last) {
+        /* Next = Long Break */
         /* If it's the last short break, make long break color green */
-        /* Next = LONG */
         $('#nextBreakIn').closest(".time").css('border-color', '#94BA0B').toggleClass("active");
-        NextShortBreakInSelector.closest(".time").css('border-color', '#e4e4e4');
+        nextShortBreakInSelector.closest(".time").css('border-color', '#e4e4e4');
     }
     else {
         /* Next = Short break */
         $('#nextBreakIn').closest(".time").css('border-color', '#e4e4e4');
-        NextShortBreakInSelector.closest(".time").css('border-color', '#94BA0B').toggleClass("active");
+        nextShortBreakInSelector.closest(".time").css('border-color', '#94BA0B').toggleClass("active");
     }
 
 }
 
 
 function setLongBreakHTML(nextLongBreakAt) {
-
-    var longBreakEvery = parseInt(localStorage.longBreakInterval) || (60*minutes);
-
-    var nextLongBreakTimeString = new Date(Date.now() + longBreakEvery);
+    let longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
+    let nextLongBreakTimeString = new Date(Date.now() + longBreakEvery);
     nextLongBreakTimeString = nextLongBreakTimeString.toLocaleTimeString().replace(/:\d+ /, ' ').toLowerCase(); /* replace takes off seconds */
-
     $("#nextLongBreakAt").html(nextLongBreakTimeString);
-
 }
 
 
@@ -558,24 +544,24 @@ function setLongBreakHTML(nextLongBreakAt) {
 function longBreakTimer() {
 
     GC();
-    init();
+    initAppSetDefaults();
     setStats();
 
-    uniqueID = GUID(6);
+    let uniqueID = GUID(6);
+    let nextBreakInSelector = $('#nextBreakIn');
 
-    var NextBreakInSelector = $('#nextBreakIn');
-
-    console.log("//longBreakTimer " + (totalLongBreaks + 1) + " ~ " + uniqueID + " ");
-    console.log("//shortbreaks so far  " + (totalShortBreaks));
-
+    console.log("=== BREAK TIMER ID: " + uniqueID + " ===");
+    console.log("//longBreaks so far:", totalLongBreaks);
+    console.log("//shortBreaks so far:", totalShortBreaks);
 
     longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
     shortBreakEvery = parseInt(localStorage.shortBreakInterval) || (20 * minutes);
 
-    nextBreakAt = new Date(Date.now() + longBreakEvery);
+    let now = new Date.now();
+    nextBreakAt = new Date(now + longBreakEvery);
     setLongBreakHTML(nextBreakAt);
 
-    nextShortBreakAt = new Date(Date.now() + shortBreakEvery);
+    nextShortBreakAt = new Date(now + shortBreakEvery);
     setShortBreakHTML(nextShortBreakAt);
 
     /* Calculate number of short breaks */
@@ -589,21 +575,22 @@ function longBreakTimer() {
      console.log("" + noOfShortBreaks + " short breaks and 1 long break");
      /* */
 
-    $("#breakInfo").html("" + noOfShortBreaks + " short breaks and 1 long break per hour");
+    let pluralize = noOfShortBreaks===1?'':'s';
+    $("#breakInfo").html("" + noOfShortBreaks + " short break" + pluralize + " and 1 long break per hour");
 
-    NextBreakInSelector.countdown(nextBreakAt, function (event) {
-        mins = parseInt(event.strftime('%M'));
-        secs = parseInt(event.strftime('%S'));
-        updateCountdownDOM(NextBreakInSelector,mins,secs);
-    }).on('update.countdown', function (event) {
+    nextBreakInSelector.countdown(nextBreakAt, function (e) {
+        mins = parseInt(e.strftime('%M'));
+        secs = parseInt(e.strftime('%S'));
+        updateCountdownDOM(nextBreakInSelector,mins,secs);
+    }).on('update.countdown', function (e) {
 
         secondsPassed = secondsPassed + 1;
 
-        console.log(secondsPassed);
+        //console.log(secondsPassed); // log every second passed?
 
         /* Find multiples of ShortBreak */
-        if (((secondsPassed * 1000) % (localStorage.shortBreakInterval)) == 0) {
-            /* check with localStorage.shortBreakInterval as it might get updated from Settings in realtime */
+        if ( ( (secondsPassed * 1000) % (shortBreakEvery) ) === 0 ) {
+            /* check with `localStorage.shortBreakInterval` as it might get updated from Settings in realtime (REMOVED for performance) */
 
             shortBreaksElapsed = shortBreaksElapsed + 1;
 
@@ -612,24 +599,24 @@ function longBreakTimer() {
                 console.log("No more short breaks for this session " + uniqueID);
             }
             else {
-                if (shortBreaksElapsed == noOfShortBreaks) {
+                let now = new Date.now();
+                if (shortBreaksElapsed === noOfShortBreaks) {
                     /* Last shortbreak for an hour */
                     /* So, next short break is after the long break */
-                    nextShortBreakAt = new Date(Date.now() + (shortBreakEvery * 2));
+                    nextShortBreakAt = new Date(now + (shortBreakEvery * 2));
                     /* Make UI update : It's the last */
                     setShortBreakHTML(nextShortBreakAt, 1);
                 }
                 else {
-                    nextShortBreakAt = new Date(Date.now() + shortBreakEvery);
+                    nextShortBreakAt = new Date(now + shortBreakEvery);
                     /* Make UI update : NEXT Short Break */
                     setShortBreakHTML(nextShortBreakAt);
                 }
 
                 localStorage.breakType = "short";
-                console.log("Short Break " + shortBreaksElapsed + " for " + uniqueID);
                 startBreak(localStorage.breakType);
                 totalShortBreaks++;
-                console.log("Short Break " + shortBreaksElapsed + " @ +" + secondsPassed);
+                console.log(`Break ${uniqueID}: SHORT #${shortBreaksElapsed} @ ${secondsPassed}`);
             }
 
         }
@@ -642,106 +629,84 @@ function longBreakTimer() {
 
         localStorage.breakType = "long";
         startBreak(localStorage.breakType);
-        console.log("Long Break @ +" + secondsPassed);
+        console.log(`Break ${uniqueID}: LONG #${totalLongBreaks} @ ${secondsPassed}`);
 
         if (event.elapsed) {
             /* Restart */
             //setTimeout(longBreakTimer,(parseInt(localStorage.shortBreakDuration)+1));
             /* +1 just to play safe :"> */
         }
-        else {
-            console.log("WFT?");
-        }
-        return 1;
+        else { console.log("WTF?"); }
+        return true;
     });
-    return 1;
+    return true;
 }
 
 longBreak = longBreakTimer();
 
-function restart_longBreak(){
-    timer_set_state_ui($state=1);
+function restart_longBreak() {
+    timer_set_state_ui(1);
     $(".time").removeClass("active").removeClass("paused");
-    longBreak = function(){};
+    longBreak = () => {};
     longBreak = longBreakTimer();
 }
 
-/* was killmodal() */
-function breakCleanup() {
-
+breakCleanup = () => {
+    // alert("Cleanup on Aisle 4");
+    breakModalWindow = null;
     if(parseInt(localStorage.breakOngoing)) {
         localStorage.breakOngoing = 0;
-        breakModalWindow = null;
-
-        if("long"==localStorage.breakType) {
-
+        if("long" === localStorage.breakType) {
             /* Restart Long Break */
             restart_longBreak();
-
-            /* Lock PC? */
-            if (("Windows" == localStorage.OSName) && parseInt(localStorage.opt_lockPC)) {
-                ipcRenderer.send('lockWinPC', 'Lock PC');
+            /* Lock PC? (WINDOWS ONLY) */
+            if (("Windows" === localStorage.OSName) && parseInt(localStorage.opt_lockPC)) {
+                ipcRenderer.send('synchronous-messages', 'lockPC');
             }
-
         }
-
     }
-
-    return 1;
+    return true;
 }
 
-/*
-*
-*
-* @@@todo
-* LAST LEFT OFF HERE
-* Need to make one single startbreak() that will adjust accordingly
-* decide short/long break, monk or sgt window
-* Lock PC?
-* Finally, restart main timer if long break
-*
-* */
+function startBreak(type = "short", forcedMode = '') {
 
+    console.log('startBreak: ', {"type": type, "forcedMode": forcedMode} );
 
+    /* Init vars with defaults */
+    let optFullScreen = true;
+    let optWidth = window.screen.availWidth;
+    let optHeight = window.screen.availHeight;
 
-function startBreak(type="short",forced="no") {
+    switch (type) {
+        case "demo":
+            break;
+        case "long":
+            localStorage.count_longBreaks = parseInt(localStorage.count_longBreaks) + 1;
+            break;
+        case "short":
+        default:
+            localStorage.count_shortBreaks = parseInt(localStorage.count_shortBreaks) + 1
+            break;
+    }
 
-    /* Debug * /
-    return 1;
-    /* */
+    if( (forcedMode && "monk" === forcedMode) || (!forcedMode && "monk" === localStorage.mode) ) {
+        optFullScreen = false;
+        optWidth = 660;
+        optHeight = 460;
+    }
 
-    var optFS = true;
-    var optWid = window.screen.availWidth;
-    var optHt = window.screen.availHeight;
-
+    /* Set localstorage */
     localStorage.breakOngoing = 1;
+    localStorage.breakType!==type? localStorage.breakType=type : null;
+    localStorage.isFullscreen = optFullScreen;
 
-    if("no"==forced) {
-        if ("short" == type) localStorage.count_shortBreaks = parseInt(localStorage.count_shortBreaks)+1;
-        else if ("long" == type) localStorage.count_longBreaks = parseInt(localStorage.count_longBreaks)+1;
-    }
-    else localStorage.breakType = "demo";
-
-    if( ("monk"==forced) || ("monk"==localStorage.mode) ) {
-        optFS = false;
-        optWid = 660;
-        optHt = 460;
-    }
-    if("sgt"==forced) {
-        optFS = true;
-        optWid = window.screen.width;
-        optHt = window.screen.height;
-    }
-
-    localStorage.isFullscreen = optFS ? true : false;
-
-    /* Create new FSModal */
+    /* Create break Window */
     breakModalWindow = new BrowserWindow({
-        title: "Break @ " + appName,
+        title: appName + " break",
         icon: __dirname + "/assets/ico/tray.ico",
-        width: optWid,
-        height: optHt,
-        fullscreen: localStorage.isFullscreen,
+        width: optWidth,
+        height: optHeight,
+        fullscreen: optFullScreen,
         show: true,
         center: true,
         movable: false,
@@ -752,26 +717,30 @@ function startBreak(type="short",forced="no") {
         skipTaskbar: false,
         closable: true,
         titleBarStyle: "hidden",
-        alwaysOnTop: false,
+        alwaysOnTop: !!(parseInt(localStorage.opt_alwaysOnTop)),
         transparent: true,
         frame: false,
-        hasShadow: false
-    });
-    breakModalWindow.on('closed', function() {
-        breakModalWindow = null;
-        breakCleanup();
-    });
-    breakModalWindow.on('destroy', function() {
-        breakModalWindow = null;
-        breakCleanup();
-    });
-    breakModalWindow.on('unresponsive', function() {
-        breakModalWindow = null;
-        breakCleanup();
+        hasShadow: false,
+        webPreferences: {
+            nodeIntegration: true, // false: default value from Electron v5+
+            enableRemoteModule: true,
+        }
     });
 
-    //breakModalWindow.loadURL('file://' + basePath + '/break.html');
+    /* Subscribe to events */
+    breakModalWindow.on('closed', () => breakCleanup() );
+    breakModalWindow.on('hide', () => breakCleanup() );
+    breakModalWindow.on('unresponsive', () => breakCleanup() );
+
+    /* Load contents */
     breakModalWindow.loadFile( getPathTo( 'break.html' ) );
+
+    breakModalWindow.webContents.openDevTools({ mode: "detach" } );
+    if(parseInt(localStorage.opt_alwaysOnTop)) {
+        /* If AlwaysOnTop ALWAYS giving a blank screen for first run, uncomment below line */
+        // makeAlwaysOnTop = setTimeout( () => breakModalWindow.setAlwaysOnTop(true), 500);
+    }
+
 
 }
 
@@ -837,7 +806,6 @@ function activityAnimation($timeMS) {
                 imgItemCheckedClass: 'item-checked',
                 hideLabel: true
             },
-
             /**
              * Method firing when need to update classes.
              */
@@ -912,10 +880,12 @@ jQuery(document).ready( function($) {
     $('input.radioImageSelect').radioImageSelect();
 
     $(document).on('click', '#demo-monk', function () {
-        startBreak("short","monk");
+        localStorage.breakType = "demo";
+        startBreak("demo","monk");
     });
     $(document).on('click', '#demo-sgt', function () {
-        startBreak("short","sgt");
+        localStorage.breakType = "demo";
+        startBreak("demo","sgt");
     });
 
     $(document).on('click', '#button-action', function () {
@@ -930,7 +900,139 @@ jQuery(document).ready( function($) {
 
 jQuery(document).ready(
     function() {
+        /* Branding */
         $(".app-title").html(config.name);
         $(".app-tagline").html(config.tagline)
+        $(".app-version").html(config.version)
+        /* Hooks */
+        $(".action-minimize").click(() => minimizeWindow());
+        $(".action-notification").click( () => naughtyfication());
+        $(".action-quit").click( () => quitIt());
+        $(".action-update").click( () => checkForUpdates());
     }
 );
+
+
+
+
+$(document).ready(function() {
+
+    $iCheckSelectors = "input.icheck";
+
+    $($iCheckSelectors).iCheck({
+        checkboxClass: 'icheckbox_square',
+        radioClass: 'iradio_square',
+        increaseArea: '20%'
+    });
+
+    /* Set Values */
+    $opts = ["opt_autoStart","opt_lockPC","opt_startMinimized","opt_sounds","opt_splash","opt_alwaysOnTop","opt_allowSkips"];
+    $.each( $opts, function( key, value ) {
+        $selector = $("#"+value);
+        if(0==$selector.length) return 0;
+        if(1==parseInt(localStorage[value])) $selector.iCheck('check');
+        else $selector.iCheck('uncheck');
+    });
+
+    $($iCheckSelectors).on('ifToggled', function(event){
+        activityAnimation(160);
+        $what = event.target.id;
+
+        if ($(this).is(":checked")){ localStorage[$what] = 1; }
+        else { localStorage[$what] = 0; }
+
+        switch($what) {
+            case "opt_autoStart":
+                osAutorunAtStartup(parseInt(localStorage[$what]));
+                break;
+        }
+
+    });
+
+});
+
+// In renderer process (web page).
+const ipcRenderer = require('electron').ipcRenderer;
+
+function checkForUpdates() {
+    activityAnimation(1100);
+    console.log(ipcRenderer.sendSync('synchronous-messages','check-for-updates'));
+}
+
+function quitIt() {
+    return ipcRenderer.sendSync('synchronous-messages', 'force-quit');
+}
+
+ipcRenderer.on('timer-changeReq-from-main', function (event, arg) {
+    timers(arg);
+});
+
+$(document).ready(function(){
+
+    return;
+
+    $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
+
+    $updatesCached = true;
+    $updatesCachedTTL = 24*5;
+
+    $fallbackUpdates = [
+        {
+            "title":"Refreshie v1.0",
+            "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='OpenURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
+        }
+    ];
+
+    // Set defaults in case Web fetch fails:
+    $updates = $fallbackUpdates;
+
+    $updateSelctor = $("#messageCenter");
+
+    $webURL = config.urlUpdatesRESTEndpoint;
+    console.log("Web URL Base: " + $webURL);
+
+    $.ajax({
+        url          : $webURL, /* TRIAL -- 100 Posts: http://s.typicode.com/posts */
+        localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or OBJ that implements the Storage interface */
+        cacheTTL     : $updatesCachedTTL,
+        cacheKey     : '_ajax_upd_',
+        isCacheValid : true
+    }).done(function(response){
+        console.log("Updates received from server", response);
+        response = tryParseJSON(response);
+        if(response) {
+            $updates = response;
+        }
+    }).fail(function (jqXHR, textStatus) {
+        $updates = $fallbackUpdates;
+    }).complete( function() {
+        $.each($updates, function(index, item) {
+            $updateSelctor.append('<li><b><span class="icon icon-bubble"></span> '+item.title+'</b><span class="desc">'+item.desc+'</span></li>');
+        });
+    });
+
+    /* Check if server response is JSON */
+    function tryParseJSON (jsonString) {
+        try {
+            var o = JSON.parse(jsonString);
+            // Handle non-exception-throwing cases:
+            // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+            // but... JSON.parse(null) returns null, and typeof null === "object",
+            // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+            if (o && typeof o === "object") {
+                return o;
+            }
+        }
+        catch (e) { }
+        return false;
+    };
+
+
+
+
+
+
+
+});
+
+

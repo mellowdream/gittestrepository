@@ -40,11 +40,12 @@ body {
     overflow: hidden;
 }
 
-.appBoxStyle {
+.app-container {
     margin:0;
     padding: 30px 15px 15px 30px;
-    border-radius: 1px;
     border: 1px solid #b1b1b1;
+    resize: none;
+    border-radius: var(--app-border-radius);
 }
 
 /* DARK
@@ -240,16 +241,16 @@ nav a:hover,nav a:focus {outline: none}
 }
 
 
-/* Grey Blocks */
-.gb-time {
+/* Horizontal Grey Blocks */
+.hblock-time {
     font-size: 15px; padding: 10px 0; text-align: center; background: #efefef;
 }
-.gbclo {margin: 0 5px 0 0; line-height: 22px;}
+.hblock-ico {margin: 0 5px 0 0; line-height: 22px;}
 
-.gb-upd {
+.hblock-upd {
     background: #f5f5f5; padding: 8px 20px;
 }
-.upd-btn {float:right}
+.btn-update {float:right}
 
 .button-action {
     margin: 0 10px 0 0;
@@ -521,17 +522,23 @@ box-shadow:  1px 1px 10px rgba(0, 0, 0, 0.1);
 
 
 /* Homepage Stats */
-#statis {
+#stats {
     padding: 0 10px 0 104px;
     margin: 0;
     background:transparent url(assets/images/badges/thumbup_s.png) no-repeat left center;
     display: inline-block;
 }
-#statis.virgo {
+#stats.virgo {
     background: url(assets/images/badges/heart_s.png) no-repeat left center;
 }
 
-
+.align-1 {
+    text-align: center; padding-top: 10px
+}
+.f-w-600 {font-weight: 600}
+.col-dark {
+    color: #888
+}
 
 .cd-title {
     position: relative;
@@ -713,7 +720,7 @@ xpush
 
 
 /* Fullscreen */
-.breakMeUpWhenItsOver {
+.app-break-window {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -721,10 +728,11 @@ xpush
     height: 100%;
     margin: 0 auto;
     padding: 0;
-    resize: both;
+    resize: none;
     overflow: auto;
     text-align: center;
-    background: white; /*rgba(255,255,255,0.86);*/
+    background: white; /* rgba(255,255,255,0.86); */
+    border-radius: var(--app-border-radius);
 }
 
 /* Options */
@@ -808,7 +816,11 @@ xpush
     float: left;
     font-size: 33px;
     margin-right: 12px;
-    color: #666;
+    color: var(--color-primary);
+    opacity: 0.56;
+}
+.ululu .icon-bold {
+    font-weight: 600;
 }
 
 span.red { color: #F06E5C }

@@ -2,12 +2,16 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+
     <title class="app-title">Refreshie</title>
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="assets/fonts/ico/style.css"/>
 </head>
 <body>
-<div id="container" class="appBoxStyle">
+<div id="container" class="app-container">
 
     <div id="intro">
     <section class="cd-intro">
@@ -34,7 +38,7 @@
 
     <div class="notif-controls">
         <a class="draggable" title="Move"><i class="icon-contract"></i></a>
-        <a class="notif-minimize" onclick="minimizeWindow()" title="Minimize to Tray"><i class="icon-minus"></i></a>
+        <a class="notif-minimize action-minimize" title="Minimize to Tray"><i class="icon-minus"></i></a>
     </div>
 
     <h1 class="draggable appHeading">
@@ -95,15 +99,15 @@
 
                 <div class="clearfix"></div>
 
-                <p class="gb-time"><!--fffae3-->
+                <p class="hblock-time"><!--fffae3-->
                     <a class="button-action restart" id="button-action-restart" title="Click to Restart"><i class="icon-reload"></i></a>
                     <a class="button-action" id="button-action" title="Click to toggle">Running</a>
-                    <i class="icon icon-clock2 gbclo"></i>
+                    <i class="icon icon-clock2 hblock-ico"></i>
                     <span id="breakInfo"></span>
                 </p>
 
 
-                <div id="statis" class="">
+                <div id="stats" class="">
                     <h3>Congratulations</h3>
                     <p id="meta_welcome">On your decision to improve your life <br><br></p>
                     <p id="meta_hoursSaved">You have had <span id="times"></span> fatigue-free hour<span id="plural">s</span> since you started using
@@ -111,10 +115,10 @@
                     </p>
                 </div>
 
-                <nav class="cl-effect-5" style="text-align: center; padding-top: 10px">
-                    <a href="#" onclick="naughtyfication()"><i class="icon-heart"></i> <span data-hover="Give feedback">Give feedback</span></a>
-                    <a href="#" onclick="minimizeWindow()"><i class="icon-arrow-down"></i> <span data-hover="Minimize to Tray">Minimize to Tray</span></a>
-                    <a href="#" onclick="quitIt()"><i class="icon-power"></i> <span data-hover="Quit">Quit</span></a>
+                <nav class="cl-effect-5 align-1">
+                    <a href="#" class="action-notification"><i class="icon-heart"></i> <span data-hover="Give feedback">Give feedback</span></a>
+                    <a href="#" class="action-minimize"><i class="icon-arrow-down"></i> <span data-hover="Minimize to Tray">Minimize to Tray</span></a>
+                    <a href="#" class="action-quit"><i class="icon-power"></i> <span data-hover="Quit">Quit</span></a>
                 </nav>
 
             </div>
@@ -157,15 +161,15 @@
                         You've skipped <span id="count_skipped">0</span> <span id="count_totalBreaks">0</span> breaks
                         <small><span id="percSkips"></span></small>
                     </li>
-                    <li><span class="icon icon-pin-outline" style="font-weight: 600"></span>
+                    <li><span class="icon icon-bold icon-pin-outline f-w-600"></span>
                         App used <span id="count_opened">1 time</span>
                         <small>Since <span id="firstTouch"></span></small>
                     </li>
                 </ul>
 
-                <p class="gb-upd">
-                    App: v<b class="appVersion">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
-                &bull; --><a href="#" class="upd-btn" onclick="checkForUpdates()">Check for updates</a></small>
+                <p class="hblock-upd">
+                    App: v<b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
+                &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
                 </p>
 
             </div>
@@ -224,7 +228,7 @@
                         <td colspan="2"><b class="icon icon-reload tabIco"></b> App Settings</td>
                     </tr>
                     <tr>
-                        <td>Always on top</td>
+                        <td>Break window: Always on top</td>
                         <td><input name="opt_alwaysOnTop" id="opt_alwaysOnTop" type="checkbox" class="icheck" /></td>
                     </tr>
                     <tr>
@@ -233,7 +237,7 @@
                     </tr>
                     <tr>
                         <td>Auto-run at system startup
-                            <small style="padding-top: 6px;color:#777; font-weight: 300; display:none">For your own good, do not turn this off, grasshopper</small>
+                            <!--<small style="padding-top: 6px;color:#777; font-weight: 300; display:none">For your own good, do not turn this off, grasshopper</small>-->
                         </td>
                         <td><input name="opt_autoStart" id="opt_autoStart" type="checkbox" class="icheck" /></td>
                     </tr>
@@ -287,7 +291,7 @@
                     <div id="auth-bio">
                         <h3>By Deepak Thomas
                             <a href="#" title="Check me out on Twitter" class="" onclick="OpenURL('http://twitter.com/thinkdj')">@thinkdj</a>&nbsp;
-                            <a href="#" title="Reach out via email" onclick="naughtyfication()" style="color:#888"><span class="icon-envelope"></span></a>
+                            <a href="#" title="Reach out via email" class="action-notification col-dark"><span class="icon-envelope"></span></a>
                         </h3>
                         <p><span class="app-title">Refreshie</span> is a weekend pet project born from a need. <br/>
                             <a href="#" onclick="OpenURL('http://im.think.dj/introducing-refreshie/?from=app')">Read on &rarr;</a></p>
@@ -298,9 +302,9 @@
                     <ul id="messageCenter"></ul>
                 </div>
 
-                <p class="gb-upd">
-                    App: v<b class="appVersion">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
-                &bull; --><a href="#" class="upd-btn" onclick="checkForUpdates()">Check for updates</a></small>
+                <p class="hblock-upd">
+                    App: v<b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
+                &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
                 </p>
 
             </div>
@@ -309,147 +313,16 @@
 
     </div>
 
-    <div style="clear:both"></div>
+    <div class="clearfix"></div>
 
 </div>
 </body>
 
-<script>
-    /*window.nodeRequire = require;
-    delete window.require;
-    delete window.exports;
-    delete window.module;*/
-    //window.$ = window.jQuery = require( __dirname + '/assets/js/jquery-1.12.2.min.js');
-    window.$ = window.jQuery = require('jquery');
-</script>
-<script src="assets/js/jquery.countdown.js"></script>
-<script src="assets/js/jquery-ajax-localstorage-cache.js"></script>
-<script src="assets/js/icheck.js"></script>
-<script src="assets/js/splash.anim.js" id="script-splash-anim"></script>
+<script src="assets/js/init.js"></script>
+<script src="assets/js/vendor/jquery.countdown.js"></script>
+<script src="assets/js/vendor/jquery-ajax-localstorage-cache.js"></script>
+<script src="assets/js/vendor/icheck.js"></script>
+<script src="assets/js/vendor/splash.anim.js" id="script-splash-anim"></script>
 <script src="app.js"></script>
 <!--<script src="assets/js/vex.combined.min.js"></script>-->
-<script>
-
-    $(document).ready(function() {
-
-        $iCheckSelectors = "input.icheck";
-
-        $($iCheckSelectors).iCheck({
-            checkboxClass: 'icheckbox_square',
-            radioClass: 'iradio_square',
-            increaseArea: '20%'
-        });
-
-        /* Set Values */
-        $opts = ["opt_autoStart","opt_lockPC","opt_startMinimized","opt_sounds","opt_splash","opt_alwaysOnTop","opt_allowSkips"];
-        $.each( $opts, function( key, value ) {
-            $selector = $("#"+value);
-            if(0==$selector.length) return 0;
-            if(1==parseInt(localStorage[value])) $selector.iCheck('check');
-            else $selector.iCheck('uncheck');
-        });
-
-        $($iCheckSelectors).on('ifToggled', function(event){
-            activityAnimation(160);
-            $what = event.target.id;
-
-            if ($(this).is(":checked")){ localStorage[$what] = 1; }
-            else { localStorage[$what] = 0; }
-
-            switch($what) {
-                case "opt_autoStart":
-                    osAutorunAtStartup(parseInt(localStorage[$what]));
-                    break;
-            }
-
-        });
-
-    });
-    /*
-     LEARNING:
-     You can't use a variable in the dot notation, but you can use brackets notation:
-     localStorage[$what] = 1;
-     => localStorage.opt_lockPC = 1;
-    */
-
-    // In renderer process (web page).
-    const ipcRenderer = require('electron').ipcRenderer;
-
-    function checkForUpdates(){
-        activityAnimation(800);
-        console.log(ipcRenderer.sendSync('check-for-update','latest'));
-    }
-
-    function quitIt(){
-        return ipcRenderer.sendSync('force-quit', 'force-quit');
-    }
-
-    ipcRenderer.on('timer-changeReq-from-main', function (event, arg) {
-        timers(arg);
-    });
-
-    $(document).ready(function(){
-
-        return;
-
-        $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
-
-        $updatesCached = true;
-        $updatesCachedTTL = 24*5;
-
-        $fallbackUpdates = [
-            {
-                "title":"Refreshie v1.0",
-                "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='OpenURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
-            }
-        ];
-
-        // Set defaults in case Web fetch fails:
-        $updates = $fallbackUpdates;
-
-        $updateSelctor = $("#messageCenter");
-
-        $webURL = ipcRenderer.sendSync('get-webURL');
-        console.log("Web URL Base: " + $webURL);
-
-        $.ajax({
-            url          : $webURL, /* 100 Posts: http://s.typicode.com/posts */
-            localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or OBJ that implements the Storage interface */
-            cacheTTL     : $updatesCachedTTL,
-            cacheKey     : '_ajax_upd_',
-            isCacheValid : true
-        }).done(function(response){
-            console.log("Updates received from server", response);
-            response = tryParseJSON(response);
-            if(response) {
-                $updates = response;
-            }
-        }).fail(function (jqXHR, textStatus) {
-            $updates = $fallbackUpdates;
-        }).complete( function() {
-            $.each($updates, function(index, item) {
-                $updateSelctor.append('<li><b><span class="icon icon-bubble"></span> '+item.title+'</b><span class="desc">'+item.desc+'</span></li>');
-            });
-        });
-
-        /* Check if server response is JSON */
-        function tryParseJSON (jsonString) {
-            try {
-                var o = JSON.parse(jsonString);
-                // Handle non-exception-throwing cases:
-                // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-                // but... JSON.parse(null) returns null, and typeof null === "object",
-                // so we must check for that, too. Thankfully, null is falsey, so this suffices:
-                if (o && typeof o === "object") {
-                    return o;
-                }
-            }
-            catch (e) { }
-            return false;
-        };
-
-    });
-
-</script>
-<!-- That's all folks! -->
 </html>

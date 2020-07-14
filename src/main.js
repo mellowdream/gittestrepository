@@ -32,7 +32,7 @@ function createMainWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow( {
     width: 800,
-    height: 395,
+    height: 396,
     useContentSize: false,
     alwaysOnTop: false,
     center: true,
@@ -45,14 +45,20 @@ function createMainWindow () {
     icon: __state.icoTray,
     transparent: false,
     frame: false,
+    hasShadow: false,
     fullscreen: false,
     fullscreenable: true,
     titleBarStyle: "hidden",
     show: true,
     webPreferences: {
       nodeIntegration: true, // false: default value from Electron v5+
+      nodeIntegrationInSubFrames: false, // false: default value from Electron v5+
+      nodeIntegrationInWorker: false,
       contextIsolation: false, // true: protect against prototype pollution
       enableRemoteModule: true, // remote
+      spellcheck: false,
+      experimentalFeatures: false,
+      allowRunningInsecureContent: false,
       preload: getPathTo('preload.js'), // use a preload script
     }
   })
@@ -193,25 +199,50 @@ function setTrayMenu() {
 
 /* Inter-process Communication Subscriptions */
 function ipcSubscriptions() {
-  ipcMain.on('app-state-change', function (e, newState) {
-    switch (newState) {
-      case "toggle":
-      case "paused":
-      case "running":
-        /* Flip state, change Ico */
+  let channelName = 'synchronous-messages';
+  ipcMain.on( channelName, function (e, arg) {
+    switch (arg) {
+      case "timer-restart":
+        __state.isTimerRunning = 1;
+        mainTray.setImage(__state.icoTray);
+        break;
+      case "timer-toggle":
+      case "timer-paused":
+      case "timer-running":
+        /* Flip state, change TrayIco */
         __state.isTimerRunning = !!(1 - Number(__state.isTimerRunning));
         __state.isTimerRunning ?
             mainTray.setImage(__state.icoTray) :
             mainTray.setImage(__state.icoTrayPaused);
         break;
-      case "restart":
-        __state.isTimerRunning = 1;
-        mainTray.setImage(__state.icoTray);
+      case 'lockPC':
+        lockPC();
+        break;
+      case 'check-for-updates':
+        checkForUpdates();
+        break;
+      case 'force-quit':
+        app.exit();
         break;
       default:
         break;
     }
   })
+
+  /* * /
+  // In main process.
+  const { ipcMain } = require('electron')
+  ipcMain.on('asynchronous-message', (event, arg) => {
+    console.log(arg) // prints "ping"
+    event.reply('asynchronous-reply', 'pong')
+  })
+
+  ipcMain.on('synchronous-message', (event, arg) => {
+    console.log(arg) // prints "ping"
+    event.returnValue = 'pong'
+  })
+  /* */
+
 }
 
 

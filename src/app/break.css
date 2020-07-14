@@ -1,0 +1,29 @@
+.html {
+    background: #FFF;
+}
+.t-a-c {
+    text-align: center;
+}
+.p-r-10 {
+    padding-right: 10px;
+}
+.br-img {
+    max-width: 100%;
+    width: 600px;
+}
+
+
+.close-in {
+    text-align: right; float: right; padding: 31px 0; line-height: 15px;
+}
+
+.close-out {
+    text-align: left; float: left; padding-left: 10px;
+}
+
+.break-text {
+    padding: 0 0 5px; margin: 20px 0 10px; font-size: 26px;
+}
+.desc-text {
+    padding:0; margin:0; color: #888
+}

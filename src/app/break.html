@@ -1,131 +1,35 @@
-<html style="background: transparent">
+<!DOCTYPE html>
+<html lang="en" class="html">
 <head>
-    <title>Refreshie</title>
-    <link rel="stylesheet" href="app.css"/>
-    <script>
-
-        const electron = require('electron');
-        const remote = electron.remote;
-        const appName = remote.app.getName();
-        const thisWindow = remote.getCurrentWindow();
-        const ipcRendererProc = electron.ipcRenderer;
-
-        /* Moving auto-closing logic from 'ui.js' to here on 07 Aug 16 11:40 pm */
-        /* This page handles all its events. thisWindow is a big boy now */
-
-        thisWindow.center();
-
-        thisWindow.webContents.openDevTools({ mode: "detach" } )
-
-        function closeThis(){
-            if("demo"!=localStorage.breakType) localStorage.skippedCount++;
-            breakCleanup();
-        }
-
-        function breakCleanup() {
-            $("#ttl").remove();
-            thisWindow.close();
-        }
-
-        if(parseInt(localStorage.opt_alwaysOnTop))
-        {
-            thisWindow.setAlwaysOnTop(true);
-            /* If AlwaysOnTop ALWAYS giving a blank screen for first run, uncomment below line */
-            makeAlwaysOnTop = setTimeout(thisWindow.setAlwaysOnTop(true), 250);
-        }
-
-    </script>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src data: 'self'; worker-src 'none';">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src data: 'self'; worker-src 'none';">
+    <title class="app-title">Refreshie</title>
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="break.css" />
 </head>
 <body>
-<div class="breakMeUpWhenItsOver appBoxStyle body">
-    <div style="text-align: center;">
-        <p style="text-align: center;">
-            <img src="assets/images/do.something.png" id="whatDo" style="max-width: 100%; width: 600px;" class="apng" alt=" " />
-        </p>
-
-        <div style="text-align: right; float: right; padding: 31px 0; line-height: 15px;">
-            <small class="meta" style="padding-right: 10px;"><span id="closingTime">Closing</span> in <span id="ttl">a few seconds</span></small>
-            <nav class="cl-effect-5" id="skipper">
-                <a href="#" onclick="closeThis();"><span data-hover="Skip">Skip</span></a>
-            </nav>
+    <div class="app-break-window app-container body">
+        <div class="t-a-c">
+            <p class="t-a-c">
+                <img src="./assets/images/do.something.png" id="whatDo" class="apng br-img" alt=" " />
+            </p>
+            <div class="close-in">
+                <small class="meta p-r-10"><span id="closingTime">Closing</span> in <span id="ttl">a few seconds</span></small>
+                <nav class="cl-effect-5" id="skipper">
+                    <a href="#" class="action-close"><span data-hover="Skip">Skip</span></a>
+                </nav>
+            </div>
+            <div class="close-out">
+                <h2 class="break-text">Take a <span id="breakType">short</span> break</h2>
+                <p id="desc" class="desc-text">Look Around!</p>
+            </div>
         </div>
-
-        <div style="text-align: left; float: left; padding-left: 10px;">
-            <h2 style="padding: 0 0 5px; margin: 20px 0 10px; font-size: 26px;">Take a <span id="breakType">short</span> break</h2>
-            <p id="desc" style="padding:0; margin:0; color: #888">Look Around!</p>
-        </div>
-
     </div>
-</div>
 </body>
-
-<script>window.$ = window.jQuery = require('jquery');</script>
-<script src="assets/js/jquery.countdown.min.js"></script>
-<script src="assets/js/apng.js"></script>
-
-<script>
-    console.log("Hello from the other side...");
-
-    if(!parseInt(localStorage.opt_allowSkips)) {
-        $("#skipper").hide(10);
-    }
-
-    /* UI Stuff */
-    var breakType = localStorage.breakType;
-    $("#breakType").text(breakType);
-
-    var imgSrc="do.neck.png", desc;
-
-    var imgStack = [
-        {"img":"do.look.png","desc":"Look around"},
-        {"img":"do.spine.png","desc":"Flex your back"},
-        {"img":"do.neck.png","desc":"Flex your neck and look around"}
-    ];
-    var longBreakStack = [
-        {"img":"do.walk.png","desc":"Take a walk"}
-    ];
-
-    var shortBreakWhat = localStorage.shortBreakWhat || "eyes";
-
-    /* Decide on IMAGE */
-    if(("eyes"==shortBreakWhat)||("demo111"===breakType)) {
-        imgSrc = imgStack[0].img;
-        desc = imgStack[0].desc;
-    }
-    else if("long"==breakType) {
-        /* Show WALK for long break */
-        imgSrc = longBreakStack[0].img;
-        desc = longBreakStack[0].desc;
-        if(parseInt(localStorage.opt_lockPC)) $("#closingTime").text("Locking PC");
-    }
-    else if("all"==shortBreakWhat) {
-        /* Pick a random one */
-        var selected = Math.floor(Math.random()*imgStack.length);
-        imgSrc = imgStack[selected].img;
-        desc = imgStack[selected].desc;
-    }
-
-    $('#whatDo').attr('src', "assets/images/" + imgSrc).parent().hide().fadeIn(900);
-    $("#desc").text(desc);
-
-    var ttl = new Date(Date.now() + parseInt(localStorage.shortBreakDuration));
-
-    $('#ttl').countdown(ttl, function (event) {
-        $(this).html(event.strftime('%S s'));
-    }).on('finish.countdown', function(event) {
-        breakCleanup();
-    });
-
-    APNG.ifNeeded().then(function() {
-        var images = document.querySelectorAll(".apng");
-        for (var i = 0; i < images.length; i++) {
-            //APNG.animateImage(images[i]);
-        }
-    });
-
-
-    if(parseInt(localStorage.isFullscreen)) $(".appBoxStyle").css('border','0');
-
-</script>
-
+<script src="assets/js/init.js"></script>
+<script src="assets/js/vendor/jquery.countdown.min.js"></script>
+<script src="assets/js/vendor/apng.js"></script>
+<script src="break.js"></script>
 </html>

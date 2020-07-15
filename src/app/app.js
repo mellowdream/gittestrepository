@@ -12,18 +12,18 @@
 let config = require('./../config.json');
 const path = require('path');
 
-var basePath = window.getDirname();
+let basePath = window.getDirname();
 
-var audioElement = document.createElement('audio');
+let audioElement = document.createElement('audio');
 audioElement.setAttribute('src', 'assets/sounds/click.wav');
 
 
 function removeJSorCSS(filename, filetype){
     /* SRC: http://www.javascriptkit.com/javatutors/loadjavascriptcss2.shtml */
-    var targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none";
-    var targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none";
-    var allsuspects=document.getElementsByTagName(targetelement);
-    for (var i=allsuspects.length; i>=0; i--){
+    let targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none";
+    let targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none";
+    let allsuspects=document.getElementsByTagName(targetelement);
+    for (let i=allsuspects.length; i>=0; i--){
         if (allsuspects[i] && allsuspects[i].getAttribute(targetattr)!=null && allsuspects[i].getAttribute(targetattr).indexOf(filename)!=-1)
         {
             allsuspects[i].parentNode.removeChild(allsuspects[i]);
@@ -106,8 +106,8 @@ function minimizeWindow() {
 
 
 function osAutorunAtStartup(launch) {
-    var AutoLaunch = require('auto-launch');
-    var appLauncher = new AutoLaunch({
+    let AutoLaunch = require('auto-launch');
+    let appLauncher = new AutoLaunch({
         name: appName,
         isHidden: false
     });
@@ -134,7 +134,7 @@ function osAutorunAtStartup(launch) {
 
 
 /* TOASTER * /
-var msg = {
+let msg = {
     title : "Awesome!",
     message : "Check this out!<br>Check this out!<br>Check this out!<br>Check this out!<br>Check this out!<br>Check this out!<br>",
     detail : "PI is equal to 3! - 0.0<br>PI is equal to 3! - 0.0<br>PI is equal to 3! - 0.0<br>PI is equal to 3! - 0.0<br>",
@@ -149,24 +149,24 @@ ipc.send('electron-toaster-message', msg);
 
 /* All scoped variables */
 
-var seconds = 1000; /* ms */
-var minutes = (60*seconds); /* ms */
+let seconds = 1000; /* ms */
+let minutes = (60*seconds); /* ms */
 
-var nextShortBreakTimeString = '';
-var longBreakEvery = null;
-var shortBreakEvery = null;
-var breakModalWindow = null;
+let nextShortBreakTimeString = '';
+let longBreakEvery = null;
+let shortBreakEvery = null;
+let breakModalWindow = null;
 
-var totalLongBreaks = 0;
-var totalShortBreaks = 0;
-var nextBreakAt = null;
-var nextShortBreakAt = null;
-var noOfShortBreaks = 0;
-var secondsPassed = 0;
-var shortBreaksElapsed = 0;
+let totalLongBreaks = 0;
+let totalShortBreaks = 0;
+let nextBreakAt = null;
+let nextShortBreakAt = null;
+let noOfShortBreaks = 0;
+let secondsPassed = 0;
+let shortBreaksElapsed = 0;
 
-var longBreak = null; /* Variable for the longBreak hook */
-/* PS: Wasted two days on http://stackoverflow.com/questions/3015319/settimeout-cleartimeout-problems ; 8-10 Aug 2016 */
+let longBreak = null; /* Variable for the longBreak hook */
+/* PS: Spent two days on http://stackoverflow.com/questions/3015319/settimeout-cleartimeout-problems; 8-10 Aug 2016 */
 
 
 function GC() {
@@ -185,7 +185,7 @@ function GC() {
     shortBreaksElapsed = 0;
 
     longBreak = null;
-    longBreak = function(){};
+    longBreak = () => {};
 
     /* (Re)Create DOM */
     reincarnate("nextShortBreakIn");
@@ -208,7 +208,7 @@ function initAppSetDefaults() {
         mode: 'monk',
         count_shortBreaks: 0,
         count_longBreaks: 0,
-        shortBreakWhat: "all",
+        shortBreakType: "all",
         /* Options */
         opt_lockPC: 0,
         opt_alwaysOnTop: 1,
@@ -246,7 +246,7 @@ initAppSetDefaults();
 
 function naughtyfication() {
 
-    var notiFire = new Notification('Hello!', {
+    let notiFire = new Notification('Hello!', {
         body: "I'd love to hear from you. Requests, kudos, bugs, rants et al."
     });
 
@@ -305,11 +305,11 @@ function setStats() {
 
     $("#firstTouch").text(localStorage.firstTouch);
 
-    var totalBreaks = parseInt(localStorage.count_shortBreaks) + parseInt(localStorage.count_longBreaks);
-    var percSkips = Math.round( parseInt(localStorage.skippedCount)/( totalBreaks )*100 ) || 0;
-    var percSkipsText;
+    let totalBreaks = parseInt(localStorage.count_shortBreaks) + parseInt(localStorage.count_longBreaks);
+    let percSkips = Math.round( parseInt(localStorage.skippedCount)/( totalBreaks )*100 ) || 0;
+    let percSkipsText;
 
-    var skipPercAllowed = 15;
+    let skipPercAllowed = 15;
 
     let el = $("#percSkips");
     switch(true) {
@@ -541,7 +541,7 @@ function setLongBreakHTML(nextLongBreakAt) {
 
 
 
-function longBreakTimer() {
+function initMainTimer() {
 
     GC();
     initAppSetDefaults();
@@ -579,10 +579,11 @@ function longBreakTimer() {
     $("#breakInfo").html("" + noOfShortBreaks + " short break" + pluralize + " and 1 long break per hour");
 
     nextBreakInSelector.countdown(nextBreakAt, function (e) {
-        mins = parseInt(e.strftime('%M'));
-        secs = parseInt(e.strftime('%S'));
-        updateCountdownDOM(nextBreakInSelector,mins,secs);
-    }).on('update.countdown', function (e) {
+        let mm = parseInt(e.strftime('%M'));
+        let ss = parseInt(e.strftime('%S'));
+        updateCountdownDOM(nextBreakInSelector, mm, ss);
+    })
+        .on('update.countdown', function (e) {
 
         secondsPassed = secondsPassed + 1;
 
@@ -620,35 +621,37 @@ function longBreakTimer() {
             }
 
         }
-    }).on('finish.countdown', function (event) {
+    })
+        .on('finish.countdown', function (e) {
 
         reincarnate("nextBreakIn");
 
         secondsPassed++;
         totalLongBreaks++;
 
+        /* Long break */
         localStorage.breakType = "long";
         startBreak(localStorage.breakType);
         console.log(`Break ${uniqueID}: LONG #${totalLongBreaks} @ ${secondsPassed}`);
-
-        if (event.elapsed) {
+        if (e.elapsed) {
             /* Restart */
-            //setTimeout(longBreakTimer,(parseInt(localStorage.shortBreakDuration)+1));
-            /* +1 just to play safe :"> */
+            setTimeout( () => initMainTimer() , parseInt(localStorage.shortBreakDuration)+1 );
         }
         else { console.log("WTF?"); }
+
         return true;
     });
+
     return true;
 }
 
-longBreak = longBreakTimer();
+longBreak = initMainTimer();
 
 function restart_longBreak() {
     timer_set_state_ui(1);
     $(".time").removeClass("active").removeClass("paused");
     longBreak = () => {};
-    longBreak = longBreakTimer();
+    longBreak = initMainTimer();
 }
 
 breakCleanup = () => {
@@ -718,6 +721,7 @@ function startBreak(type = "short", forcedMode = '') {
         closable: true,
         titleBarStyle: "hidden",
         alwaysOnTop: !!(parseInt(localStorage.opt_alwaysOnTop)),
+        backgroundColor: 'transparent',
         transparent: true,
         frame: false,
         hasShadow: false,
@@ -752,31 +756,33 @@ function getPathTo(filename) {
 
 /* Handle change in options */
 $(function() {
-    /* OnChange, update localstore */
-    $('input[name=mode]').on('change', function() {
-        localStorage.mode = $(this).val();
-    });
 
     $("#shortIntervalDD").val(localStorage.shortBreakInterval/minutes);
     $("#shortBreakDuration").val(localStorage.shortBreakDuration/1000);
-    $("#shortBreakWhat").val(localStorage.shortBreakWhat);
+    $("#shortBreakType").val(localStorage.shortBreakType);
+
+    /* Changes */
+    $('input[name=mode]').on('change', function() {
+        localStorage.mode = $(this).val();
+    });
     $("#shortIntervalDD").change(function() {
         activityAnimation();
-        $newShortInterval = $('option:selected', this).val();
-        shortBreakInterval = parseFloat($newShortInterval)*minutes;
+        let $newShortInterval = $('option:selected', this).val();
+        let shortBreakInterval = parseFloat($newShortInterval)*minutes;
         localStorage.shortBreakInterval = shortBreakInterval;
-        longBreakTimer();
+        initMainTimer();
     });
     $("#shortBreakDuration").change(function() {
         activityAnimation();
-        $shortBreakDuration = $('option:selected', this).val();
-        shortBreakDuration = parseFloat($shortBreakDuration)*1000;
+        let $shortBreakDuration = $('option:selected', this).val();
+        let shortBreakDuration = parseFloat($shortBreakDuration)*1000;
         localStorage.shortBreakDuration = shortBreakDuration;
+        initMainTimer();
     });
-    $("#shortBreakWhat").change(function() {
+    $("#shortBreakType").change(function() {
         activityAnimation();
-        $shortBreakWhat = $('option:selected', this).val();
-        localStorage.shortBreakWhat = $shortBreakWhat;
+        let $shortBreakType = $('option:selected', this).val();
+        localStorage.shortBreakType = $shortBreakType;
     });
 });
 
@@ -800,8 +806,8 @@ function activityAnimation($timeMS) {
 (function($) {
     // Register jQuery plugin.
     $.fn.radioImageSelect = function( options ) {
-        // Default var for options.
-        var defaults = {
+        // Default let for options.
+        let defaults = {
                 imgItemClass: 'radio-select-img-item',
                 imgItemCheckedClass: 'item-checked',
                 hideLabel: true
@@ -810,11 +816,11 @@ function activityAnimation($timeMS) {
              * Method firing when need to update classes.
              */
             syncClassChecked = function( img ) {
-                var radioName = img.prev('input[type="radio"]').attr('name');
+                let radioName = img.prev('input[type="radio"]').attr('name');
 
                 $('input[name="' + radioName + '"]').each(function() {
                     // Define img by radio name.
-                    var myImg = $(this).next('img');
+                    let myImg = $(this).next('img');
 
                     // Add / Remove Checked class.
                     if ( $(this).prop('checked') ) {
@@ -837,12 +843,12 @@ function activityAnimation($timeMS) {
                 .after('<img src="' + $(this).data('image') + '" alt="radio image" />');
 
             // Define the new img element.
-            var img = $(this).next('img');
+            let img = $(this).next('img');
             // Add item class.
             img.addClass(options.imgItemClass);
 
             /* CUSTOM CODE: Select MODE onload; 14-aug-16 1:12pm */
-            var theSelImg = $('input[name="mode"][value="' + localStorage.mode + '"]').next('img');
+            let theSelImg = $('input[name="mode"][value="' + localStorage.mode + '"]').next('img');
             theSelImg.addClass(options.imgItemCheckedClass);
 
             // Check if need to hide label connected.
@@ -917,7 +923,7 @@ jQuery(document).ready(
 
 $(document).ready(function() {
 
-    $iCheckSelectors = "input.icheck";
+    let $iCheckSelectors = "input.icheck";
 
     $($iCheckSelectors).iCheck({
         checkboxClass: 'icheckbox_square',
@@ -971,12 +977,12 @@ $(document).ready(function(){
 
     return;
 
-    $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
+    let $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
 
-    $updatesCached = true;
-    $updatesCachedTTL = 24*5;
+    let $updatesCached = true;
+    let $updatesCachedTTL = 24*5;
 
-    $fallbackUpdates = [
+    let $fallbackUpdates = [
         {
             "title":"Refreshie v1.0",
             "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='OpenURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
@@ -984,11 +990,11 @@ $(document).ready(function(){
     ];
 
     // Set defaults in case Web fetch fails:
-    $updates = $fallbackUpdates;
+    let $updates = $fallbackUpdates;
 
-    $updateSelctor = $("#messageCenter");
+    let $updateSelctor = $("#messageCenter");
 
-    $webURL = config.urlUpdatesRESTEndpoint;
+    let $webURL = config.urlUpdatesRESTEndpoint;
     console.log("Web URL Base: " + $webURL);
 
     $.ajax({
@@ -1014,25 +1020,18 @@ $(document).ready(function(){
     /* Check if server response is JSON */
     function tryParseJSON (jsonString) {
         try {
-            var o = JSON.parse(jsonString);
+            let obj = JSON.parse(jsonString);
             // Handle non-exception-throwing cases:
             // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
             // but... JSON.parse(null) returns null, and typeof null === "object",
             // so we must check for that, too. Thankfully, null is falsey, so this suffices:
-            if (o && typeof o === "object") {
-                return o;
+            if (obj && typeof obj === "object") {
+                return obj;
             }
         }
         catch (e) { }
         return false;
-    };
-
-
-
-
-
+    }
 
 
 });
-
-

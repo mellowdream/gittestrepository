@@ -9,8 +9,10 @@ const config = require('./../config.json');
 
 thisBreakWindow.center();
 
+let isDemoBreak = () => ["demo"].includes(localStorage.breakType);
+
 function closeThis() {
-    if("demo"!==localStorage.breakType) localStorage.skippedCount++;
+    if(!isDemoBreak()) localStorage.skippedCount++;
     breakCleanup();
 }
 
@@ -34,7 +36,7 @@ jQuery(document).ready(
 
 console.log("Hello from the other side...");
 
-if(!parseInt(localStorage.opt_allowSkips)) {
+if(!isDemoBreak() && !parseInt(localStorage.opt_allowSkips)) {
     $("#skipper").css('display','none').fadeOut(0);
 }
 
@@ -44,18 +46,16 @@ let breakType = localStorage.breakType;
 let imgSrc = "do.neck.png", desc = '';
 
 let imgStack = [
-    {"img":"do.look.png","desc":"Look around"},
-    {"img":"do.spine.png","desc":"Flex your back"},
-    {"img":"do.neck.png","desc":"Flex your neck and look around"}
+    ...config.assetsShortBreak
 ];
 let longBreakStack = [
-    {"img":"do.walk.png","desc":"Take a walk"}
+    ...config.assetsLongBreak
 ];
 
-let shortBreakWhat = localStorage.shortBreakWhat || "eyes";
+let shortBreakType = localStorage.shortBreakType || "eyes";
 
 /* Decide on IMAGE */
-switch (shortBreakWhat) {
+switch (shortBreakType) {
     case "eyes":
         imgSrc = imgStack[0].img;
         desc = imgStack[0].desc;
@@ -63,9 +63,9 @@ switch (shortBreakWhat) {
     case "all":
     default:
         /* Pick a random one */
-        let selected = Math.floor(Math.random() * imgStack.length);
-        imgSrc = imgStack[selected].img;
-        desc = imgStack[selected].desc;
+        let random = Math.floor(Math.random() * imgStack.length);
+        imgSrc = imgStack[random].img;
+        desc = imgStack[random].desc;
         break;
 }
 
@@ -85,9 +85,9 @@ jQuery(document).ready(
 
         /* UI */
         $("#breakType").html(breakType);
-        $('#whatDo').attr('src', "./assets/images/" + imgSrc).parent().hide().fadeIn(900);
+        $('#whatDo').attr('src', imgSrc).parent().hide().fadeIn(1000);
         $("#desc").html(desc);
-        if(localStorage.mode==="sgt")  {
+        if(localStorage.isFullscreen===true) {
             $(".app-container").css('border','none').css('border-radius','0');
         }
 

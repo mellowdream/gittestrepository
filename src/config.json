@@ -13,11 +13,11 @@
   "audioClickSound": "assets/sounds/plop.mp3",
   "audioBreakStart": "assets/sounds/piano-smooth.mp3",
   "assetsShortBreak": [
-    { "img": "assets/images/do.look.png", "desc": "Look around" },
-    { "img": "assets/images/do.spine.png", "desc": "Flex your back" },
-    { "img": "assets/images/do.neck.png", "desc": "Flex your neck and look around" }
+    { "img": "assets/images/do.look.png", "title": "Look around" },
+    { "img": "assets/images/do.spine.png", "title": "Flex your back" },
+    { "img": "assets/images/do.neck.png", "title": "Flex your neck and look around" }
   ],
   "assetsLongBreak": [
-    { "img": "assets/images/do.walk.png", "desc":"Take a walk" }
+    { "img": "assets/images/do.walk.png", "title":"Take a walk" }
   ]
 }

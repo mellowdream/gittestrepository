@@ -43,7 +43,7 @@ if(!isDemoBreak() && !parseInt(localStorage.opt_allowSkips)) {
 /* UI Stuff */
 let breakType = localStorage.breakType;
 
-let imgSrc = "do.neck.png", desc = '';
+let curBreakImage = "do.neck.png", curBreakTitle = '';
 
 let imgStack = [
     ...config.assetsShortBreak
@@ -57,46 +57,43 @@ let shortBreakType = localStorage.shortBreakType || "eyes";
 /* Decide on IMAGE */
 switch (shortBreakType) {
     case "eyes":
-        imgSrc = imgStack[0].img;
-        desc = imgStack[0].desc;
+        curBreakImage = imgStack[0].img;
+        curBreakTitle = imgStack[0].title;
         break;
     case "all":
     default:
         /* Pick a random one */
         let random = Math.floor(Math.random() * imgStack.length);
-        imgSrc = imgStack[random].img;
-        desc = imgStack[random].desc;
+        curBreakImage = imgStack[random].img;
+        curBreakTitle = imgStack[random].title;
         break;
 }
 
 if("long"===breakType) {
     /* Show WALK for long break */
-    imgSrc = longBreakStack[0].img;
-    desc = longBreakStack[0].desc;
+    curBreakImage = longBreakStack[0].img;
+    curBreakTitle = longBreakStack[0].title;
     if(parseInt(localStorage.opt_lockPC)) $("#closingTime").text("Locking PC");
 }
-
-
-
 
 
 jQuery(document).ready(
     function() {
 
         /* UI */
-        $("#breakType").html(breakType);
-        $('#whatDo').attr('src', imgSrc).parent().hide().fadeIn(1000);
-        $("#desc").html(desc);
+        $("#breakType").text(breakType);
+        $('#breakImage').attr('src', curBreakImage).parent().hide().fadeIn(750);
+        $("#breakTitle").text(curBreakTitle);
         if(localStorage.isFullscreen===true) {
             $(".app-container").css('border','none').css('border-radius','0');
         }
 
-        /* Close Countdown */
+        /* Close Countdown automatically after timeout */
         let ttl = new Date(Date.now() + parseInt(localStorage.shortBreakDuration));
         $('#ttl').countdown(ttl, function (event) {
             $(this).html(event.strftime('%S s'));
         }).on('finish.countdown', function(event) {
-            breakCleanup();
+            //breakCleanup();
         });
 
         /* APNG */

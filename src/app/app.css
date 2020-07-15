@@ -146,8 +146,8 @@ h1.appHeading:hover {
 
 #loadingIndicator {
     position: absolute;
-    top: 1px;
-    right: 60px;
+    top: 0;
+    right: 70px;
     display: none;
     z-index: 105;
 }
@@ -974,28 +974,27 @@ a.faded {
     user-select: none;
 }
 .do-respond {
-    pointer-events: all !important;
-    user-select: all !important;
+    pointer-events: auto !important;
+    user-select: auto !important;
 }
 
 /* Monk vs Sgt */
 /* Selection */
 
 img.radio-select-img-item {
-    border-radius: 0;
     cursor: pointer;
     width: 200px;
     padding: 12px;
+    border-radius: 3px;
     border-left: 4px solid white;
 }
-img.radio-select-img-item:hover {
-    background: #F5F5F5;
-}
 img.radio-select-img-item.item-checked {
-    background: #EFEFEF;
+    background: rgba(0,0,0,0.045);
     border-color: var(--color-primary);
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
+}
+img.radio-select-img-item:hover,
+img.radio-select-img-item.item-checked:hover {
+    background: rgba(0,0,0,0.045);
 }
 
 /* Select Boxes */

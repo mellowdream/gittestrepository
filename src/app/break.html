@@ -11,19 +11,23 @@
 </head>
 <body>
     <div class="app-break-window app-container dont-respond body">
-        <div class="t-a-c">
-            <p class="t-a-c">
-                <img src="./assets/images/do.something.png" id="whatDo" class="apng br-img" alt=" " />
-            </p>
-            <div class="close-in">
-                <small class="meta p-r-10"><span id="closingTime">Closing</span> in <span id="ttl">a few seconds</span></small>
-                <nav class="fx-text-slideIn do-respond" id="skipper">
-                    <a href="#" class="action-close"><span data-hover="Skip">Skip</span></a>
-                </nav>
+        <div class="content-container">
+            <div class="image-holder fade-out">
+                <img src="./assets/images/do.something.png" id="breakImage" class="apng break-img" alt="" />
             </div>
-            <div class="break-meta">
-                <h2 class="break-title">Take a <span id="breakType">short</span> break</h2>
-                <p id="desc" class="break-desc">Look Around!</p>
+            <div class="break-meta-container">
+                <div class="break-meta">
+                    <h2 id="breakTitle" class="break-title">Look Around!</h2>
+                    <p class="break-desc">Take a <span id="breakType">short</span> break</p>
+                </div>
+                <div class="close-in">
+                    <small class="meta">
+                        <span id="closingTime">Closing</span> in <span id="ttl">a few seconds</span>
+                    </small>
+                    <nav class="fx-text-slideIn do-respond" id="skipper">
+                        <a href="#" class="action-close"><span data-hover="Skip">Skip</span></a>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>

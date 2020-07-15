@@ -4,4 +4,9 @@
     --app-border-radius: 2px;
     /* Light Theme */
     --color-light-background: #FFF;
+
+    --color-status-good: #94BA0B;
+    --color-status-bad: #F06E5C;
+    --color-status-paused: #daa520; /* goldenrod */
+    --color-status-default: #e4e4e4;
 }

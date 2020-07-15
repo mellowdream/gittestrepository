@@ -14,8 +14,11 @@ const path = require('path');
 
 let basePath = window.getDirname();
 
-let audioElement = document.createElement('audio');
-audioElement.setAttribute('src', 'assets/sounds/click.wav');
+/* Audio Elements */
+let audioClick = document.createElement('audio');
+audioClick.setAttribute('src', config.audioClickSound);
+let audioStartBreak = document.createElement('audio');
+audioStartBreak.setAttribute('src', config.audioBreakStart);
 
 
 function removeJSorCSS(filename, filetype){
@@ -55,7 +58,7 @@ $(document).ready( function() {
 $(document).on('click', '.isTab', function () {
     let target = $(this).attr('aria-controls');
     if(!$(this).is(".isActive")) {
-        if( ("undefined"!==audioElement) && (parseInt(localStorage.opt_sounds)) ) audioElement.play();
+        if( ("undefined"!==audioClick) && (parseInt(localStorage.opt_sounds)) ) audioClick.play();
         $('.isHideable').hide();
         $("#" + target).fadeIn(200);
         $('.isTab').removeClass('isActive').attr("aria-selected", "false");
@@ -502,31 +505,37 @@ function updateCountdownDOM(element,mins,secs) {
 
 function setShortBreakHTML(nextShortBreakAt, last=0) {
 
-    nextShortBreakTimeString = nextShortBreakAt.toLocaleTimeString().replace(/:\d+ /, ' ').toLowerCase(); /* replace takes off seconds */
-    $("#nextShortBreakAt").html(nextShortBreakTimeString);
+    nextShortBreakTimeString =
+        nextShortBreakAt.toLocaleTimeString()
+        .replace(/:\d+ /, ' ')
+        .toLowerCase(); /* Take off seconds */
 
+    $("#nextShortBreakAt").html(nextShortBreakTimeString);
     /*$('#nextShortBreakIn').countdown('stop');*/
 
-    nextShortBreakInSelector = $("#nextShortBreakIn");
+    let nextShortBreakInSelector = $("#nextShortBreakIn");
+    let nextBreakInSelector = $("#nextBreakIn");
 
     nextShortBreakInSelector.countdown(nextShortBreakAt, function (event) {
         mins = parseInt(event.strftime('%M'));
         secs = parseInt(event.strftime('%S'));
         updateCountdownDOM(nextShortBreakInSelector,mins,secs);
-    }).on('finish.countdown', function(event) {
+    })
+    .on('finish.countdown', function(event) {
         reincarnate("nextShortBreakIn");
     });
+
     /* Decide color */
     if(last) {
         /* Next = Long Break */
-        /* If it's the last short break, make long break color green */
-        $('#nextBreakIn').closest(".time").css('border-color', '#94BA0B').toggleClass("active");
-        nextShortBreakInSelector.closest(".time").css('border-color', '#e4e4e4');
+        /* If it's the last short break, focus long break with block highlight */
+        nextBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
+        nextShortBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
     }
     else {
         /* Next = Short break */
-        $('#nextBreakIn').closest(".time").css('border-color', '#e4e4e4');
-        nextShortBreakInSelector.closest(".time").css('border-color', '#94BA0B').toggleClass("active");
+        nextBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
+        nextShortBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
     }
 
 }
@@ -703,6 +712,8 @@ function startBreak(type = "short", forcedMode = '') {
     localStorage.breakType!==type? localStorage.breakType=type : null;
     localStorage.isFullscreen = optFullScreen;
 
+    if( ("undefined"!==audioStartBreak) && (parseInt(localStorage.opt_sounds)) ) audioStartBreak.play();
+
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
         title: appName + " break",
@@ -717,12 +728,12 @@ function startBreak(type = "short", forcedMode = '') {
         resizable: false,
         minimizable: false,
         maximizable: false,
-        skipTaskbar: false,
+        skipTaskbar: true,
         closable: true,
         titleBarStyle: "hidden",
         alwaysOnTop: !!(parseInt(localStorage.opt_alwaysOnTop)),
         backgroundColor: 'transparent',
-        transparent: true,
+        transparent: false,
         frame: false,
         hasShadow: false,
         webPreferences: {

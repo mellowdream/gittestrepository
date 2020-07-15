@@ -14,30 +14,27 @@
     font-style: normal;
 }
 
-html {
-    width: 100%;
-    height: 100%;
-}
-body {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    font: 15px/15px "sofia_prolight", "Proxima Nova", "Open Sans", Helvetica, Arial, sans-serif;
-    color: #595959;
+html, body {
     background: transparent;
+    width: 100%;
+    height: 100%;
     border:0;
     padding:0;
     margin:0;
+}
+html { }
+body {
+    font: 15px/15px "sofia_prolight", "Proxima Nova", "Open Sans", Helvetica, Arial, sans-serif;
+    color: #595959;
     font-weight: bold;
 }
 
 #container {
-    background: rgba(255,255,255,1); /* url(assets/bg-table.png) no-repeat right bottom;*/
     position: relative;
-    box-shadow: 1px 1px 20px rgba(0,0,0,0.18);
     height: 100%;
     width: 100%;
     overflow: hidden;
+    box-shadow: 1px 1px 20px rgba(0,0,0,0.18);
 }
 
 .animated { transition: all 0.25s ease-out; }
@@ -48,6 +45,7 @@ body {
     border: 1px solid #b1b1b1;
     resize: none;
     border-radius: var(--app-border-radius);
+    background-color: var(--color-light-background);
 }
 
 /* DARK
@@ -544,15 +542,22 @@ box-shadow:  1px 1px 10px rgba(0, 0, 0, 0.1);
     padding: 0 10px 0 110px;
     margin: 20px 0 10px;
     background:transparent url(assets/images/badges/thumbup_s.png) no-repeat left center;
-    display: grid;
     min-height: 96px;
-    align-items: center;
     line-height: 1;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
 }
 #stats h3, #stats p {
     line-height: 1.45;
     padding: 0;
     margin: 0;
+}
+#stats h3 {
+    display: block;
+    padding: 0 0 6px 0;
+    text-transform: capitalize;
 }
 #stats.virgo {
     background: url(assets/images/badges/heart_s.png) no-repeat left center;
@@ -758,8 +763,6 @@ xpush
     resize: none;
     overflow: auto;
     text-align: center;
-    background: white; /* rgba(255,255,255,0.86); */
-    border-radius: var(--app-border-radius);
 }
 
 /* Options */

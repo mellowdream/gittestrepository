@@ -9,5 +9,13 @@
   "icons": [
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
     { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.ico" }
+  ],
+  "assetsShortBreak": [
+    { "img": "assets/images/do.look.png", "desc": "Look around" },
+    { "img": "assets/images/do.spine.png", "desc": "Flex your back" },
+    { "img": "assets/images/do.neck.png", "desc": "Flex your neck and look around" }
+  ],
+  "assetsLongBreak": [
+    { "img": "assets/images/do.walk.png", "desc":"Take a walk" }
   ]
 }

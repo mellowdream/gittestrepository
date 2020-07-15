@@ -1,5 +1,7 @@
 :root {
     --color-primary: #ea4f35;/* green: 94BA0B --- orange: ea4f35;*/
     --color-secondary: #1890e3; /* blue:1890e3 */
-    --app-border-radius: 4px;
+    --app-border-radius: 2px;
+    /* Light Theme */
+    --color-light-background: #FFF;
 }

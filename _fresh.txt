@@ -100,3 +100,13 @@ let win = new BrowserWindow({
  </script>
  <script type="text/javascript" src="jquery.js"></script>
  </head>
+
+
+
+
+
+console.log("app.isPackaged",electron.remote.app.isPackaged);
+console.log("app.filename",electron.remote.process.mainModule.filename);
+console.log("!app.asar",electron.remote.process.mainModule.filename.indexOf('app.asar') === -1);
+
+

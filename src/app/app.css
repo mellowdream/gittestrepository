@@ -27,12 +27,17 @@ body {
     font: 15px/15px "sofia_prolight", "Proxima Nova", "Open Sans", Helvetica, Arial, sans-serif;
     color: #595959;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #container {
     position: relative;
     height: 100%;
     width: 100%;
+    max-width: 800px;
+    max-height: 396px;
     overflow: hidden;
     box-shadow: 1px 1px 20px rgba(0,0,0,0.18);
 }
@@ -96,6 +101,7 @@ html {
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -408,7 +414,7 @@ nav a:hover,nav a:focus {outline: none}
 
 /* Content Widths and Sizes */
 
-#main-container {
+#container-content {
     display: grid;
     grid-template-columns: 220px auto;
     grid-gap: 20px;

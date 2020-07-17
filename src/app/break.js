@@ -93,7 +93,7 @@ jQuery(document).ready(
         $('#ttl').countdown(ttl, function (event) {
             $(this).html(event.strftime('%S s'));
         }).on('finish.countdown', function(event) {
-            //breakCleanup();
+            breakCleanup();
         });
 
         /* APNG */

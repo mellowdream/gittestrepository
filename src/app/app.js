@@ -46,8 +46,9 @@ $(document).ready( function() {
     setTimeout(function() {
         removeJSorCSS("assets/js/splash.anim.js", "js");
         $("#script-splash-anim").empty().attr('src','').remove();
-        console.log("Intro element removed");
-        return elIntro.remove();
+        elIntro.remove();
+        console.log("Intro element destroyed");
+        return true;
     },splashDelay + 1000);
     elIntro.click( function() {
         elIntro.fadeOut(500);

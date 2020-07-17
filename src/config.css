@@ -1,12 +1,20 @@
 :root {
-    --color-primary: #ea4f35;/* green: 94BA0B --- orange: ea4f35;*/
-    --color-secondary: #1890e3; /* blue:1890e3 */
+
+    /* App */
     --app-border-radius: 2px;
+    --pill-border-radius: 3px; /* default: 3px, circular: 100px */
+
+    /* App: Colors */
+    --color-primary: #ea4f35; /* green: 94BA0B --- orange: ea4f35; cool: 59DBBF */
+    --color-secondary: #1890e3; /* blue:1890e3 */
+
+    /* Status Colors */
+    --color-status-good: #94BA0B;
+    --color-status-bad: #ee4d4d;
+    --color-status-paused: #d99f21;
+    --color-status-default: #e4e4e4;
+
     /* Light Theme */
     --color-light-background: #FFF;
 
-    --color-status-good: #94BA0B;
-    --color-status-bad: #F06E5C;
-    --color-status-paused: #daa520; /* goldenrod */
-    --color-status-default: #e4e4e4;
 }

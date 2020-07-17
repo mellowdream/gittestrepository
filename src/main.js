@@ -1,7 +1,7 @@
 
 // Modules to control application lifecycle (main process)
 
-const { app, BrowserWindow, Menu, Tray, shell, ipcMain, ipcRenderer } = require('electron');
+const { app, BrowserWindow, Menu, Tray, shell, ipcMain } = require('electron');
 const path = require('path');
 
 /* Read config JSON */
@@ -10,7 +10,7 @@ let config = require('./config.json');
 /* Internal state/var */
 let __state = {
   forceQuit: false,
-  developerMode: true,
+  developerMode: !app.isPackaged,
   isTimerRunning: 1,
   basePath: __dirname,
   icoTray: getPathTo(config.icons.find(i => i.id==='tray').asset),
@@ -21,6 +21,27 @@ let __state = {
 
 let mainWindow = null;
 let mainTray = null;
+
+
+/* App: SINGLE INSTANCE */
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus();
+    }
+  })
+}
+
+/* INSTALL: HANDLE SQUIRREL INSTALLER */
+// this should be placed at top of main.js to handle setup events like install/uninstall
+if (handleSquirrelEvent()) {
+  return;
+}
+/* */
 
 function createMainWindow () {
 
@@ -107,9 +128,10 @@ app.whenReady().then( () => {
 
   /* Handle SPECIAL CASES */
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
+    // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0)  {
+      createMainWindow();
+    }
   });
 
 })
@@ -119,6 +141,11 @@ app.whenReady().then( () => {
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
+})
+
+// Emitted when remote.require() is called in the renderer process of webContents
+app.on('remote-require', function () {
+  //event.preventDefault() // Prevents the module from being returned
 })
 
 
@@ -177,8 +204,7 @@ function setTrayMenu() {
         {
           label: 'Relaunch App [DEV]',
           click: async () => {
-            app.exit()
-            app.relaunch();
+            relaunchApp();
           },
         },
         {type: 'separator'},
@@ -198,6 +224,12 @@ function setTrayMenu() {
     mainWindowVisibility('toggle');
   });
 
+}
+
+
+function relaunchApp() {
+  app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });
+  app.exit();
 }
 
 /* Inter-process Communication Subscriptions */
@@ -249,7 +281,7 @@ function ipcSubscriptions() {
 }
 
 
-function sendToRenderer(message, channel='channel-main-ipc') {
+function sendToRenderer(message, channel='ipc-channel-main') {
   return mainWindow.webContents.send(channel, message);
 }
 
@@ -280,7 +312,7 @@ function showMainWindow() {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-/* HELPER FUNCTIONS */
+/* FUNCTIONS */
 function getPathTo(filename) {
   if(filename.startsWith('/')) return __dirname + filename;
   return path.join(__dirname, filename);
@@ -288,9 +320,8 @@ function getPathTo(filename) {
 /* Lock Workstation */
 let lockPC = () => {
   if(['win32','win64'].includes(process.platform)) {
-    const exec = require('child_process').exec;
-    const winLockCommand = "rundll32.exe user32.dll, LockWorkStation";
-    exec(winLockCommand);
+    const command = "rundll32.exe user32.dll, LockWorkStation";
+    const exec = require('child_process').exec(command);
   }
 }
 let restartApp = () => {
@@ -298,3 +329,119 @@ let restartApp = () => {
   exec(process.argv.join(' ')); /* Execute the command that was used to run the app*/
   app.exit(0);
 }
+
+
+
+/* ================ INSTALL SEQUENCE ================ */
+
+function handleSquirrelEvent() {
+  if (process.platform !== 'win32' || process.argv.length === 1) {
+    return false;
+  }
+
+  const ChildProcess = require('child_process');
+  const path = require('path');
+
+  const appFolder = path.resolve(process.execPath, '..');
+  const rootFolder = path.resolve(appFolder, '..');
+  const updateDotExe = path.resolve(path.join( rootFolder, 'Update.exe') );
+  const exeName = path.basename(process.execPath);
+  /*
+  var cp = require('child_process');
+  var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+  var target = path.basename(process.execPath);
+  var child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
+  child.on('close', function(code) {
+    app.quit();
+  });*/
+
+  const spawn = function(command, args) {
+    let spawnedProcess;
+    try {
+      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
+    } catch (error) { }
+    return spawnedProcess;
+  };
+
+  const spawnUpdate = function(args) {
+    return spawn(updateDotExe, args);
+  };
+
+  const squirrelEvent = process.argv[1];
+  switch (squirrelEvent) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      // Optionally do things such as:
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //  explorer context menus
+      // Install desktop and start menu shortcuts
+      //spawnUpdate(['--createShortcut', exeName]);
+      //console.log("--squirrel-install or update. Shortcut + Quit");
+      //setTimeout(() => app.quit(), 500);
+      //app.quit();
+      squirrelInstallTasks()
+      return true;
+
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+      // Remove desktop and start menu shortcuts
+      //spawnUpdate(['--removeShortcut', exeName]);
+      //console.log("--squirrel-uninstall. Remove Shortcut + Quit");
+      //setTimeout(() => app.quit(), 500);
+      //app.quit();
+      squirrelUninstallTasks();
+      return true;
+
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+      console.log("--squirrel-obsolete. Quit");
+      app.quit();
+      return true;
+  }
+}
+
+function squirrelInstallTasks() {
+  let childProcess = require('child_process');
+  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+  let target = path.basename(process.execPath);
+  let child = childProcess.spawn(updateExe, ["--shortcut-locations=Desktop,StartMenu --createShortcut", target], { detached: true });
+  child.on('close', function(code) {
+    app.quit();
+  });
+
+  /*
+  let target = path.basename(process.execPath);
+  let updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+  let createShortcut = updateDotExe + ' --createShortcut=' + target + ' --shortcut-locations=Desktop,StartMenu' ;
+  console.log (createShortcut);
+  exec(createShortcut);
+  app.quit();
+  return true;*/
+}
+
+function squirrelUninstallTasks() {
+  // Undo anything you did in the --squirrel-install and
+  // --squirrel-updated handlers
+  let childProcess = require('child_process');
+  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+  let target = path.basename(process.execPath);
+  let child = childProcess.spawn(updateExe, ["--shortcut-locations=Desktop,StartMenu --createShortcut", target], { detached: true });
+  child.on('close', function(code) {
+    app.quit();
+  });
+/*
+  let target = path.basename(process.execPath);
+  let updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
+  let createShortcut = updateDotExe + ' --removeShortcut=' + target ;
+  console.log (createShortcut);
+  exec(createShortcut);
+  app.quit();
+  return true;*/
+}
+
+
+/* =============== / INSTALL SEQUENCE =============== */

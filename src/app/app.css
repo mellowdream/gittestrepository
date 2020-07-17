@@ -279,6 +279,15 @@ nav a:hover,nav a:focus {outline: none}
     min-width: 20px;
 }
 
+.button-action.restart:hover {
+animation: spin .5s 1 linear;
+}
+@keyframes spin {
+    0%  { transform: rotate(0deg) }
+    100% { transform: rotate(360deg) }
+}
+
+
 /* Common button styles */
 .button {
     float: left;

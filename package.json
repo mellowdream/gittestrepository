@@ -33,6 +33,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "__readme": "https://www.electronjs.org/docs/tutorial/code-signing",
         "asar": true,
         "prune": true,
         "dir": "app",
@@ -42,8 +43,19 @@
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
+          "__readme_config": "https://js.electronforge.io/maker/squirrel/interfaces/makersquirrelconfig",
           "config": {
-            "name": "Refreshie"
+            "name": "Refreshie",
+            "title": "Refreshie Installer",
+            "setupExe": "Refreshie_Installer.exe",
+            "setupIcon": "./src/app/assets/ico/tray.ico",
+            "loadingGif": "./src/app/assets/images/install/install.splash.monk.png",
+            "dest": "./dist/",
+            "exe": "Refreshie.exe",
+            "icon": "./src/app/assets/ico/tray.ico",
+            "_iconUrl": "https://",
+            "_certificateFile": "./cert.pfx",
+            "_certificatePassword": "__SECRET_KEY__"
           }
         },
         {

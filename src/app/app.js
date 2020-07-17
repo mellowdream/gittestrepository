@@ -95,24 +95,27 @@ notifier.on('timeout', function (notifierObject, options) {
 
 /* */
 
-const electron = require('electron');
 const {BrowserWindow} = require('electron').remote;
-const appName = electron.remote.app.getName();
-const remote = electron.remote;
 const {shell} = require('electron');
+const electron = require('electron');
+const remote = electron.remote;
 
-const licenseLength = 16;
 
 function minimizeWindow() {
     /* Returns the BrowserWindow object which this web page belongs to */
     remote.getCurrentWindow().hide();
 }
 
+let __state = {
+     developerMode: !electron.remote.app.isPackaged,
+};
+
+
 
 function osAutorunAtStartup(launch) {
     let AutoLaunch = require('auto-launch');
     let appLauncher = new AutoLaunch({
-        name: appName,
+        name: remote.app.getName(),
         isHidden: false
     });
     if(!launch) {
@@ -343,7 +346,7 @@ function setStats() {
     $("#count_totalBreaks").text(totalBreaks);
 }
 
-function reverse(s){return s.split("").reverse().join("");}
+function reverse(s){ return s.split("").reverse().join("") }
 if (typeof String.prototype.trim != 'function') {
     String.prototype.trim = function () {
         return this.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -351,10 +354,11 @@ if (typeof String.prototype.trim != 'function') {
 }
 
 /* License - deprecated/discontinued */
+const licenseLength = 16;
 function validateLicense(email,serial) {
-    encEmail = reverse(btoa((email.trim())+"think.dj")).substring(0, licenseLength);
+    let encEmail = reverse(btoa((email.trim())+"think.dj")).substring(0, licenseLength);
     console.log(encEmail);
-    if(serial===encEmail) {
+    if (serial===encEmail) {
         return true;
     }
     else {
@@ -437,7 +441,7 @@ function reincarnate(id) {
     /* Reincarnate destroys a selector and recreates it */
     /* This was added because https://github.com/hilios/jQuery.countdown/issues/215#issuecomment-238989295 */
 
-    $selector = "#" + id;
+    let $selector = "#" + id;
 
     if(($($selector).length)) {
         ///$($selector).countdown('remove');
@@ -452,8 +456,8 @@ function reincarnate(id) {
 }
 
 /* Define state and text */
-$state = 1;
-$stateText = [ "Paused", "Running" ];
+let $state = 1;
+let $stateText = [ "Paused", "Running" ];
 
 function timer_set_state_ui(state=1) {
     $("#button-action").text($stateText[state]);
@@ -717,7 +721,7 @@ function startBreak(type = "short", forcedMode = '') {
 
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
-        title: appName + " break",
+        title: remote.app.getName() + " break",
         icon: __dirname + "/assets/ico/tray.ico",
         width: optWidth,
         height: optHeight,
@@ -751,9 +755,9 @@ function startBreak(type = "short", forcedMode = '') {
     /* Load contents */
     breakModalWindow.loadFile( getPathTo( 'break.html' ) );
 
-    breakModalWindow.webContents.openDevTools({ mode: "detach" } );
+    if(__state.developerMode) breakModalWindow.webContents.openDevTools({ mode: "detach" } );
     if(parseInt(localStorage.opt_alwaysOnTop)) {
-        /* If AlwaysOnTop ALWAYS giving a blank screen for first run, uncomment below line */
+        /* If AlwaysOnTop is always giving a blank screen for first run, uncomment below line */
         // makeAlwaysOnTop = setTimeout( () => breakModalWindow.setAlwaysOnTop(true), 500);
     }
 
@@ -981,8 +985,8 @@ function quitIt() {
     return ipcRenderer.sendSync('synchronous-messages', 'force-quit');
 }
 
-ipcRenderer.on('timer-changeReq-from-main', function (event, arg) {
-    timers(arg);
+ipcRenderer.on('ipc-channel-main', function (event, args) {
+    timers(args);
 });
 
 $(document).ready(function(){

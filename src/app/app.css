@@ -132,7 +132,7 @@ h1.appHeading {
     display: block;
     margin-bottom: 15px;
     background: rgba(0,0,0,0.0);
-    max-width: 98%;
+    max-width: 97%;
     line-height: 1.1;
     overflow: hidden;
     z-index: 0;
@@ -141,7 +141,7 @@ h1.appHeading {
     cursor: grab;
 }
 h1.appHeading:hover {
-    background: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.04);
 }
 
 #loadingIndicator {
@@ -461,25 +461,26 @@ nav a:hover,nav a:focus {outline: none}
 /* view-source:http://www.ourtuts.com/tutorials/vertical-menu/ */
 
 
-ul.form {
-    position:relative;
+ul.menu-main {
+    position: relative;
     display: block;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
     list-style: none;
-    overflow:hidden;
+    overflow: hidden;
 }
 
-.form li a {
-    width:100%;
-    padding-left:20px;
-    height:53px;
-    line-height:53px;
-    overflow:hidden;
-    position:relative;
-    text-decoration:none;
-    text-transform:uppercase;
-    font-size:14px;
+.menu-main li a {
+    width: 100%;
+    padding-left: 20px;
+    height: 53px;
+    line-height: 53px;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px;
     color: #686868;
     border-left: 3px solid transparent;
     display: flex;
@@ -487,28 +488,28 @@ ul.form {
     transition: all 0.3s ease-out;
 }
 
-.form li a:hover {
+.menu-main li a:hover {
     background: rgba(0,0,0,0.035);
     border-left-color: #ddd;
     color:var(--color-primary);
     transition: all 0.3s ease-out;
 }
-.form li a:hover i {
+.menu-main li a:hover i {
     color:var(--color-primary);
 }
 /*
-.form {
+.menu-main {
 -webkit-box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
 -moz-box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
 box-shadow:  1px 1px 10px rgba(0, 0, 0, 0.1);
 }
-.form li a.profile {border-left:5px solid #008747;}.form li a.messages {border-left:5px solid #fecf54;}.form li a.settings {border-left:5px solid #cf2130;}.form li a.logout {border-left:5px solid #dde2d5;}
+.menu-main li a.profile {border-left:5px solid #008747;}.menu-main li a.messages {border-left:5px solid #fecf54;}.menu-main li a.settings {border-left:5px solid #cf2130;}.menu-main li a.logout {border-left:5px solid #dde2d5;}
 
-.form li:first-child a:hover, .form li:first-child a,
-.form li:last-child a:hover, .form li:last-child a {}
+.menu-main li:first-child a:hover, .menu-main li:first-child a,
+.menu-main li:last-child a:hover, .menu-main li:last-child a {}
 */
 
-.form i {
+.menu-main i {
     margin-right:15px;
     -webkit-transition:all 0.2s linear;
     -moz-transition:all 0.2s linear;
@@ -518,7 +519,7 @@ box-shadow:  1px 1px 10px rgba(0, 0, 0, 0.1);
     font-weight: 300;
 }
 
-.form .update-highlight {
+.menu-main .update-highlight {
     font-size: 11px;
     line-height: 3px;
     background: var(--color-primary);
@@ -530,7 +531,7 @@ box-shadow:  1px 1px 10px rgba(0, 0, 0, 0.1);
     margin-left: 15px;
 }
 
-.form li.isActive a {
+.menu-main li.isActive a {
     border-left-color: var(--color-primary);
 }
 
@@ -987,6 +988,9 @@ img.radio-select-img-item {
     padding: 12px;
     border-radius: 3px;
     border-left: 4px solid white;
+    user-drag: none;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 img.radio-select-img-item.item-checked {
     background: rgba(0,0,0,0.045);

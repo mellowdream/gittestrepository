@@ -37,8 +37,9 @@
         "asar": true,
         "prune": true,
         "dir": "app",
-        "out": "dist",
-        "overwrite": false
+        "out": "./out/",
+        "overwrite": false,
+        "icon": "./src/app/assets/ico/tray.ico"
       },
       "makers": [
         {
@@ -50,7 +51,7 @@
             "setupExe": "Refreshie_Installer.exe",
             "setupIcon": "./src/app/assets/ico/tray.ico",
             "loadingGif": "./src/app/assets/images/install/install.splash.monk.png",
-            "dest": "./dist/",
+            "dest": "./out/",
             "exe": "Refreshie.exe",
             "icon": "./src/app/assets/ico/tray.ico",
             "_iconUrl": "https://",

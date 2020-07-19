@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:">
 
     <title class="app-title">Refreshie</title>
     <link rel="stylesheet" href="app.css"/>
@@ -58,6 +58,15 @@
         <div id="content">
 
             <div id="app-info" class="isHideable">
+
+                <!--<div id="my-previews">
+                </div>
+
+                <img id="my-preview"/>
+                <input id="trigger" value="Fullscreen screenshot" type="button"/>
+                <video src=""></video>-->
+
+
                 <!--<img src="assets/gift.png" alt="" style="float:left; margin-right: 20px;"/>-->
                 <!--<p>On nodeJS <script>document.write(process.versions.node)</script>,</p>
                 <p>Chromium <script>document.write(process.versions.chrome)</script>,</p>-->
@@ -73,7 +82,7 @@
                 <div class="animated dataBlock shortBreak">
                     <div class="dbw">
                         <div class="animated time">
-                            <span id="nextShortBreakInInject"><!-- Inject Time --></span>
+                            <span id="nextShortBreakInInjectable"><!-- Inject Time --></span>
                         </div>
                         <div class="info">
                             <p>to next short break</p>
@@ -86,7 +95,7 @@
                 <div class="animated dataBlock">
                     <div class="dbw">
                         <div class="animated time">
-                            <span id="nextBreakInInject"><!-- Inject Time --></span>
+                            <span id="nextLongBreakInInjectable"><!-- Inject Time --></span>
                         </div>
                         <div class="info">
                             <p>to next long break</p>
@@ -99,7 +108,7 @@
 
                 <div class="clearfix"></div>
 
-                <p class="hblock-time">
+                <p class="hblock-info">
                     <span>
                         <i class="icon icon-clock2 hblock-ico"></i>
                         <span id="breakInfo"></span>
@@ -169,7 +178,7 @@
                     </li>
                 </ul>
 
-                <p class="hblock-upd">
+                <p class="hblock-update">
                     App: v<b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
                 &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
                 </p>
@@ -304,7 +313,7 @@
                     <ul id="messageCenter"></ul>
                 </div>
 
-                <p class="hblock-upd">
+                <p class="hblock-update">
                     App: v<b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
                 &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
                 </p>

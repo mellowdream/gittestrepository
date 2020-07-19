@@ -248,7 +248,7 @@ nav a:hover,nav a:focus {outline: none}
 
 
 /* Horizontal Grey Blocks */
-.hblock-time {
+.hblock-info {
     font-size: 15px;
     padding: 10px 0;
     margin: 12px 0 0;
@@ -257,13 +257,14 @@ nav a:hover,nav a:focus {outline: none}
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+    border-radius: var(--app-border-radius);
 }
-.hblock-ico {margin: 0 5px 0 0; line-height: 22px;}
-
-.hblock-upd {
+.hblock-update {
     background: #f5f5f5; padding: 8px 20px;
+    border-radius: var(--app-border-radius);
 }
 .btn-update {float:right}
+.hblock-ico {margin: 0 5px 0 0; line-height: 22px;}
 
 .button-action {
     padding: 1px 10px;
@@ -490,7 +491,7 @@ ul.menu-main {
     padding-left: 20px;
     height: 53px;
     line-height: 53px;
-    border-radius: 3px;
+    border-radius: var(--pill-border-radius);
     overflow: hidden;
     position: relative;
     text-decoration: none;
@@ -792,7 +793,7 @@ xpush
 .opTable tr td {
     display: inline-block;
     padding: 10px;
-    width: 50%;
+    width: 49.25%;
 }
 
 #app-settings {
@@ -821,6 +822,7 @@ xpush
     border-left: 4px solid var(--color-status-default);
     max-width: 90px;
     overflow: hidden;
+    border-radius: var(--pill-border-radius);
 }
 .dataBlock .time.active.paused {
     border-color: var(--color-status-paused) !important;
@@ -1001,7 +1003,7 @@ img.radio-select-img-item {
     cursor: pointer;
     width: 200px;
     padding: 12px;
-    border-radius: 3px;
+    border-radius: var(--pill-border-radius);
     border-left: 4px solid white;
     user-drag: none;
     user-select: none;
@@ -1018,8 +1020,12 @@ img.radio-select-img-item.item-checked:hover {
 
 /* Select Boxes */
 select {
-    padding: 3px 6px;
+    padding: 4px 8px;
     border: 1px solid #D3CFC8;
+    border-radius: 0;
+}
+select:hover, select:focus, select:active {
+    border-radius: 0;
 }
 select:hover {
     border-color: var(--color-primary);
@@ -1035,7 +1041,7 @@ select:hover {
     padding: 0;
     width: 22px;
     height: 22px;
-    background: url(assets/images/icheck_blue.png) no-repeat;
+    background: url(assets/images/icheck_grey.png) no-repeat;
     border: none;
     cursor: pointer;
 }
@@ -1059,9 +1065,17 @@ select:hover {
 @media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi), (min-resolution: 1.25dppx) {
     .icheckbox_square,
     .iradio_square {
-        background-image: url(assets/images/icheck_blue@2x.png);
+        background-image: url(assets/images/icheck_grey@2x.png);
         -webkit-background-size: 240px 24px;
         background-size: 240px 24px;
     }
 }
 
+
+
+
+
+.img-thumb {
+    width: 190px;
+    float: left;
+}

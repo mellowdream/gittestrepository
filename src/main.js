@@ -1,7 +1,7 @@
 
 // Modules to control application lifecycle (main process)
 
-const { app, BrowserWindow, Menu, Tray, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, Notification, ipcMain } = require('electron');
 const path = require('path');
 
 /* Read config JSON */
@@ -134,7 +134,19 @@ app.whenReady().then( () => {
     }
   });
 
-})
+  /* Power events */
+  powerMonitor.on("lock-screen", () => { timerActionsAuto('lock') } );
+  powerMonitor.on("suspend", () => { timerActionsAuto('lock') } );
+  powerMonitor.on("unlock-screen", () => {  timerActionsAuto('unlock') } );
+  powerMonitor.on("resume", () => { timerActionsAuto('unlock') } );
+
+});
+
+// Power-saver mode disabler
+// const { powerSaveBlocker } = require('electron');
+// const id = powerSaveBlocker.start('prevent-display-sleep');
+// let status = powerSaveBlocker.isStarted(id);
+// let stop = powerSaveBlocker.stop(id);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -162,19 +174,6 @@ function setTrayMenu() {
       }
     },
     {
-      label: 'Restart',
-      click: function () {
-        sendToRenderer("restart");
-      }
-    },
-    {
-      label: 'Pause/Resume',
-      click: function () {
-        sendToRenderer("toggle");
-      }
-    },
-    {type: 'separator'},
-    {
       label: 'Homepage',
       click: async () => {
         await shell.openExternal(config.url || __state.urlFallback)
@@ -188,6 +187,23 @@ function setTrayMenu() {
     },
     {
       type: 'separator'
+    },
+    {
+      label: 'Restart',
+      click: function () {
+        sendToRenderer("restart");
+      }
+    },
+    {
+      label: 'Pause/Resume',
+      click: function () {
+        sendToRenderer("toggle");
+      }
+    },
+    {type: 'separator'},
+    {
+      label: 'Lock PC',
+      click: () => lockPC()
     },
     {
       label: 'Quit',
@@ -232,23 +248,69 @@ function relaunchApp() {
   app.exit();
 }
 
+
+function timerActions(action) {
+  switch (action.toLowerCase()) {
+    case 'start':
+    case 'restart':
+      __state.isTimerRunning = 1;
+      mainTray.setImage(__state.icoTray);
+      break;
+    case 'stop':
+    case 'pause':
+    case 'paused':
+      __state.isTimerRunning = 0;
+      mainTray.setImage(__state.icoTrayPaused);
+      break;
+    default:
+    case 'toggle':
+      /* Flip state, change TrayIco */
+      __state.isTimerRunning = !!(1 - Number(__state.isTimerRunning));
+      __state.isTimerRunning ?
+          mainTray.setImage(__state.icoTray) :
+          mainTray.setImage(__state.icoTrayPaused);
+      break;
+  }
+}
+
+let timerAutoPaused = false;
+function timerActionsAuto(state) {
+  const delay = 1000;
+  switch (state.toLowerCase()) {
+    case 'lock':
+      if(!timerAutoPaused && __state.isTimerRunning) {
+        setTimeout(() => {
+          sendToRenderer("toggle");
+          timerAutoPaused = true;
+        }, delay);
+      }
+      break;
+    case 'unlock':
+      if(timerAutoPaused) {
+        setTimeout(() => {
+          sendToRenderer("restart");
+          timerAutoPaused = false;
+        } , delay);
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+
 /* Inter-process Communication Subscriptions */
 function ipcSubscriptions() {
   let channelName = 'synchronous-messages';
   ipcMain.on( channelName, function (e, arg) {
     switch (arg) {
       case "timer-restart":
-        __state.isTimerRunning = 1;
-        mainTray.setImage(__state.icoTray);
+        timerActions("start");
         break;
       case "timer-toggle":
       case "timer-paused":
       case "timer-running":
-        /* Flip state, change TrayIco */
-        __state.isTimerRunning = !!(1 - Number(__state.isTimerRunning));
-        __state.isTimerRunning ?
-            mainTray.setImage(__state.icoTray) :
-            mainTray.setImage(__state.icoTrayPaused);
+        timerActions("toggle");
         break;
       case 'lockPC':
         lockPC();
@@ -321,7 +383,8 @@ function getPathTo(filename) {
 let lockPC = () => {
   if(['win32','win64'].includes(process.platform)) {
     const command = "rundll32.exe user32.dll, LockWorkStation";
-    const exec = require('child_process').exec(command);
+    const commandBackup = __state.basePath + "/app/assets/bin/w.exe quiet lock";
+    return require('child_process').exec(command);
   }
 }
 let restartApp = () => {
@@ -445,3 +508,31 @@ function squirrelUninstallTasks() {
 
 
 /* =============== / INSTALL SEQUENCE =============== */
+
+
+
+/* =================================================== */
+// GLOBAL SHORTCUTS
+/* =================================================== * /
+
+const shortcutKey = 'PrintScreen'; // CommandOrControl+X
+
+const { globalShortcut } = require('electron');
+
+app.on('ready', () => {
+  if (globalShortcut.isRegistered(shortcutKey)) return;
+  const ret = globalShortcut.register(shortcutKey, () => {
+    sendToRenderer("capture-image")
+    return true;
+  })
+  if (!ret) {
+    // Reg failed; Handle
+  }
+});
+
+app.on('will-quit', () => {
+  globalShortcut.unregister(shortcutKey);
+  globalShortcut.unregisterAll();
+})
+
+/* */

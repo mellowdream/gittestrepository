@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Created by Deepak Thomas
  * Mod 0 on 3/23/2016 @ 6:56pm (creation)
@@ -12,16 +13,13 @@
 let config = require('./../config.json');
 const path = require('path');
 
-let basePath = window.getDirname();
-
 /* Audio Elements */
 let audioClick = document.createElement('audio');
 audioClick.setAttribute('src', config.audioClickSound);
 let audioStartBreak = document.createElement('audio');
 audioStartBreak.setAttribute('src', config.audioBreakStart);
 
-
-function removeJSorCSS(filename, filetype){
+function removeJSorCSS(filename, filetype) {
     /* SRC: http://www.javascriptkit.com/javatutors/loadjavascriptcss2.shtml */
     let targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none";
     let targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none";
@@ -34,6 +32,7 @@ function removeJSorCSS(filename, filetype){
     }
 }
 
+/* SPLASH ANIMATION */
 $(document).ready( function() {
     let splashDelay = 4200;
     let elIntro = $("#intro");
@@ -95,8 +94,8 @@ notifier.on('timeout', function (notifierObject, options) {
 
 /* */
 
-const {BrowserWindow} = require('electron').remote;
-const {shell} = require('electron');
+const { BrowserWindow } = require('electron').remote;
+const { shell } = require('electron');
 const electron = require('electron');
 const remote = electron.remote;
 
@@ -106,8 +105,17 @@ function minimizeWindow() {
     remote.getCurrentWindow().hide();
 }
 
+/* Statuses */
+const statusIs = {
+    PAUSED_BY_SYSTEM: -1,
+    PAUSED: 0,
+    RUNNING: 1,
+};
+Object.freeze(statusIs);
+
 let __state = {
-     developerMode: !electron.remote.app.isPackaged,
+    developerMode: !electron.remote.app.isPackaged,
+    status: statusIs.RUNNING
 };
 
 
@@ -166,7 +174,7 @@ let breakModalWindow = null;
 
 let totalLongBreaks = 0;
 let totalShortBreaks = 0;
-let nextBreakAt = null;
+let nextLongBreakAt = null;
 let nextShortBreakAt = null;
 let noOfShortBreaks = 0;
 let secondsPassed = 0;
@@ -183,9 +191,9 @@ function GC() {
     shortBreakEvery = null;
     breakModalWindow = null;
 
-    /*totalLongBreaks = 0;*/
-    /*totalShortBreaks = 0;*/
-    nextBreakAt = null;
+    /* totalLongBreaks = 0; */
+    /* totalShortBreaks = 0; */
+    nextLongBreakAt = null;
     nextShortBreakAt = null;
     noOfShortBreaks = 0;
     secondsPassed = 0;
@@ -196,7 +204,7 @@ function GC() {
 
     /* (Re)Create DOM */
     reincarnate("nextShortBreakIn");
-    reincarnate("nextBreakIn");
+    reincarnate("nextLongBreakIn");
 
 }
 
@@ -230,7 +238,7 @@ function initAppSetDefaults() {
     }
 
     /* DEV Vars*/
-    devModeForTesting = false; /* Set true for clearing cache / Debug Mode */
+    let devModeForTesting = false; /* Set true for clearing cache / Debug Mode */
     if(devModeForTesting) {
         localStorage.clear();
         localStorage.longBreakInterval  = 60 * seconds;
@@ -438,18 +446,27 @@ function humanizeTime(time) {
 
 function reincarnate(id) {
 
-    /* Reincarnate destroys a selector and recreates it */
-    /* This was added because https://github.com/hilios/jQuery.countdown/issues/215#issuecomment-238989295 */
+    /* `Reincarnate` destroys a selector and then recreates it */
+    /* Added because of this bug: https://github.com/hilios/jQuery.countdown/issues/215#issuecomment-238989295 */
 
     let $selector = "#" + id;
 
+    $($selector).off();
+
+    let elem = document.getElementById($selector);
+    console.log("$selector orig$",$(elem) );
+    if(elem) elem.replaceWith(elem.cloneNode(true));
+    console.log("$selector cloneNode",$(elem) );
+
+
     if(($($selector).length)) {
-        ///$($selector).countdown('remove');
+        console.log("$selector off",$($selector) );
         $($selector).remove();
     }
+    console.log("$selector remove",$($selector) );
 
     if(!($($selector).length))
-        $selector = $('<span id="'+id+'">_:_</span>').appendTo($(($selector)+'Inject'));
+        $selector = $('<span id="'+id+'">_:_</span>').appendTo( $( $selector + 'Injectable' ) );
 
     $selector.hide().fadeIn(1250);
 
@@ -459,7 +476,7 @@ function reincarnate(id) {
 let $state = 1;
 let $stateText = [ "Paused", "Running" ];
 
-function timer_set_state_ui(state=1) {
+function timer_set_state_ui(state = 1) {
     $("#button-action").text($stateText[state]);
     console.log("Set UI to "+$stateText[state]);
     /* Yellow Border for timer */
@@ -475,7 +492,7 @@ function timer_set_state_ui(state=1) {
     }
 }
 
-function timers(action="toggle") {
+function timers(action="toggle") { /* action: 'start' | 'stop' | 'restart' | 'toggle' */
     let prefix = 'timer-';
     switch(action) {
         case "restart":
@@ -485,10 +502,28 @@ function timers(action="toggle") {
             ipcRenderer.send('synchronous-messages', prefix+"restart");
             break;
         default:
+        case "toggle":
             $state = 1 - $state;
             timer_set_state_ui($state);
-            $('#nextBreakIn').countdown(action);
-            $("#nextShortBreakIn").countdown(action);
+            if($state) {
+                /* From Paused TO RESUME */
+                console.log('Restarting time');
+
+                // now = Date.now();
+                let timediff = Date.now() - now;
+
+                nextLongBreakAt = new Date(now + longBreakEvery + timediff);
+                setLongBreakHTML(nextLongBreakAt);
+
+                nextShortBreakAt = new Date(now + shortBreakEvery + timediff);
+                setShortBreakHTML(nextShortBreakAt);
+
+            }
+            else {
+                /* From Running TO Paused */
+            }
+            $('#nextLongBreakIn').countdown("toggle");
+            $("#nextShortBreakIn").countdown("toggle");
             /* Ask mainProcess to change tray icon */
             ipcRenderer.send('synchronous-messages', prefix+action);
             break;
@@ -512,21 +547,21 @@ function setShortBreakHTML(nextShortBreakAt, last=0) {
 
     nextShortBreakTimeString =
         nextShortBreakAt.toLocaleTimeString()
-        .replace(/:\d+ /, ' ')
-        .toLowerCase(); /* Take off seconds */
+        .replace(/:\d+ /, ' ').toLowerCase(); /* Take off seconds */
 
     $("#nextShortBreakAt").html(nextShortBreakTimeString);
     /*$('#nextShortBreakIn').countdown('stop');*/
 
     let nextShortBreakInSelector = $("#nextShortBreakIn");
-    let nextBreakInSelector = $("#nextBreakIn");
+    let nextLongBreakInSelector = $("#nextLongBreakIn");
 
     nextShortBreakInSelector.countdown(nextShortBreakAt, function (event) {
-        mins = parseInt(event.strftime('%M'));
-        secs = parseInt(event.strftime('%S'));
-        updateCountdownDOM(nextShortBreakInSelector,mins,secs);
+        let mm = parseInt(event.strftime('%M'));
+        let ss = parseInt(event.strftime('%S'));
+        updateCountdownDOM(nextShortBreakInSelector,mm,ss);
     })
     .on('finish.countdown', function(event) {
+        nextShortBreakInSelector.countdown('remove');
         reincarnate("nextShortBreakIn");
     });
 
@@ -534,26 +569,25 @@ function setShortBreakHTML(nextShortBreakAt, last=0) {
     if(last) {
         /* Next = Long Break */
         /* If it's the last short break, focus long break with block highlight */
-        nextBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
+        nextLongBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
         nextShortBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
     }
     else {
         /* Next = Short break */
-        nextBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
+        nextLongBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
         nextShortBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
     }
 
 }
 
+let now = Date.now();
 
 function setLongBreakHTML(nextLongBreakAt) {
     let longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
-    let nextLongBreakTimeString = new Date(Date.now() + longBreakEvery);
+    let nextLongBreakTimeString = new Date(now + longBreakEvery);
     nextLongBreakTimeString = nextLongBreakTimeString.toLocaleTimeString().replace(/:\d+ /, ' ').toLowerCase(); /* replace takes off seconds */
     $("#nextLongBreakAt").html(nextLongBreakTimeString);
 }
-
-
 
 function initMainTimer() {
 
@@ -562,18 +596,18 @@ function initMainTimer() {
     setStats();
 
     let uniqueID = GUID(6);
-    let nextBreakInSelector = $('#nextBreakIn');
+    let nextLongBreakInSelector = $('#nextLongBreakIn');
 
-    console.log("=== BREAK TIMER ID: " + uniqueID + " ===");
-    console.log("//longBreaks so far:", totalLongBreaks);
-    console.log("//shortBreaks so far:", totalShortBreaks);
+    console.log("=== " + uniqueID + " [BREAK TIMER ID] ===");
+    console.log("// longBreaks so far:", totalLongBreaks);
+    console.log("// shortBreaks so far:", totalShortBreaks);
 
     longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
     shortBreakEvery = parseInt(localStorage.shortBreakInterval) || (20 * minutes);
 
-    let now = Date.now();
-    nextBreakAt = new Date(now + longBreakEvery);
-    setLongBreakHTML(nextBreakAt);
+    now = Date.now();
+    nextLongBreakAt = new Date(now + longBreakEvery);
+    setLongBreakHTML(nextLongBreakAt);
 
     nextShortBreakAt = new Date(now + shortBreakEvery);
     setShortBreakHTML(nextShortBreakAt);
@@ -592,20 +626,20 @@ function initMainTimer() {
     let pluralize = noOfShortBreaks===1?'':'s';
     $("#breakInfo").html("" + noOfShortBreaks + " short break" + pluralize + " and 1 long break per hour");
 
-    nextBreakInSelector.countdown(nextBreakAt, function (e) {
+    nextLongBreakInSelector.countdown(nextLongBreakAt, function (e) {
         let mm = parseInt(e.strftime('%M'));
         let ss = parseInt(e.strftime('%S'));
-        updateCountdownDOM(nextBreakInSelector, mm, ss);
+        updateCountdownDOM(nextLongBreakInSelector, mm, ss);
     })
         .on('update.countdown', function (e) {
 
         secondsPassed = secondsPassed + 1;
 
-        //console.log(secondsPassed); // log every second passed?
+        console.log(secondsPassed); // log every second passed?
 
         /* Find multiples of ShortBreak */
         if ( ( (secondsPassed * 1000) % (shortBreakEvery) ) === 0 ) {
-            /* check with `localStorage.shortBreakInterval` as it might get updated from Settings in realtime (REMOVED for performance) */
+            /* check with `localStorage.shortBreakInterval` as it might get updated from Settings in realtime => REMOVED for performance reasons */
 
             shortBreaksElapsed = shortBreaksElapsed + 1;
 
@@ -614,7 +648,6 @@ function initMainTimer() {
                 console.log("No more short breaks for this session " + uniqueID);
             }
             else {
-                let now = Date.now();
                 if (shortBreaksElapsed === noOfShortBreaks) {
                     /* Last shortbreak for an hour */
                     /* So, next short break is after the long break */
@@ -638,7 +671,8 @@ function initMainTimer() {
     })
         .on('finish.countdown', function (e) {
 
-        reincarnate("nextBreakIn");
+        nextLongBreakInSelector.countdown('remove');
+        reincarnate("nextLongBreakIn");
 
         secondsPassed++;
         totalLongBreaks++;
@@ -668,7 +702,7 @@ function restart_longBreak() {
     longBreak = initMainTimer();
 }
 
-breakCleanup = () => {
+let breakCleanup = () => {
     // alert("Cleanup on Aisle 4");
     breakModalWindow = null;
     if(parseInt(localStorage.breakOngoing)) {
@@ -677,7 +711,7 @@ breakCleanup = () => {
             /* Restart Long Break */
             restart_longBreak();
             /* Lock PC? (WINDOWS ONLY) */
-            if (("Windows" === localStorage.OSName) && parseInt(localStorage.opt_lockPC)) {
+            if (parseInt(localStorage.opt_lockPC)) {
                 ipcRenderer.send('synchronous-messages', 'lockPC');
             }
         }
@@ -948,9 +982,9 @@ $(document).ready(function() {
     });
 
     /* Set Values */
-    $opts = ["opt_autoStart","opt_lockPC","opt_startMinimized","opt_sounds","opt_splash","opt_alwaysOnTop","opt_allowSkips"];
+    let $opts = ["opt_autoStart","opt_lockPC","opt_startMinimized","opt_sounds","opt_splash","opt_alwaysOnTop","opt_allowSkips"];
     $.each( $opts, function( key, value ) {
-        $selector = $("#"+value);
+        let $selector = $("#"+value);
         if(0==$selector.length) return 0;
         if(1==parseInt(localStorage[value])) $selector.iCheck('check');
         else $selector.iCheck('uncheck');
@@ -958,7 +992,7 @@ $(document).ready(function() {
 
     $($iCheckSelectors).on('ifToggled', function(event){
         activityAnimation(160);
-        $what = event.target.id;
+        let $what = event.target.id;
 
         if ($(this).is(":checked")){ localStorage[$what] = 1; }
         else { localStorage[$what] = 0; }
@@ -986,10 +1020,24 @@ function quitIt() {
 }
 
 ipcRenderer.on('ipc-channel-main', function (event, args) {
-    timers(args);
+
+    switch(args) {
+        case 'restart':
+        case 'toggle':
+        case 'start':
+        case 'stop':
+            timers(args);
+            break;
+        case "capture-image":
+            break;
+        default:
+            break;
+    }
+    console.log('rx', args);
+
 });
 
-$(document).ready(function(){
+$(document).ready(function() {
 
     return;
 

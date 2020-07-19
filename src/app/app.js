@@ -98,11 +98,12 @@ const { BrowserWindow } = require('electron').remote;
 const { shell } = require('electron');
 const electron = require('electron');
 const remote = electron.remote;
+const thisWindow = remote.getCurrentWindow();
 
 
 function minimizeWindow() {
     /* Returns the BrowserWindow object which this web page belongs to */
-    remote.getCurrentWindow().hide();
+    thisWindow.hide();
 }
 
 /* Statuses */
@@ -118,9 +119,40 @@ let __state = {
     status: statusIs.RUNNING
 };
 
+/* * /
+let taskRunnerDaemon = null;
+let taskRunnerCreate = () => { taskRunnerDaemon = setInterval(() => countDown(),1000); }
+let taskRunnerToggle = () => { taskRunnerDaemon ? taskRunnerDestroy() : taskRunnerCreate(); }
+let taskRunnerDestroy = () => { clearInterval(taskRunnerDaemon); taskRunnerDaemon = null };
+let taskRunnerRecreate = () => { taskRunnerDestroy(); taskRunnerCreate(); };
+let taskRunnerAction = (action) => {
+    switch (action.toLowerCase()) {
+        case 'resume':
+        case 'start':
+            taskRunnerRecreate();
+            break;
+        case 'stop':
+        case 'pause':
+            taskRunnerDestroy();
+            break;
+        default:
+        case 'toggle':
+            taskRunnerToggle();
+    }
+}
+taskRunnerAction('start');
+
+let secondsElapsed = 0;
+
+function countDown() {
+    if(__state.status===statusIs.PAUSED) return;
+    secondsElapsed += 1;
+    console.log("count", secondsElapsed);
+}
+/* */
 
 
-function osAutorunAtStartup(launch) {
+function autorunOSstart(launch) {
     let AutoLaunch = require('auto-launch');
     let appLauncher = new AutoLaunch({
         name: remote.app.getName(),
@@ -135,18 +167,6 @@ function osAutorunAtStartup(launch) {
         console.log("AutoLaunch Enabled");
     }
 }
-
-/*
-    .then(function(enabled){
-    console.log("Auto-start with OS is enabled");
-    if(enabled) return;
-    return appLauncher.enable();
-}).then(function(err){
-    console.log("Auto-start ERR:  " + err);
-});
-
-//appLauncher.disable();
-
 
 /* TOASTER * /
 let msg = {
@@ -181,8 +201,6 @@ let secondsPassed = 0;
 let shortBreaksElapsed = 0;
 
 let longBreak = null; /* Variable for the longBreak hook */
-/* PS: Spent two days on http://stackoverflow.com/questions/3015319/settimeout-cleartimeout-problems; 8-10 Aug 2016 */
-
 
 function GC() {
 
@@ -246,7 +264,7 @@ function initAppSetDefaults() {
         localStorage.shortBreakDuration =  2 * seconds;
     }
 
-    /* Set config persistent [DEFAULTS] */
+    /* Set config persistent if no value is set [DEFAULTS] */
     for (const [key, value] of Object.entries(defaultSettings)) {
         if(!localStorage[key]) {
             localStorage[key] = value;
@@ -260,20 +278,11 @@ initAppSetDefaults();
 
 
 function naughtyfication() {
-
-    let notiFire = new Notification('Hello!', {
-        body: "I'd love to hear from you. Requests, kudos, bugs, rants et al."
-    });
-
-    notiFire.onclick = function () {
-        console.log('Notification clicked :o oooooo!');
-    };
-
-    shell.openExternal('mailto:shout@think.dj?subject=RE(freshie): ');
+    let o = shell.openExternal('mailto:shout@think.dj?subject=RE(freshie): ');
 }
 
 
-function OpenURL(url) {
+function openURL(url) {
     return shell.openExternal(url);
     /* https://github.com/electron/electron/issues/1344
     I ended up using child_process.execSync('start http://example.com') on Win32 and child_process.execSync('open http://example.com') on Darwin so the browser actually pops up and gets focus.
@@ -355,26 +364,15 @@ function setStats() {
 }
 
 function reverse(s){ return s.split("").reverse().join("") }
-if (typeof String.prototype.trim != 'function') {
-    String.prototype.trim = function () {
-        return this.replace(/^\s+/, '').replace(/\s+$/, '');
-    };
-}
 
 /* License - deprecated/discontinued */
 const licenseLength = 16;
 function validateLicense(email,serial) {
     let encEmail = reverse(btoa((email.trim())+"think.dj")).substring(0, licenseLength);
-    console.log(encEmail);
-    if (serial===encEmail) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return serial === encEmail;
 }
 function checkLicense() {
-    if( (licenseLength==localStorage.uLicense.length) && (validateLicense(localStorage.uEmail, localStorage.uLicense)) ) {
+    if( (licenseLength===localStorage.uLicense.length) && (validateLicense(localStorage.uEmail, localStorage.uLicense)) ) {
         console.log("App is Registered");
         return true;
     }
@@ -389,12 +387,13 @@ function checkLicense() {
 /* First time? */
 if(!parseInt(localStorage.timesOpened)) {
     console.log("Looks like you are a first timer :)");
-    osAutorunAtStartup(1);
+    autorunOSstart(1);
 }
 else {
-    /* If Nnot a Refreshie `noob`, honor his choice of app start, we must */
-    if(1===parseInt(localStorage.opt_startMinimized))
-        minimizeWindow();
+    /* If not a Refreshie `noob`, honor his choice of app start, we must */
+    (1===parseInt(localStorage.opt_startMinimized)) ?
+        minimizeWindow():
+        () => {};
 }
 localStorage.timesOpened = parseInt(localStorage.timesOpened)+1;
 
@@ -405,18 +404,16 @@ localStorage.timesOpened = parseInt(localStorage.timesOpened)+1;
 * 10 MB per storage area in Internet Explorer;
 */
 function fract(n){ return Number(String(n).split('.')[1] || 0); }
-function localStore()
-{
+function localStoreTest() {
     localStorage.uuid = fract(Math.random());
     console.log('localStorage=');console.log(localStorage);
 }
 
 /*
 * NOTE: BreakScreenDuration must always be lesser than BreakInterval
-*/
-/*
 *
 *  NEW LOGIC
+* ==========================================
 *  Implemented on 09-Jul-2016 @ 8:00pm
 *  Has one core timer that is for LongBreak
 *  Mode(%) of shortBreak is checked in the timer to display short breaks
@@ -454,16 +451,11 @@ function reincarnate(id) {
     $($selector).off();
 
     let elem = document.getElementById($selector);
-    console.log("$selector orig$",$(elem) );
     if(elem) elem.replaceWith(elem.cloneNode(true));
-    console.log("$selector cloneNode",$(elem) );
-
 
     if(($($selector).length)) {
-        console.log("$selector off",$($selector) );
         $($selector).remove();
     }
-    console.log("$selector remove",$($selector) );
 
     if(!($($selector).length))
         $selector = $('<span id="'+id+'">_:_</span>').appendTo( $( $selector + 'Injectable' ) );
@@ -473,26 +465,32 @@ function reincarnate(id) {
 }
 
 /* Define state and text */
-let $state = 1;
-let $stateText = [ "Paused", "Running" ];
+let $state = statusIs.RUNNING;
+let $stateText = [ "Reset", "Pause" ]; /* "Paused", "Running" */
+
+$("#button-action").text($stateText[statusIs.RUNNING]);
 
 function timer_set_state_ui(state = 1) {
     $("#button-action").text($stateText[state]);
     console.log("Set UI to "+$stateText[state]);
     /* Yellow Border for timer */
     let el = $(".dataBlock .time");
-    switch (String($stateText[state]).toLowerCase()) {
-        case "running":
+    switch (state) {
+        case statusIs.RUNNING:
             el.removeClass("paused");
             break;
-        case "paused":
+        case statusIs.PAUSED:
         default:
             el.addClass("paused");
             break;
     }
 }
 
-function timers(action="toggle") { /* action: 'start' | 'stop' | 'restart' | 'toggle' */
+let startAt = Date.now();
+let pausedAt = 0;
+let pausedFor = 0;
+
+function timers(action = "toggle") { /* action: 'start' | 'stop' | 'restart' | 'toggle' */
     let prefix = 'timer-';
     switch(action) {
         case "restart":
@@ -505,25 +503,24 @@ function timers(action="toggle") { /* action: 'start' | 'stop' | 'restart' | 'to
         case "toggle":
             $state = 1 - $state;
             timer_set_state_ui($state);
-            if($state) {
-                /* From Paused TO RESUME */
-                console.log('Restarting time');
-
-                // now = Date.now();
-                let timediff = Date.now() - now;
-
-                nextLongBreakAt = new Date(now + longBreakEvery + timediff);
-                setLongBreakHTML(nextLongBreakAt);
-
-                nextShortBreakAt = new Date(now + shortBreakEvery + timediff);
-                setShortBreakHTML(nextShortBreakAt);
-
+            if(!$state) {
+                /* From Running TO Paused */
+                pausedAt = Date.now();
+                pausedFor = 0;
+                $('#nextLongBreakIn').countdown("pause");
+                $("#nextShortBreakIn").countdown("pause");
             }
             else {
-                /* From Running TO Paused */
+                /* From Paused TO RESUME */
+                console.log('Restarting time');
+                pausedFor = Math.ceil( (Date.now() - pausedAt) / 1000 );
+                pausedAt = 0;
+                console.log("Paused for ", pausedFor);
+
+                /* OVERRIDE till FIX */
+                timers("restart");
             }
-            $('#nextLongBreakIn').countdown("toggle");
-            $("#nextShortBreakIn").countdown("toggle");
+
             /* Ask mainProcess to change tray icon */
             ipcRenderer.send('synchronous-messages', prefix+action);
             break;
@@ -543,7 +540,7 @@ function updateCountdownDOM(element,mins,secs) {
 }
 
 
-function setShortBreakHTML(nextShortBreakAt, last=0) {
+function setupShortBreak( nextShortBreakAt, finalShortBreak = false ) {
 
     nextShortBreakTimeString =
         nextShortBreakAt.toLocaleTimeString()
@@ -558,7 +555,7 @@ function setShortBreakHTML(nextShortBreakAt, last=0) {
     nextShortBreakInSelector.countdown(nextShortBreakAt, function (event) {
         let mm = parseInt(event.strftime('%M'));
         let ss = parseInt(event.strftime('%S'));
-        updateCountdownDOM(nextShortBreakInSelector,mm,ss);
+        updateCountdownDOM(nextShortBreakInSelector, mm, ss);
     })
     .on('finish.countdown', function(event) {
         nextShortBreakInSelector.countdown('remove');
@@ -566,25 +563,22 @@ function setShortBreakHTML(nextShortBreakAt, last=0) {
     });
 
     /* Decide color */
-    if(last) {
-        /* Next = Long Break */
+    if(finalShortBreak) {
         /* If it's the last short break, focus long break with block highlight */
         nextLongBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
         nextShortBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
     }
     else {
-        /* Next = Short break */
+        /* Next = a short break */
         nextLongBreakInSelector.closest(".time").css('border-color', 'var(--color-status-default)');
         nextShortBreakInSelector.closest(".time").css('border-color', 'var(--color-status-good)').toggleClass("active");
     }
 
 }
 
-let now = Date.now();
-
-function setLongBreakHTML(nextLongBreakAt) {
+function setupLongBreak(nextLongBreakAt) {
     let longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
-    let nextLongBreakTimeString = new Date(now + longBreakEvery);
+    let nextLongBreakTimeString = new Date(startAt + longBreakEvery);
     nextLongBreakTimeString = nextLongBreakTimeString.toLocaleTimeString().replace(/:\d+ /, ' ').toLowerCase(); /* replace takes off seconds */
     $("#nextLongBreakAt").html(nextLongBreakTimeString);
 }
@@ -605,12 +599,12 @@ function initMainTimer() {
     longBreakEvery = parseInt(localStorage.longBreakInterval) || (60 * minutes);
     shortBreakEvery = parseInt(localStorage.shortBreakInterval) || (20 * minutes);
 
-    now = Date.now();
-    nextLongBreakAt = new Date(now + longBreakEvery);
-    setLongBreakHTML(nextLongBreakAt);
+    startAt = Date.now();
+    nextLongBreakAt = new Date(startAt + longBreakEvery);
+    setupLongBreak(nextLongBreakAt);
 
-    nextShortBreakAt = new Date(now + shortBreakEvery);
-    setShortBreakHTML(nextShortBreakAt);
+    nextShortBreakAt = new Date(startAt + shortBreakEvery);
+    setupShortBreak(nextShortBreakAt);
 
     /* Calculate number of short breaks */
     noOfShortBreaks = (Math.floor(longBreakEvery / shortBreakEvery)) - 1;
@@ -637,7 +631,7 @@ function initMainTimer() {
 
         console.log(secondsPassed); // log every second passed?
 
-        /* Find multiples of ShortBreak */
+        /* Find multiples of short breaks */
         if ( ( (secondsPassed * 1000) % (shortBreakEvery) ) === 0 ) {
             /* check with `localStorage.shortBreakInterval` as it might get updated from Settings in realtime => REMOVED for performance reasons */
 
@@ -649,16 +643,17 @@ function initMainTimer() {
             }
             else {
                 if (shortBreaksElapsed === noOfShortBreaks) {
-                    /* Last shortbreak for an hour */
+                    /* Last short break for an hour */
                     /* So, next short break is after the long break */
-                    nextShortBreakAt = new Date(now + (shortBreakEvery * 2));
+                    nextShortBreakAt = new Date(startAt + (shortBreakEvery * 2));
                     /* Make UI update : It's the last */
-                    setShortBreakHTML(nextShortBreakAt, 1);
+                    setupShortBreak(nextShortBreakAt, true);
                 }
                 else {
-                    nextShortBreakAt = new Date(now + shortBreakEvery);
-                    /* Make UI update : NEXT Short Break */
-                    setShortBreakHTML(nextShortBreakAt);
+                    /* More short breaks pending */
+                    nextShortBreakAt = new Date(startAt + shortBreakEvery);
+                    /* Make UI update for next Short Break */
+                    setupShortBreak(nextShortBreakAt);
                 }
 
                 localStorage.breakType = "short";
@@ -999,7 +994,7 @@ $(document).ready(function() {
 
         switch($what) {
             case "opt_autoStart":
-                osAutorunAtStartup(parseInt(localStorage[$what]));
+                autorunOSstart(parseInt(localStorage[$what]));
                 break;
         }
 
@@ -1049,7 +1044,7 @@ $(document).ready(function() {
     let $fallbackUpdates = [
         {
             "title":"Refreshie v1.0",
-            "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='OpenURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
+            "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='openURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
         }
     ];
 

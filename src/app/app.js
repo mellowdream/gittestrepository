@@ -119,38 +119,6 @@ let __state = {
     status: statusIs.RUNNING
 };
 
-/* * /
-let taskRunnerDaemon = null;
-let taskRunnerCreate = () => { taskRunnerDaemon = setInterval(() => countDown(),1000); }
-let taskRunnerToggle = () => { taskRunnerDaemon ? taskRunnerDestroy() : taskRunnerCreate(); }
-let taskRunnerDestroy = () => { clearInterval(taskRunnerDaemon); taskRunnerDaemon = null };
-let taskRunnerRecreate = () => { taskRunnerDestroy(); taskRunnerCreate(); };
-let taskRunnerAction = (action) => {
-    switch (action.toLowerCase()) {
-        case 'resume':
-        case 'start':
-            taskRunnerRecreate();
-            break;
-        case 'stop':
-        case 'pause':
-            taskRunnerDestroy();
-            break;
-        default:
-        case 'toggle':
-            taskRunnerToggle();
-    }
-}
-taskRunnerAction('start');
-
-let secondsElapsed = 0;
-
-function countDown() {
-    if(__state.status===statusIs.PAUSED) return;
-    secondsElapsed += 1;
-    console.log("count", secondsElapsed);
-}
-/* */
-
 
 function autorunOSstart(launch) {
     let AutoLaunch = require('auto-launch');
@@ -226,6 +194,11 @@ function GC() {
 
 }
 
+const isset = (variable) => {
+    try { return typeof eval(variable) !== 'undefined'; }
+    catch (err) { return false; }
+};
+
 function initAppSetDefaults() {
 
     let defaultSettings = {
@@ -256,9 +229,9 @@ function initAppSetDefaults() {
     }
 
     /* DEV Vars*/
-    let devModeForTesting = false; /* Set true for clearing cache / Debug Mode */
+    let devModeForTesting = true; /* Set true for clearing cache / Debug Mode */
     if(devModeForTesting) {
-        localStorage.clear();
+        //localStorage.clear();
         localStorage.longBreakInterval  = 60 * seconds;
         localStorage.shortBreakInterval = 20 * seconds;
         localStorage.shortBreakDuration =  2 * seconds;
@@ -266,7 +239,7 @@ function initAppSetDefaults() {
 
     /* Set config persistent if no value is set [DEFAULTS] */
     for (const [key, value] of Object.entries(defaultSettings)) {
-        if(!localStorage[key]) {
+        if(!localStorage[key] && !isset(localStorage[key])) {
             localStorage[key] = value;
         }
     }
@@ -466,7 +439,7 @@ function reincarnate(id) {
 
 /* Define state and text */
 let $state = statusIs.RUNNING;
-let $stateText = [ "Reset", "Pause" ]; /* "Paused", "Running" */
+let $stateText = [ "Reset", "Stop" ]; /* "Paused", "Running" */
 
 $("#button-action").text($stateText[statusIs.RUNNING]);
 
@@ -507,8 +480,6 @@ function timers(action = "toggle") { /* action: 'start' | 'stop' | 'restart' | '
                 /* From Running TO Paused */
                 pausedAt = Date.now();
                 pausedFor = 0;
-                $('#nextLongBreakIn').countdown("pause");
-                $("#nextShortBreakIn").countdown("pause");
             }
             else {
                 /* From Paused TO RESUME */
@@ -517,10 +488,12 @@ function timers(action = "toggle") { /* action: 'start' | 'stop' | 'restart' | '
                 pausedAt = 0;
                 console.log("Paused for ", pausedFor);
 
-                /* OVERRIDE till FIX */
-                timers("restart");
+                /* OVERRIDE till FIX @todo */
+                return timers("restart");
             }
 
+            $('#nextLongBreakIn').countdown("toggle");
+            $("#nextShortBreakIn").countdown("toggle");
             /* Ask mainProcess to change tray icon */
             ipcRenderer.send('synchronous-messages', prefix+action);
             break;
@@ -629,7 +602,7 @@ function initMainTimer() {
 
         secondsPassed = secondsPassed + 1;
 
-        console.log(secondsPassed); // log every second passed?
+        // console.log(secondsPassed); // log every second passed?
 
         /* Find multiples of short breaks */
         if ( ( (secondsPassed * 1000) % (shortBreakEvery) ) === 0 ) {
@@ -642,18 +615,19 @@ function initMainTimer() {
                 console.log("No more short breaks for this session " + uniqueID);
             }
             else {
+                let now = Date.now();
                 if (shortBreaksElapsed === noOfShortBreaks) {
                     /* Last short break for an hour */
                     /* So, next short break is after the long break */
-                    nextShortBreakAt = new Date(startAt + (shortBreakEvery * 2));
+                    nextShortBreakAt = new Date(now + (shortBreakEvery * 2));
                     /* Make UI update : It's the last */
-                    setupShortBreak(nextShortBreakAt, true);
+                    setTimeout( () => { setupShortBreak(nextShortBreakAt, true); }, localStorage.shortBreakDuration);
                 }
                 else {
                     /* More short breaks pending */
-                    nextShortBreakAt = new Date(startAt + shortBreakEvery);
+                    nextShortBreakAt = new Date(now + shortBreakEvery);
                     /* Make UI update for next Short Break */
-                    setupShortBreak(nextShortBreakAt);
+                    setTimeout( () => { setupShortBreak(nextShortBreakAt, false); }, localStorage.shortBreakDuration);
                 }
 
                 localStorage.breakType = "short";
@@ -703,12 +677,12 @@ let breakCleanup = () => {
     if(parseInt(localStorage.breakOngoing)) {
         localStorage.breakOngoing = 0;
         if("long" === localStorage.breakType) {
-            /* Restart Long Break */
-            restart_longBreak();
             /* Lock PC? (WINDOWS ONLY) */
             if (parseInt(localStorage.opt_lockPC)) {
                 ipcRenderer.send('synchronous-messages', 'lockPC');
             }
+            /* Restart Long Break */
+            restart_longBreak();
         }
     }
     return true;
@@ -980,8 +954,8 @@ $(document).ready(function() {
     let $opts = ["opt_autoStart","opt_lockPC","opt_startMinimized","opt_sounds","opt_splash","opt_alwaysOnTop","opt_allowSkips"];
     $.each( $opts, function( key, value ) {
         let $selector = $("#"+value);
-        if(0==$selector.length) return 0;
-        if(1==parseInt(localStorage[value])) $selector.iCheck('check');
+        if(0===$selector.length) return 0;
+        if(1===parseInt(localStorage[value])) $selector.iCheck('check');
         else $selector.iCheck('uncheck');
     });
 

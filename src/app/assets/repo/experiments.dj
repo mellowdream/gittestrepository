@@ -173,3 +173,52 @@ function handleError (e) {
 }
 
 /* */
+
+
+
+
+
+
+// ================================== NEW LOGIC
+// ==== YET TO REWRITE
+
+
+/* * /
+let taskRunnerDaemon = null;
+let taskRunnerCreate = () => { taskRunnerDaemon = setInterval(() => countDown(),1000); }
+let taskRunnerToggle = () => { taskRunnerDaemon ? taskRunnerDestroy() : taskRunnerCreate(); }
+let taskRunnerDestroy = () => { clearInterval(taskRunnerDaemon); taskRunnerDaemon = null };
+let taskRunnerRecreate = () => { taskRunnerDestroy(); taskRunnerCreate(); };
+let taskRunnerAction = (action) => {
+    switch (action.toLowerCase()) {
+        case 'resume':
+        case 'start':
+            taskRunnerRecreate();
+            break;
+        case 'stop':
+        case 'pause':
+            taskRunnerDestroy();
+            break;
+        default:
+        case 'toggle':
+            taskRunnerToggle();
+    }
+}
+taskRunnerAction('start');
+
+let secondsElapsed = 0;
+
+function countDown() {
+    if(__state.status===statusIs.PAUSED) return;
+    secondsElapsed += 1;
+    console.log("count", secondsElapsed);
+}
+/* */
+
+
+
+
+
+NEW LOGIC : https://stackoverflow.com/a/3969760/849829
+
+

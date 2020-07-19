@@ -1,5 +1,5 @@
 const electron = require('electron');
-const thisBreakWindow = electron.remote.getCurrentWindow();
+const thisWindow = electron.remote.getCurrentWindow();
 const config = require('./../config.json');
 
 /* Moving auto-closing logic from 'ui.js' to here on 07 Aug 16 11:40 pm */
@@ -7,7 +7,7 @@ const config = require('./../config.json');
 // const appName = remote.app.getName();
 // const ipcRendererProc = electron.ipcRenderer;
 
-thisBreakWindow.center();
+thisWindow.center();
 
 let isDemoBreak = () => ["demo"].includes(localStorage.breakType);
 
@@ -18,7 +18,7 @@ function closeThis() {
 
 function breakCleanup() {
     $("#ttl").remove();
-    thisBreakWindow.close();
+    thisWindow.close();
 }
 
 

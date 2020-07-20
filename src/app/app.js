@@ -229,7 +229,7 @@ function initAppSetDefaults() {
     }
 
     /* DEV Vars*/
-    let devModeForTesting = true; /* Set true for clearing cache / Debug Mode */
+    let devModeForTesting = false; /* Set true for clearing cache / Debug Mode */
     if(devModeForTesting) {
         //localStorage.clear();
         localStorage.longBreakInterval  = 60 * seconds;

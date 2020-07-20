@@ -418,94 +418,70 @@ function handleSquirrelEvent() {
     app.quit();
   });*/
 
-  const spawn = function(command, args) {
-    let spawnedProcess;
-    try {
-      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
-    } catch (error) { }
-    return spawnedProcess;
-  };
-
-  const spawnUpdate = function(args) {
-    return spawn(updateDotExe, args);
-  };
-
   const squirrelEvent = process.argv[1];
   switch (squirrelEvent) {
     case '--squirrel-install':
     case '--squirrel-updated':
       // Optionally do things such as:
-      // - Add your .exe to the PATH
-      // - Write to the registry for things like file associations and
-      //  explorer context menus
-      // Install desktop and start menu shortcuts
-      //spawnUpdate(['--createShortcut', exeName]);
-      //console.log("--squirrel-install or update. Shortcut + Quit");
-      //setTimeout(() => app.quit(), 500);
-      //app.quit();
-      squirrelInstallTasks()
+      // Add your .exe to the PATH | Write to the registry for things like file associations and explorer context menus
+      squirrelInstallTasks();
       return true;
 
     case '--squirrel-uninstall':
-      // Undo anything you did in the --squirrel-install and
-      // --squirrel-updated handlers
+      // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
       // Remove desktop and start menu shortcuts
-      //spawnUpdate(['--removeShortcut', exeName]);
-      //console.log("--squirrel-uninstall. Remove Shortcut + Quit");
-      //setTimeout(() => app.quit(), 500);
-      //app.quit();
       squirrelUninstallTasks();
       return true;
 
     case '--squirrel-obsolete':
-      // This is called on the outgoing version of your app before
-      // we update to the new version - it's the opposite of
-      // --squirrel-updated
+      // This is called on the outgoing version of your app before we update to the new version
+      // It's the opposite of --squirrel-updated
       console.log("--squirrel-obsolete. Quit");
       app.quit();
       return true;
   }
 }
 
-function squirrelInstallTasks() {
-  let childProcess = require('child_process');
-  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-  let target = path.basename(process.execPath);
-  let child = childProcess.spawn(updateExe, ["--shortcut-locations=Desktop,StartMenu --createShortcut", target], { detached: true });
-  child.on('close', function(code) {
-    app.quit();
-  });
 
-  /*
-  let target = path.basename(process.execPath);
-  let updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-  let createShortcut = updateDotExe + ' --createShortcut=' + target + ' --shortcut-locations=Desktop,StartMenu' ;
-  console.log (createShortcut);
-  exec(createShortcut);
-  app.quit();
-  return true;*/
+
+function squirrelInstallerTasks(action='install') {
+
+  const updateExe = "Update.exe";
+
+  const ChildProcess = require('child_process');
+  const path = require('path');
+
+  const appFolder = path.resolve(process.execPath, '..');
+  const rootFolder = path.resolve(appFolder, '..');
+  const updateExePath = path.resolve(path.join(rootFolder, updateExe));
+  const target = path.basename(process.execPath);
+
+  const spawn = function(command, args) {
+    let spawnedProcess, error;
+    try {
+      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
+    } catch (error) {}
+    return spawnedProcess;
+  };
+
+  const spawnUpdate = function(args) {
+    return spawn(updateExePath, args);
+  };
+
+  switch(action) {
+    case "install":
+      // let child = childProcess.spawn(updateExePath, ["--shortcut-locations=Desktop,StartMenu --createShortcut", target], { detached: true });
+      // child.on('close', function(code) { app.quit(); });
+      spawnUpdate(['--createShortcut', target]);
+      break;
+    case "uninstall":
+      spawnUpdate(['--removeShortcut', target]);
+      break;
+  }
+
+  setTimeout(() => { app.quit()}, 1000);
+
 }
-
-function squirrelUninstallTasks() {
-  // Undo anything you did in the --squirrel-install and
-  // --squirrel-updated handlers
-  let childProcess = require('child_process');
-  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-  let target = path.basename(process.execPath);
-  let child = childProcess.spawn(updateExe, ["--shortcut-locations=Desktop,StartMenu --createShortcut", target], { detached: true });
-  child.on('close', function(code) {
-    app.quit();
-  });
-/*
-  let target = path.basename(process.execPath);
-  let updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
-  let createShortcut = updateDotExe + ' --removeShortcut=' + target ;
-  console.log (createShortcut);
-  exec(createShortcut);
-  app.quit();
-  return true;*/
-}
-
 
 /* =============== / INSTALL SEQUENCE =============== */
 

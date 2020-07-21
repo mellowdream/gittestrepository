@@ -1,27 +1,76 @@
 {
-  "name": "Refreshie",
+  "name": "refreshie",
   "version": "2.1.0",
   "description": "Refreshie: Taking back control",
   "author": "thinkdj",
   "homepage": "https://think.dj/refreshie/",
   "license": "Private",
   "main": "src/main.js",
+  "keywords": [
+    "refreshie",
+    "fatugue buster",
+    "desktop app"
+  ],
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "serve": "electron .",
     "pack": "electron-builder --dir",
+
     "dist": "electron-builder",
-    "postinstall": "electron-builder install-app-deps",
-    "build-win32": "electron-builder --windows nsis:ia32",
-    "build-lin": "electron-builder --linux deb tar.xz"
+    "dist-lin": "build --linux snap",
+
+    "build": "run-os",
+    "test": "echo success",
+    "release": "electron-builder build --publish always",
+
+    "build:win": "electron-builder --win",
+    "build:win32": "electron-builder --windows nsis:ia32",
+    "build:lin": "electron-builder --linux deb tar.xz",
+    "build:darwin": "electron-builder --mac",
+
+    "postinstall": "electron-builder install-app-deps"
+
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/thinkdj/refreshie.ng"
   },
   "private": true,
+  "build": {
+    "productName": "Refreshie",
+    "appId": "dj.think.refreshie",
+    "category": "com.app.refreshie",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "squirrel",
+      "icon": "app.ico"
+    },
+    "nsis": {
+      "createDesktopShortcut": "always",
+      "license": "LICENSE"
+    }
+  },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.52",
     "@electron-forge/maker-deb": "^6.0.0-beta.52",

@@ -6,7 +6,6 @@
 # builds
 /out
 /dist
-/build
 /builds
 
 # laravel

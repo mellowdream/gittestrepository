@@ -1,5 +1,4 @@
 #! /bin/bash
-
 # SRC: https://qvault.io/2019/08/08/automatic-cross-platform-deployments-with-electron-on-a-ci-server-travis/
 
 if [ "$TRAVIS_OS_NAME" == osx ]; then

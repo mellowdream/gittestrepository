@@ -79,27 +79,41 @@ script:
       yarn release;
     fi
 
+# DEPLOY using script
 # only deploy to github on a merge to the prod branch
-deploy:
-  provider: script
-  script: bash deploy.travis.sh
-  skip_cleanup: true
-  on:
-    branch: master
+#deploy:
+#  provider: script
+#  script: bash deploy.travis.sh
+#  skip_cleanup: true
+#  on:
+#    branch: master
+
 
 # ALT DEPLOY
 # Deploy to Github Releases using `releases` provider
-#deploy:
-#  provider: releases
-#  skip_cleanup: true
-#  api_key: $GH_TOKEN
-#  file_glob: true
-#  file:
-#    - "dist/*-x86_64.AppImage"
-#    - "dist/*_amd64.deb"
-#    - "dist/*.dmg"
-#  on:
-#    tags: true
+before_deploy:
+  # Set up git user name and tag this commit
+  - git config --local user.name "thinkdj"
+  - git config --local user.email "think.dj@gmail.com"
+  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  - git tag $TRAVIS_TAG
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key: $GH_TOKEN
+  draft: false
+  file_glob: true
+  file:
+    - "dist/*.exe"
+    - "dist/*.zip"
+    - "dist/*.7z"
+    - "dist/*.AppImage"
+    - "dist/*.deb"
+    - "dist/*.dmg"
+    - "dist/*.blockmap"
+    - "dist/*.yml"
+  on:
+    tags: true
 
 
 before_cache:

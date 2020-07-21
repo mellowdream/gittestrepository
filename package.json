@@ -53,12 +53,13 @@
           "path": "/Applications"
         }
       ],
-      "artifactName": "refreshie-${version}.${ext}"
+      "artifactName": "Refreshie-Installer-${version}.${ext}"
     },
     "linux": {
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "7z"
       ],
       "category": "Utility"
     },
@@ -67,20 +68,20 @@
       "icon": "app.ico",
       "target": [
         {
+          "target": "portable"
+        },
+        {
           "target": "nsis",
           "arch": [
             "ia32",
             "x64"
           ]
-        },
-        {
-          "target": "portable"
         }
       ]
     },
     "nsis": {
-      "artifactName": "refreshie-${version}.${ext}",
-      "license": "LICENSE",
+      "artifactName": "Refreshie-Installer-${version}.${ext}",
+      "license": "LICENSE.md",
       "runAfterFinish": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
@@ -91,14 +92,14 @@
       "allowToChangeInstallationDirectory": false
     },
     "portable": {
-      "artifactName": "refreshie.exe"
+      "artifactName": "Refreshie-standalone.exe"
     },
     "appx": {
       "applicationId": "dj.think.refreshie",
       "backgroundColor": "#ee5a24",
       "identityName": "dj.think.refreshie",
       "publisherDisplayName": "thinkdj",
-      "artifactName": "refreshie-${version}.${ext}"
+      "artifactName": "Refreshie-Installer-${version}.${ext}"
     },
     "publish": {
       "provider": "github",
@@ -127,7 +128,7 @@
         "asar": true,
         "prune": true,
         "dir": "app",
-        "out": "./out/",
+        "out": "./dist/",
         "overwrite": false,
         "icon": "./src/app/assets/ico/tray.ico"
       },
@@ -141,7 +142,7 @@
             "setupExe": "Refreshie_Installer.exe",
             "setupIcon": "./src/app/assets/ico/tray.ico",
             "loadingGif": "./src/app/assets/images/install/install.splash.monk.png",
-            "dest": "./out/",
+            "dest": "./dist/",
             "exe": "Refreshie.exe",
             "icon": "./src/app/assets/ico/tray.ico",
             "_iconUrl": "https://",

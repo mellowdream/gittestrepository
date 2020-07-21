@@ -2,13 +2,13 @@
   "name": "refreshie",
   "productName": "Refreshie",
   "version": "2.1.0",
-  "description": "Refreshie: Taking back control",
+  "description": "Refreshie: Fatigue-buster desktop app for taking back control",
   "homepage": "https://think.dj/refreshie/",
-  "license": "Private",
+  "license": "Attribution-NonCommercial-NoDerivatives 4.0 International",
   "main": "src/main.js",
   "author": {
-    "name" : "thinkdj",
-    "email" : "think.dj@gmail.com",
+    "name": "thinkdj",
+    "email": "think.dj@gmail.com",
     "url": "https://think.dj/"
   },
   "keywords": [
@@ -40,6 +40,8 @@
   "build": {
     "productName": "Refreshie",
     "appId": "dj.think.refreshie",
+    "output": "dist",
+    "removePackageScripts": true,
     "dmg": {
       "contents": [
         {
@@ -53,7 +55,11 @@
           "path": "/Applications"
         }
       ],
-      "artifactName": "Refreshie-Installer-${version}.${ext}"
+      "artifactName": "Refreshie-Installer-${version}.${ext}",
+      "title": "${productName} ${version}",
+      "background": "./build/background.png",
+      "icon": "./build/icon.png",
+      "backgroundColor": "#FFFFFF"
     },
     "linux": {
       "target": [
@@ -61,6 +67,8 @@
         "deb",
         "7z"
       ],
+      "executableName": "Refreshie",
+      "icon": "./build/icon.png",
       "category": "Utility"
     },
     "win": {
@@ -81,18 +89,23 @@
     },
     "nsis": {
       "artifactName": "Refreshie-Installer-${version}.${ext}",
+      "shortcutName": "Refreshie",
       "license": "LICENSE.md",
       "runAfterFinish": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "menuCategory": true,
+      "menuCategory": false,
       "oneClick": false,
       "perMachine": true,
       "allowElevation": true,
-      "allowToChangeInstallationDirectory": false
+      "allowToChangeInstallationDirectory": false,
+      "installerHeader": "./build/nsisInstallerHeader.bmp",
+      "installerSidebar": "./build/nsisInstallerSidebar.bmp",
+      "uninstallerSidebar": "./build/nsisInstallerSidebar.bmp",
+      "uninstallDisplayName": "${productName}"
     },
     "portable": {
-      "artifactName": "Refreshie-standalone.exe"
+      "artifactName": "Refreshie-Standalone.exe"
     },
     "appx": {
       "applicationId": "dj.think.refreshie",

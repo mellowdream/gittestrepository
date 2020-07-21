@@ -75,6 +75,7 @@ script:
       npm install;
       npm run release;
     else
+      yarn install;
       yarn release;
     fi
 

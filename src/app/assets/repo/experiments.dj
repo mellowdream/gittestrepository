@@ -1,5 +1,30 @@
 
 
+
+
+
+
+
+
+
+MAKE ICONS FOR ELECTRON BUILDS
+https://iconverticons.com/online/
+https://makeappicon.com/
+
+Use https://www.electron.build/
+
+Build using
+TRAVIS OR
+https://ci.appveyor.com/projects
+
+
+
+
+
+
+
+
+
 /* PS: Spent two days on http://stackoverflow.com/questions/3015319/settimeout-cleartimeout-problems; 8-10 Aug 2016 */
 
 

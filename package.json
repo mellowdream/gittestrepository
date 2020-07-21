@@ -41,7 +41,6 @@
   "build": {
     "productName": "Refreshie",
     "appId": "dj.think.refreshie",
-    "category": "com.app.refreshie",
     "dmg": {
       "contents": [
         {

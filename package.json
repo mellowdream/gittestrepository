@@ -2,10 +2,14 @@
   "name": "refreshie",
   "version": "2.1.0",
   "description": "Refreshie: Taking back control",
-  "author": "thinkdj",
   "homepage": "https://think.dj/refreshie/",
   "license": "Private",
   "main": "src/main.js",
+  "author": {
+    "name" : "thinkdj",
+    "email" : "think.dj@gmail.com",
+    "url": "https://think.dj/"
+  },
   "keywords": [
     "refreshie",
     "fatugue buster",
@@ -57,7 +61,7 @@
       ]
     },
     "win": {
-      "target": "squirrel",
+      "target": "nsis",
       "icon": "app.ico"
     },
     "nsis": {

@@ -27,7 +27,7 @@ jobs:
     #  node_js: "12"
 
     - os: linux
-      dist: trusty
+      dist: xenial
       sudo: required
       services: docker
       language: generic

@@ -1,5 +1,6 @@
 {
   "name": "refreshie",
+  "productName": "Refreshie",
   "version": "2.1.0",
   "description": "Refreshie: Taking back control",
   "homepage": "https://think.dj/refreshie/",
@@ -22,7 +23,6 @@
     "serve": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "dist-lin": "build --linux snap",
     "build": "run-os",
     "test": "echo success",
     "release": "electron-builder build --publish always",
@@ -63,11 +63,13 @@
       "category": "Utility"
     },
     "win": {
+      "publisherName": "thinkdj",
       "icon": "app.ico",
       "target": [
         {
           "target": "nsis",
           "arch": [
+            "ia32",
             "x64"
           ]
         },
@@ -77,10 +79,16 @@
       ]
     },
     "nsis": {
-      "createDesktopShortcut": "always",
+      "artifactName": "refreshie-${version}.${ext}",
       "license": "LICENSE",
       "runAfterFinish": true,
-      "artifactName": "refreshie-${version}.${ext}"
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "menuCategory": true,
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": false
     },
     "portable": {
       "artifactName": "refreshie.exe"
@@ -91,6 +99,10 @@
       "identityName": "dj.think.refreshie",
       "publisherDisplayName": "thinkdj",
       "artifactName": "refreshie-${version}.${ext}"
+    },
+    "publish": {
+      "provider": "github",
+      "releaseType": "release"
     }
   },
   "devDependencies": {

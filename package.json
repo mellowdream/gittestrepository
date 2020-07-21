@@ -40,8 +40,10 @@
   "build": {
     "productName": "Refreshie",
     "appId": "dj.think.refreshie",
-    "output": "dist",
-    "removePackageScripts": true,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
     "dmg": {
       "contents": [
         {
@@ -112,8 +114,10 @@
       "backgroundColor": "#ee5a24",
       "identityName": "dj.think.refreshie",
       "publisherDisplayName": "thinkdj",
-      "artifactName": "Refreshie-Installer-${version}.${ext}"
+      "artifactName": "Refreshie-Installer-appx-${version}.${ext}"
     },
+    "removePackageScripts": true,
+    "compression": "maximum",
     "publish": {
       "provider": "github",
       "releaseType": "release"

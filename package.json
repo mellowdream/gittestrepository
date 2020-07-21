@@ -52,22 +52,52 @@
           "type": "link",
           "path": "/Applications"
         }
-      ]
+      ],
+      "artifactName": "refreshie-${version}.${ext}"
     },
     "linux": {
       "target": [
         "AppImage",
         "deb"
-      ]
+      ],
+      "category": "Utility"
     },
     "win": {
-      "target": "nsis",
-      "icon": "app.ico"
+      "icon": "app.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable"
+        }
+      ]
     },
     "nsis": {
       "createDesktopShortcut": "always",
-      "license": "LICENSE"
-    }
+      "license": "LICENSE",
+      "runAfterFinish": true,
+      "artifactName": "refreshie-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "refreshie.exe"
+    },
+    "appx": {
+      "applicationId": "dj.think.refreshie",
+      "backgroundColor": "#ee5a24",
+      "identityName": "dj.think.refreshie",
+      "publisherDisplayName": "thinkdj",
+      "artifactName": "refreshie-${version}.${ext}"
+    },
+    "__publish": [
+      {
+        "provider": "github",
+        "releaseType": "release"
+      }
+    ]
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.52",

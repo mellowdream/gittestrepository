@@ -8,9 +8,9 @@ language: node_js
 node_js:
   - '12'
 
-# Run two parallel builds: one on mac and one on linux
-# the linux build will use wine to be able to build windows and linux apps
-matrix:
+# Run two parallel builds: Mac and Linux
+# Linux build will use wine & build windows and linux apps
+jobs:
   include:
     - os: osx
       osx_image: xcode10.2
@@ -85,6 +85,21 @@ deploy:
   skip_cleanup: true
   on:
     branch: prod
+
+# ALT DEPLOY
+# Deploy to Github Releases using `releases` provider
+#deploy:
+#  provider: releases
+#  skip_cleanup: true
+#  api_key: $GH_TOKEN
+#  file_glob: true
+#  file:
+#    - "dist/*-x86_64.AppImage"
+#    - "dist/*_amd64.deb"
+#    - "dist/*.dmg"
+#  on:
+#    tags: true
+
 
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine

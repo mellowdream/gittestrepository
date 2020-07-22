@@ -4,9 +4,9 @@
   "description": "Taking back control",
   "url": "https://think.dj/refreshie/",
   "urlAbout": "https://think.dj/refreshie/?from=app-about",
-  "RESTendpointCompanyUpdates": "http://s.typicode.com/posts",
+  "RESTendpointCompanyUpdates": "https://jsonplaceholder.typicode.com/posts",
   "urlAppUpdates": "https://think.dj/refreshie/?from=app-update",
-  "RESTendpointAppUpdates": "http://s.typicode.com/posts",
+  "RESTendpointAppUpdates": "https://jsonplaceholder.typicode.com/posts",
   "UrlContact": "mailto:shout@think.dj?subject=RE[freshie]: ",
   "version": "2.1.1",
   "icons": [

@@ -1005,49 +1005,43 @@ ipcRenderer.on('ipc-channel-main', function (event, args) {
 
 $(document).ready(function() {
 
-    return;
+    //return;
 
-    let $blogURL = "http://im.think.dj/introducing-refreshie/?from=app";
-
-    let $updatesCached = true;
-    let $updatesCachedTTL = 24*5;
-
-    let $fallbackUpdates = [
-        {
-            "title":"Refreshie v1.0",
-            "desc":"What started out as a hunt for a good fatigue-buster app ended as <a href='#' onclick='openURL($blogURL)'>Refreshie</a>. Watch this space for lots more kickass updates"
-        }
-    ];
+    const $updatesCached = true;
+    const $updatesCachedTTL = 24*5;
 
     // Set defaults in case Web fetch fails:
-    let $updates = $fallbackUpdates;
+    let $updates = require('./../default.updates.json');
 
-    let $updateSelctor = $("#messageCenter");
+    let $updateSelector = $("#messageCenter");
 
     let $webURL = config.RESTendpointCompanyUpdates;
-    console.log("Web URL Base: " + $webURL);
 
-    $.ajax({
-        url          : $webURL, /* TRIAL -- 100 Posts: http://s.typicode.com/posts */
-        localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or OBJ that implements the Storage interface */
+    $.ajax( $webURL, {
+        url          : $webURL,
+        localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or an obj that implements the Storage interface */
         cacheTTL     : $updatesCachedTTL,
-        cacheKey     : '_ajax_upd_',
+        cacheKey     : '__cache_updates',
         isCacheValid : true
-    }).done(function(response) {
+    })
+    .done(function(response) {
         console.log("Updates received from server", response);
         response = tryParseJSON(response);
         if(response) {
             $updates = response;
         }
-    }).error(function (jqXHR, textStatus) {
-        $updates = $fallbackUpdates;
-    }).complete( function() {
         $.each($updates, function(index, item) {
-            $updateSelctor.append('<li><b><span class="icon icon-bubble"></span> '+item.title+'</b><span class="desc">'+item.desc+'</span></li>');
+            $updateSelector.append(`
+            <li>
+                <span class="title"><span class="icon icon-bells"></span> ${item.title}</span>
+                <span class="date">${item.date}</span>
+                <span class="desc">${item.body}</span>
+            </li>
+            `);
         });
     });
 
-    /* Check if server response is JSON */
+    /* Check if server response is valid JSON */
     function tryParseJSON (jsonString) {
         try {
             let obj = JSON.parse(jsonString);
@@ -1059,7 +1053,7 @@ $(document).ready(function() {
                 return obj;
             }
         }
-        catch (e) { }
+        catch (e) { return false; }
         return false;
     }
 

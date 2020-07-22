@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:; worker-src 'none';">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:; worker-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self'; img-src 'self' data: blob:; worker-src 'none';">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' https:; script-src 'self'; img-src 'self' data: blob:; worker-src 'none';">
 
     <title class="app-title">Refreshie</title>
     <link rel="stylesheet" href="app.css"/>
@@ -294,8 +294,7 @@
 
             <div id="app-updates" class="hidden isHideable">
 
-                <div class="author">
-                    <div class="clearfix"></div>
+                <div id="author">
                     <div id="auth-img">
                         <img src="assets/images/@thinkdj.jpg" alt="">
                     </div>
@@ -304,19 +303,19 @@
                             <a href="#" title="Check me out on Twitter" class="" onclick="openURL('http://twitter.com/thinkdj')">@thinkdj</a>&nbsp;
                             <a href="#" title="Reach out via email" class="action-notification col-dark"><span class="icon-envelope"></span></a>
                         </h3>
-                        <p><span class="app-title">Refreshie</span> is a weekend pet project born from a need. <br/>
-                            <a href="#" onclick="openURL('http://im.think.dj/introducing-refreshie/?from=app')">Read on &rarr;</a></p>
+                        <p>
+                            <span class="app-title">Refreshie</span> is a weekend pet project born from a need. <br/>
+                            <a href="#" onclick="openURL('http://im.think.dj/introducing-refreshie/?from=app')">Read on &rarr;</a>
+                        </p>
                     </div>
                 </div>
 
-                <div id="uppBlock">
-                    <ul id="messageCenter"></ul>
+                <!-- UPDATES -->
+                <div id="uppdates-container">
+                    <ul id="messageCenter">
+                        <!-- update items would be injected here -->
+                    </ul>
                 </div>
-
-                <p class="hblock-update">
-                    v <b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
-                &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
-                </p>
 
             </div>
 

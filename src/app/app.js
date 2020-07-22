@@ -731,10 +731,9 @@ function startBreak(type = "short", forcedMode = '') {
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
         title: remote.app.getName() + " break",
-        icon:
-        h.platformIs('windows')?
-            h.getImage(__state.icoTrayPath):
-            h.getImage(__state.appIcoPath),
+        icon: h.platformIs('windows')?
+                h.getImage(__state.icoTrayPath):
+                h.getImage(__state.appIcoPath),
         width: optWidth,
         height: optHeight,
         fullscreen: optFullScreen,
@@ -765,7 +764,7 @@ function startBreak(type = "short", forcedMode = '') {
     breakModalWindow.on('unresponsive', () => breakCleanup() );
 
     /* Load contents */
-    breakModalWindow.loadFile( h.getPathTo( '/app/break.html' ) );
+    breakModalWindow.loadFile(h.getPathTo('/app/break.html')).then( res => {} );
 
     if(__state.developerMode) breakModalWindow.webContents.openDevTools({ mode: "detach" } );
     if(parseInt(localStorage.opt_alwaysOnTop)) {

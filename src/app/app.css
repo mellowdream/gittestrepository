@@ -277,7 +277,8 @@ nav a:hover,nav a:focus {outline: none}
     border:0;
 }
 .button-action.restart {
-    min-width: 20px;
+    min-width: 10px;
+    padding: 2px;
 }
 
 .button-action.restart:hover {

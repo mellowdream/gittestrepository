@@ -69,8 +69,10 @@
         "7z"
       ],
       "executableName": "Refreshie",
-      "icon": "./build/icon.png",
-      "category": "Utility"
+      "icon": "./build/linux/",
+      "category": "Utility",
+      "synopsis": "A fatigue-buster app for Linux that occasionally reminds you to take a break",
+      "description": "Refreshie, the nifty little desktop app runs silently in the background and alerts you to take a break when you've been stressing out for too long"
     },
     "win": {
       "publisherName": "thinkdj",

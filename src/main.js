@@ -161,7 +161,7 @@ app.whenReady().then( () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  if (!platformIs('mac')) app.quit()
 })
 
 // Emitted when remote.require() is called in the renderer process of webContents
@@ -390,7 +390,7 @@ function getPathTo(filename) {
 }
 /* Lock Workstation */
 let lockPC = () => {
-  if(['win32','win64'].includes(process.platform)) {
+  if(platformIs('windows')) {
     const command = "rundll32.exe user32.dll, LockWorkStation";
     const commandBackup = __state.basePath + "/app/assets/bin/w.exe quiet lock";
     return require('child_process').exec(command);
@@ -408,12 +408,32 @@ function getImage(assetPath, prefixPath = false) {
   if(prefixPath) assetPath = path.join(__state.basePath, assetPath);
   return nativeImage.createFromPath(assetPath);
 }
-
+function platformIs(string = '') {
+  let platform = process.platform;
+  switch (String(string).toLowerCase()) {
+    case 'mac':
+    case 'macos':
+      return 'darwin' === platform;
+    case 'win':
+    case 'win32':
+    case 'win64':
+    case 'windows':
+      return ['win32','win64'].includes(platform);
+    case 'linux':
+    case 'ubuntu':
+      return 'linux' === platform;
+    case 'droid':
+    case 'android':
+      return 'android' === platform;
+    default:
+      return false;
+  }
+}
 
 /* ================ INSTALL SEQUENCE ================ */
 
 function handleSquirrelEvent() {
-  if (process.platform !== 'win32' || process.argv.length === 1) {
+  if ( !platformIs('windows') || process.argv.length === 1) {
     return false;
   }
 

@@ -1,8 +1,11 @@
 
 // Modules to control application lifecycle (main process)
 
-const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, nativeImage, Notification, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, ipcMain } = require('electron');  //nativeImage, Notification,
 const path = require('path');
+
+const h = require('./helpers.js');
+
 
 /* Read config JSON */
 let config = require('./config.json');
@@ -13,8 +16,9 @@ let __state = {
   developerMode: !app.isPackaged,
   isTimerRunning: 1,
   basePath: __dirname,
-  icoTrayPath: getPathTo(config.icons.find(i => i.id==='tray').asset),
-  icoTrayPathPaused: getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
+  appIcoPath: h.getPathTo(config.icons.find(i => i.id==='app').asset),
+  icoTrayPath: h.getPathTo(config.icons.find(i => i.id==='tray').asset),
+  icoTrayPathPaused: h.getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
   urlFallback: "https://think.dj/refreshie/",
 }
 
@@ -63,7 +67,7 @@ function createMainWindow () {
     resizable: false,
     skipTaskbar: false,
     title: config.name,
-    icon: getImage(__state.icoTrayPath),
+    icon: h.getImage(__state.appIcoPath),
     backgroundColor: 'rgba(255,255,255,0)',
     transparent: false,
     hasShadow: true,
@@ -83,12 +87,12 @@ function createMainWindow () {
       spellcheck: false,
       experimentalFeatures: false,
       allowRunningInsecureContent: false,
-      preload: getPathTo('preload.js'), // use a preload script
+      preload: h.getPathTo('preload.js'), // use a preload script
     }
   })
 
   // index.html of the app.
-  mainWindow.loadFile( getPathTo( 'app/app.html' ) );
+  mainWindow.loadFile( h.getPathTo( 'app/app.html' ) );
 
   /* Subscribe to events */
   /* App Ready */
@@ -161,7 +165,7 @@ app.whenReady().then( () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
-  if (!platformIs('mac')) app.quit()
+  if (!h.platformIs('mac')) app.quit()
 })
 
 // Emitted when remote.require() is called in the renderer process of webContents
@@ -172,7 +176,7 @@ app.on('remote-require', function () {
 
 function setTrayMenu() {
 
-  mainTray = new Tray(getImage(__state.icoTrayPath));
+  mainTray = new Tray(h.getImage(__state.icoTrayPath));
   mainTray.setToolTip(config.name);
 
   let menuItems = [
@@ -263,21 +267,21 @@ function timerActions(action) {
     case 'start':
     case 'restart':
       __state.isTimerRunning = 1;
-      mainTray.setImage(getImage(__state.icoTrayPath));
+      mainTray.setImage(h.getImage(__state.icoTrayPath));
       break;
     case 'stop':
     case 'pause':
     case 'paused':
       __state.isTimerRunning = 0;
-      mainTray.setImage(getImage(__state.icoTrayPathPaused));
+      mainTray.setImage(h.getImage(__state.icoTrayPathPaused));
       break;
     default:
     case 'toggle':
       /* Flip state, change TrayIco */
       __state.isTimerRunning = !!(1 - Number(__state.isTimerRunning));
       __state.isTimerRunning ?
-          mainTray.setImage(getImage(__state.icoTrayPath)) :
-          mainTray.setImage(getImage(__state.icoTrayPathPaused));
+          mainTray.setImage(h.getImage(__state.icoTrayPath)) :
+          mainTray.setImage(h.getImage(__state.icoTrayPathPaused));
       break;
   }
 }
@@ -384,13 +388,9 @@ function showMainWindow() {
 // code. You can also put them in separate files and require them here.
 
 /* FUNCTIONS */
-function getPathTo(filename) {
-  if(filename.startsWith('/')) return __dirname + filename;
-  return path.join(__dirname, filename);
-}
 /* Lock Workstation */
 let lockPC = () => {
-  if(platformIs('windows')) {
+  if(h.platformIs('windows')) {
     const command = "rundll32.exe user32.dll, LockWorkStation";
     const commandBackup = __state.basePath + "/app/assets/bin/w.exe quiet lock";
     return require('child_process').exec(command);
@@ -402,38 +402,12 @@ let restartApp = () => {
   app.exit(0);
 }
 
-/* Returns native image from path */
-/* Fixes: Image could not be loaded from ... */
-function getImage(assetPath, prefixPath = false) {
-  if(prefixPath) assetPath = path.join(__state.basePath, assetPath);
-  return nativeImage.createFromPath(assetPath);
-}
-function platformIs(string = '') {
-  let platform = process.platform;
-  switch (String(string).toLowerCase()) {
-    case 'mac':
-    case 'macos':
-      return 'darwin' === platform;
-    case 'win':
-    case 'win32':
-    case 'win64':
-    case 'windows':
-      return ['win32','win64'].includes(platform);
-    case 'linux':
-    case 'ubuntu':
-      return 'linux' === platform;
-    case 'droid':
-    case 'android':
-      return 'android' === platform;
-    default:
-      return false;
-  }
-}
+
 
 /* ================ INSTALL SEQUENCE ================ */
 
 function handleSquirrelEvent() {
-  if ( !platformIs('windows') || process.argv.length === 1) {
+  if ( !h.platformIs('windows') || process.argv.length === 1) {
     return false;
   }
 

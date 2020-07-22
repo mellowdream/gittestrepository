@@ -11,7 +11,7 @@
 ////(function() {
 
 let config = require('./../config.json');
-const path = require('path');
+const h = require('./../helpers.js');
 
 /* Audio Elements */
 let audioClick = document.createElement('audio');
@@ -21,13 +21,13 @@ audioStartBreak.setAttribute('src', config.audioBreakStart);
 
 function removeJSorCSS(filename, filetype) {
     /* SRC: http://www.javascriptkit.com/javatutors/loadjavascriptcss2.shtml */
-    let targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none";
-    let targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none";
-    let allsuspects=document.getElementsByTagName(targetelement);
-    for (let i=allsuspects.length; i>=0; i--){
-        if (allsuspects[i] && allsuspects[i].getAttribute(targetattr)!=null && allsuspects[i].getAttribute(targetattr).indexOf(filename)!=-1)
+    let targetEl=(filetype=="js")? "script" : (filetype=="css")? "link" : "none";
+    let targetAttr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none";
+    let allTagEl=document.getElementsByTagName(targetEl);
+    for (let i=allTagEl.length; i>=0; i--){
+        if (allTagEl[i] && allTagEl[i].getAttribute(targetAttr)!=null && allTagEl[i].getAttribute(targetAttr).indexOf(filename)!=-1)
         {
-            allsuspects[i].parentNode.removeChild(allsuspects[i]);
+            allTagEl[i].parentNode.removeChild(allTagEl[i]);
         }
     }
 }
@@ -728,7 +728,7 @@ function startBreak(type = "short", forcedMode = '') {
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
         title: remote.app.getName() + " break",
-        icon: getImage("/assets/ico/tray.ico", true),
+        icon: h.getImage("/assets/ico/tray.ico", true),
         width: optWidth,
         height: optHeight,
         fullscreen: optFullScreen,
@@ -759,7 +759,7 @@ function startBreak(type = "short", forcedMode = '') {
     breakModalWindow.on('unresponsive', () => breakCleanup() );
 
     /* Load contents */
-    breakModalWindow.loadFile( getPathTo( 'break.html' ) );
+    breakModalWindow.loadFile( h.getPathTo( '/app/break.html' ) );
 
     if(__state.developerMode) breakModalWindow.webContents.openDevTools({ mode: "detach" } );
     if(parseInt(localStorage.opt_alwaysOnTop)) {
@@ -769,19 +769,6 @@ function startBreak(type = "short", forcedMode = '') {
 
 
 }
-
-/* HELPER FUNCTIONS */
-function getPathTo(filename) {
-    if(filename.startsWith('/')) return __dirname + filename;
-    return path.join(__dirname, filename);
-}
-/* Returns native image from path */
-/* Fixes: Image could not be loaded from ... */
-function getImage(assetPath, prefixPath = false) {
-    if(prefixPath) assetPath = path.join(__state.basePath, assetPath);
-    return nativeImage.createFromPath(assetPath);
-}
-
 
 /* Handle change in options */
 $(function() {

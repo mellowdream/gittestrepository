@@ -7,6 +7,7 @@
   "urlUpdatesRESTEndpoint": "http://s.typicode.com/posts",
   "version": "2.0.1",
   "icons": [
+    { "id": "app", "asset": "/app/assets/images/logo.png" },
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
     { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.ico" }
   ],

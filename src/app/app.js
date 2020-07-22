@@ -256,7 +256,7 @@ function initAppSetDefaults() {
 initAppSetDefaults();
 
 
-function naughtyfication() {
+function notifire() {
     let o = shell.openExternal('mailto:shout@think.dj?subject=RE(freshie): ');
 }
 
@@ -264,7 +264,7 @@ function naughtyfication() {
 function openURL(url) {
     return shell.openExternal(url);
     /* https://github.com/electron/electron/issues/1344
-    I ended up using child_process.execSync('start http://example.com') on Win32 and child_process.execSync('open http://example.com') on Darwin so the browser actually pops up and gets focus.
+    * Ended up using child_process.execSync('start http://example.com') on Win32 and child_process.execSync('open http://example.com') on Darwin so the browser actually pops up and gets focus.
     * On Linux, you can use xdg-open: child_process.execSync('xdg-open http://example.com')
     */
 }
@@ -273,23 +273,19 @@ function kFormatter(num) {
     return num > 999 ? (num/1000).toFixed(1) + ' k' : num;
 }
 
-function pluralize(value) {
-    if(1===parseInt(value)) return "1 time";
-    return value + " times";
-}
-
 
 function setStats() {
-
-    /* Init UI */
+    /* Init Stats UI */
     let count_longBreaks = parseInt(localStorage.count_longBreaks);
-    $("#times").text(count_longBreaks);
+    $("#meta_hoursSaved_times").text(count_longBreaks);
+    /* Show `Thumbs-up Badge` after user has completed at-least one long break */
     if(count_longBreaks) {
         $("#stats").removeClass('virgo');
         $("#meta_welcome").hide();
         $("#meta_hoursSaved").show();
-        if(1===count_longBreaks) $("#plural").hide(); else $("#plural").show();
+        $("#meta_hoursSaved_hours").html(h.simplePluralize('hour', count_longBreaks));
     }
+    /* Show Congratulations `Newbie badge` */
     else {
         $("#stats").addClass('virgo');
         $("#meta_hoursSaved").hide();
@@ -299,10 +295,10 @@ function setStats() {
     /* Set Statistics */
     $("#count_shortBreaks").text(kFormatter(localStorage.count_shortBreaks));
     $("#count_longBreaks").text(kFormatter(localStorage.count_longBreaks));
-    $("#count_opened").text(pluralize(localStorage.timesOpened));
+    $("#count_opened").text(h.simplePluralize('time', localStorage.timesOpened, true));
 
     let skippedText = parseInt(localStorage.skippedCount);
-    if(!skippedText) skippedText="none of the";
+    if(!skippedText) skippedText = "none of the";
     else skippedText = skippedText + " of ";
     $("#count_skipped").text(skippedText);
 
@@ -596,8 +592,7 @@ function initMainTimer() {
      console.log("" + noOfShortBreaks + " short breaks and 1 long break");
      /* */
 
-    let pluralize = noOfShortBreaks===1?'':'s';
-    $("#breakInfo").html("" + noOfShortBreaks + " short break" + pluralize + " and 1 long break per hour");
+    $("#breakInfo").html("" + noOfShortBreaks + " short " + h.simplePluralize('break', noOfShortBreaks) + " and 1 long break per hour");
 
     nextLongBreakInSelector.countdown(nextLongBreakAt, function (e) {
         let mm = parseInt(e.strftime('%M'));
@@ -658,7 +653,7 @@ function initMainTimer() {
         console.log(`Break ${uniqueID}: LONG #${totalLongBreaks} @ ${secondsPassed}`);
         if (e.elapsed) {
             /* Restart */
-            setTimeout( () => initMainTimer() , parseInt(localStorage.shortBreakDuration)+1 );
+            setTimeout( () => {initMainTimer() }, parseInt(localStorage.shortBreakDuration)+1 );
         }
         else { console.log("WTF?"); }
 
@@ -759,9 +754,9 @@ function startBreak(type = "short", forcedMode = '') {
     });
 
     /* Subscribe to events */
-    breakModalWindow.on('closed', () => breakCleanup() );
-    breakModalWindow.on('hide', () => breakCleanup() );
-    breakModalWindow.on('unresponsive', () => breakCleanup() );
+    breakModalWindow.on('closed', () => { breakCleanup() } );
+    breakModalWindow.on('hide', () => { breakCleanup() } );
+    breakModalWindow.on('unresponsive', () => { breakCleanup() } );
 
     /* Load contents */
     breakModalWindow.loadFile(h.getPathTo('/app/break.html')).then( res => {} );
@@ -932,10 +927,10 @@ jQuery(document).ready(
         $(".app-tagline").html(config.tagline)
         $(".app-version").html(config.version)
         /* Hooks */
-        $(".action-minimize").click(() => minimizeWindow());
-        $(".action-notification").click( () => naughtyfication());
-        $(".action-quit").click( () => quitIt());
-        $(".action-update").click( () => checkForUpdates());
+        $(".action-minimize").click( () => minimizeWindow() );
+        $(".action-notification").click( () => notifire() );
+        $(".action-quit").click( () => quitIt() );
+        $(".action-update").click( () => checkForUpdates() );
     }
 );
 
@@ -983,11 +978,11 @@ const ipcRenderer = require('electron').ipcRenderer;
 
 function checkForUpdates() {
     activityAnimation(1100);
-    console.log(ipcRenderer.sendSync('synchronous-messages','check-for-updates'));
+    ipcRenderer.send('synchronous-messages', 'check-for-updates');
 }
 
 function quitIt() {
-    return ipcRenderer.sendSync('synchronous-messages', 'force-quit');
+    return ipcRenderer.send('synchronous-messages', 'force-quit'); // sendSync
 }
 
 ipcRenderer.on('ipc-channel-main', function (event, args) {
@@ -1029,7 +1024,7 @@ $(document).ready(function() {
 
     let $updateSelctor = $("#messageCenter");
 
-    let $webURL = config.urlUpdatesRESTEndpoint;
+    let $webURL = config.RESTendpointCompanyUpdates;
     console.log("Web URL Base: " + $webURL);
 
     $.ajax({
@@ -1038,13 +1033,13 @@ $(document).ready(function() {
         cacheTTL     : $updatesCachedTTL,
         cacheKey     : '_ajax_upd_',
         isCacheValid : true
-    }).done(function(response){
+    }).done(function(response) {
         console.log("Updates received from server", response);
         response = tryParseJSON(response);
         if(response) {
             $updates = response;
         }
-    }).fail(function (jqXHR, textStatus) {
+    }).error(function (jqXHR, textStatus) {
         $updates = $fallbackUpdates;
     }).complete( function() {
         $.each($updates, function(index, item) {

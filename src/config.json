@@ -3,8 +3,10 @@
   "tagline": "Taking back control",
   "description": "Taking back control",
   "url": "https://think.dj/refreshie/",
-  "urlAbout":  "http://im.think.dj/introducing-refreshie/?from=app",
-  "urlUpdatesRESTEndpoint": "http://s.typicode.com/posts",
+  "urlAbout": "https://think.dj/refreshie/?from=app-about",
+  "RESTendpointCompanyUpdates": "http://s.typicode.com/posts",
+  "urlAppUpdates": "https://think.dj/refreshie/?from=app-update",
+  "RESTendpointAppUpdates": "http://s.typicode.com/posts",
   "version": "2.1.1",
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },

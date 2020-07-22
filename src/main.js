@@ -87,7 +87,7 @@ function createMainWindow () {
       spellcheck: false,
       experimentalFeatures: false,
       allowRunningInsecureContent: false,
-      preload: h.getPathTo('preload.js'), // use a preload script
+      preload: h.getPathTo('/preload.js'), // use a preload script?
     }
   })
 
@@ -145,13 +145,22 @@ app.whenReady().then( () => {
     if (BrowserWindow.getAllWindows().length === 0)  {
       createMainWindow();
     }
+    // Set icon on Mac
+    if (h.platformIs('mac')) {
+      app.dock.setIcon(h.getImage(__state.appIcoPath));
+      //app.dock.hide();
+    }
   });
 
   /* Power events */
+  // Lock/unlock (Win/Mac)
   powerMonitor.on("lock-screen", () => { timerActionsAuto('lock') } );
+  powerMonitor.on("unlock-screen", () => { timerActionsAuto('unlock') } );
+  // Suspend/Resume (Win/Lin)
   powerMonitor.on("suspend", () => { timerActionsAuto('lock') } );
-  powerMonitor.on("unlock-screen", () => {  timerActionsAuto('unlock') } );
   powerMonitor.on("resume", () => { timerActionsAuto('unlock') } );
+  // Shutdown (Mac/Lin)
+  powerMonitor.on("shutdown", () => { app.quit() } );
 
 });
 
@@ -226,7 +235,8 @@ function setTrayMenu() {
       }
     }
   ];
-  /* DEV MODE: Reload app */
+
+  /* DEV MENU ITEM: Quick-reload app to see changes */
   if(__state.developerMode) {
     menuItems.push(
         {type: 'separator'},
@@ -407,25 +417,24 @@ let restartApp = () => {
 /* ================ INSTALL SEQUENCE ================ */
 
 function handleSquirrelEvent() {
+
   if ( !h.platformIs('windows') || process.argv.length === 1) {
     return false;
   }
 
-  const ChildProcess = require('child_process');
-  const path = require('path');
-
+  /*
   const appFolder = path.resolve(process.execPath, '..');
   const rootFolder = path.resolve(appFolder, '..');
   const updateDotExe = path.resolve(path.join( rootFolder, 'Update.exe') );
   const exeName = path.basename(process.execPath);
-  /*
   var cp = require('child_process');
   var updateDotExe = path.resolve(path.dirname(process.execPath), '..', 'update.exe');
   var target = path.basename(process.execPath);
   var child = cp.spawn(updateDotExe, ["--createShortcut", target], { detached: true });
   child.on('close', function(code) {
     app.quit();
-  });*/
+  });
+  */
 
   const squirrelEvent = process.argv[1];
   switch (squirrelEvent) {
@@ -433,19 +442,18 @@ function handleSquirrelEvent() {
     case '--squirrel-updated':
       // Optionally do things such as:
       // Add your .exe to the PATH | Write to the registry for things like file associations and explorer context menus
-      squirrelInstallTasks();
+      squirrelInstallerTasks('install');
       return true;
 
     case '--squirrel-uninstall':
       // Undo anything you did in the --squirrel-install and --squirrel-updated handlers
       // Remove desktop and start menu shortcuts
-      squirrelUninstallTasks();
+      squirrelInstallerTasks('uninstall');
       return true;
 
     case '--squirrel-obsolete':
       // This is called on the outgoing version of your app before we update to the new version
       // It's the opposite of --squirrel-updated
-      console.log("--squirrel-obsolete. Quit");
       app.quit();
       return true;
   }
@@ -458,7 +466,6 @@ function squirrelInstallerTasks(action='install') {
   const updateExe = "Update.exe";
 
   const ChildProcess = require('child_process');
-  const path = require('path');
 
   const appFolder = path.resolve(process.execPath, '..');
   const rootFolder = path.resolve(appFolder, '..');
@@ -466,10 +473,10 @@ function squirrelInstallerTasks(action='install') {
   const target = path.basename(process.execPath);
 
   const spawn = function(command, args) {
-    let spawnedProcess, error;
+    let spawnedProcess;
     try {
-      spawnedProcess = ChildProcess.spawn(command, args, {detached: true});
-    } catch (error) {}
+      spawnedProcess = ChildProcess.spawn( command, args, {detached: true} );
+    } catch (error) { }
     return spawnedProcess;
   };
 
@@ -488,11 +495,113 @@ function squirrelInstallerTasks(action='install') {
       break;
   }
 
-  setTimeout(() => { app.quit()}, 1000);
+  setTimeout(() => { app.quit() }, 1000);
 
 }
 
 /* =============== / INSTALL SEQUENCE =============== */
+
+
+
+/* =============== AUTO UPDATER =============== */
+
+const { dialog } = require('electron');
+const autoUpdater = require('electron').autoUpdater;
+let updateCheckedOnce = false;
+
+function checkForUpdates() {
+
+  let updateUrl = config.urlAppUpdates || __state.urlFallback;
+  let appendQS = 'platform=' + process.platform + '&v=' + config.version;
+  updateUrl += updateUrl.includes('?')?'&'+appendQS:'?'+appendQS;
+  shell.openExternal(updateUrl);
+  return true;
+
+  /* Electron AutoUpdater code sample below: Use if needed */
+  /* Follow DOC: https://www.electronjs.org/docs/api/auto-updater */
+
+  if(updateCheckedOnce) return;
+
+  /* For Windows, PATH to DIRECTORY that has nupkg and RELEASES files (Windows alone) */
+  /* add "Options Indexes" to htaccess if you want listing on that dir */
+  //let releaseDIR = config.RESTendpointAppUpdates + '/releases/' + process.platform;
+
+  /* process.platform is one of: 'aix' | 'android' | 'darwin' | 'freebsd' | 'linux' | 'openbsd' | 'sunos' | 'win32' | 'cygwin' | 'netbsd' */
+  /* we need win32, linux, darwin */
+  let releasesRemoteDirectory = config.RESTendpointAppUpdates + '/releases/?platform=' + process.platform;
+
+  autoUpdater.setFeedURL({ url: releasesRemoteDirectory });
+
+  autoUpdater
+      .on('error', function(e) {
+        //loggit(e);
+        return dialog.showMessageBox(mainWindow, {
+          type: 'info',
+          icon: h.getImage(__state.appIcoPath),
+          buttons: ['Dang!'],
+          title: config.name + ": Update Error",
+          message: "Something's not right out there. Please try again later.",
+          detail: "Umm... \nIt's not you, it's the server"
+        });
+      })
+      .on('checking-for-update', function(e) {
+        //loggit('Checking for update at ' + releaseDIR);
+      })
+      .on('update-available', function(e) {
+
+        var downloadConfirmation = dialog.showMessageBox(mainWindow, {
+          type: 'info',
+          icon: h.getImage(__state.appIcoPath),
+          buttons: ['Proceed'],
+          title: config.name + ": Update Available",
+          message: 'An update is available. The update will be downloaded in the background. \n\n - Minor Bug fixes \n - UI improvements',
+          detail: "Size: ~42 MB"
+        });
+
+        //loggit('Downloading update');
+
+        if (downloadConfirmation === 0) {
+          return false;
+        }
+
+      })
+      .on('update-not-available', function(e) {
+        //loggit('Update not available');
+        return dialog.showMessageBox(mainWindow, {
+          type: 'info',
+          icon: h.getImage(__state.appIcoPath),
+          buttons: ['Cool'],
+          title: config.name + ": No update available",
+          message: "It seems you're running the latest and greatest version",
+          detail: "Woot, woot! \nTalk about being tech-savvy"
+        });
+      })
+      .on('update-downloaded',  function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
+
+        var index = dialog.showMessageBox(mainWindow, {
+          type: 'info',
+          icon: h.getImage(__state.appIcoPath),
+          buttons: ['Install Update','Later'],
+          title: config.name + ": Latest version downloaded",
+          message: 'Please restart the app to apply the update',
+          detail: releaseName + "\n\n" + releaseNotes
+        });
+
+        if (index === 1) return;
+
+        force_quit = true;
+        autoUpdater.quitAndInstall();
+      });
+
+  autoUpdater.checkForUpdates();
+
+  updateCheckedOnce = true;
+
+  // "Checking for updates: " + releaseDIR + " Install Path: " + appPath;
+}
+
+/* =============== / AUTO UPDATER =============== */
+
 
 
 

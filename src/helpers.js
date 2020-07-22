@@ -40,6 +40,13 @@ module.exports = {
         return path.join(__dirname, filename);
     },
 
+    simplePluralize: function(term, count, prependNumber = false) {
+        term = String(term);
+        if(1!==Number(count)) term = term + 's' + ' ';
+        if(prependNumber) term = String(count) + ' ' + term;
+        return term;
+    },
+
     isset: (variable) => {
         try {
             return typeof eval(variable) !== 'undefined';
@@ -48,8 +55,4 @@ module.exports = {
         }
     }
 
-
 }
-
-
-

@@ -7,6 +7,7 @@
   "RESTendpointCompanyUpdates": "http://s.typicode.com/posts",
   "urlAppUpdates": "https://think.dj/refreshie/?from=app-update",
   "RESTendpointAppUpdates": "http://s.typicode.com/posts",
+  "UrlContact": "mailto:shout@think.dj?subject=RE[freshie]: ",
   "version": "2.1.1",
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },

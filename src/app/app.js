@@ -257,7 +257,7 @@ initAppSetDefaults();
 
 
 function notifire() {
-    let o = shell.openExternal('mailto:shout@think.dj?subject=RE(freshie): ');
+    return shell.openExternal(config.UrlContact);
 }
 
 

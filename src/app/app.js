@@ -120,6 +120,9 @@ let __state = {
     developerMode: !electron.remote.app.isPackaged,
     status: statusIs.RUNNING,
     basePath: __dirname,
+    appIcoPath: h.getPathTo(config.icons.find(i => i.id==='app').asset),
+    icoTrayPath: h.getPathTo(config.icons.find(i => i.id==='tray').asset),
+    icoTrayPathPaused: h.getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
 };
 
 
@@ -234,7 +237,7 @@ function initAppSetDefaults() {
     /* DEV Vars*/
     let devModeForTesting = false; /* Set true for clearing cache / Debug Mode */
     if(devModeForTesting) {
-        //localStorage.clear();
+        localStorage.clear();
         localStorage.longBreakInterval  = 60 * seconds;
         localStorage.shortBreakInterval = 20 * seconds;
         localStorage.shortBreakDuration =  2 * seconds;
@@ -728,7 +731,10 @@ function startBreak(type = "short", forcedMode = '') {
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
         title: remote.app.getName() + " break",
-        icon: h.getImage("/assets/ico/tray.ico", true),
+        icon:
+        h.platformIs('windows')?
+            h.getImage(__state.icoTrayPath):
+            h.getImage(__state.appIcoPath),
         width: optWidth,
         height: optHeight,
         fullscreen: optFullScreen,

@@ -1,7 +1,7 @@
 {
   "name": "refreshie",
   "productName": "Refreshie",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Refreshie: Fatigue-buster desktop app for taking back control",
   "homepage": "https://think.dj/refreshie/",
   "license": "Attribution-NonCommercial-NoDerivatives 4.0 International",
@@ -60,7 +60,7 @@
       "artifactName": "Refreshie-Installer-${version}.${ext}",
       "title": "${productName} ${version}",
       "background": "./build/background.png",
-      "icon": "./build/icon.png"
+      "icon": "./build/icon.icns"
     },
     "linux": {
       "target": [

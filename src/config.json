@@ -5,9 +5,9 @@
   "url": "https://think.dj/refreshie/",
   "urlAbout":  "http://im.think.dj/introducing-refreshie/?from=app",
   "urlUpdatesRESTEndpoint": "http://s.typicode.com/posts",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "icons": [
-    { "id": "app", "asset": "/app/assets/images/logo.png" },
+    { "id": "app", "asset": "/app/assets/ico/icon.512.png" },
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
     { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.ico" }
   ],

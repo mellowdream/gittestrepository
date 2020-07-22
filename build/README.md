@@ -13,3 +13,4 @@ icon: build/icon.icns
 
 Use icon.mac.psd to edit in Photoshop OR create a  
 https://cloudconvert.com/png-to-icns
+Recommended 256x256

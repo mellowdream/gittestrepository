@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:; worker-src 'none';">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data: blob:; worker-src 'none';">
 
     <title class="app-title">Refreshie</title>
     <link rel="stylesheet" href="app.css"/>
@@ -121,7 +121,7 @@
                 <div id="stats">
                     <h3>Congratulations</h3>
                     <p id="meta_welcome">On your decision to improve your life</p>
-                    <p id="meta_hoursSaved">You have had <span id="times"></span> fatigue-free hour<span id="plural">s</span> since you started using
+                    <p id="meta_hoursSaved">You have had <span id="meta_hoursSaved_times">42</span> fatigue-free <span id="meta_hoursSaved_hours">hours</span> since you started using
                         <span class="app-title">Refreshie</span>
                     </p>
                 </div>
@@ -179,7 +179,7 @@
                 </ul>
 
                 <p class="hblock-update">
-                    App: v<b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
+                    v <b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
                 &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
                 </p>
 
@@ -191,7 +191,7 @@
                         <td colspan="2"><b class="icon icon-layers tabIco"></b> Configuration</td>
                     </tr>
                     <tr>
-                        <td>Short break every </td>
+                        <td><label for="shortIntervalDD">Short break every</label> </td>
                         <td>
                             <select name="shortIntervalDD" id="shortIntervalDD">
                                 <option value="10">10 m</option>
@@ -314,7 +314,7 @@
                 </div>
 
                 <p class="hblock-update">
-                    App: v<b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
+                    v <b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
                 &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
                 </p>
 

@@ -65,7 +65,7 @@ function createMainWindow () {
     maximizable: false,
     minimizable: true,
     resizable: false,
-    skipTaskbar: false,
+    skipTaskbar: h.platformIs('linux'), // true only for linux
     title: config.name,
     icon: h.getImage(__state.appIcoPath),
     backgroundColor: 'rgba(255,255,255,0)',
@@ -92,7 +92,7 @@ function createMainWindow () {
   })
 
   // index.html of the app.
-  mainWindow.loadFile( h.getPathTo( 'app/app.html' ) );
+  mainWindow.loadFile( h.getPathTo( 'app/app.html' ) ).then( res => {} );
 
   /* Subscribe to events */
   /* App Ready */
@@ -112,8 +112,8 @@ function createMainWindow () {
     if(!__state.forceQuit) {
       e.preventDefault();
       mainWindow.hide();
+      return false;
     }
-    return false;
   });
   /* Quit */
   mainWindow.on('closed', function() {

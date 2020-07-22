@@ -95,15 +95,17 @@ notifier.on('timeout', function (notifierObject, options) {
 /* */
 
 const { BrowserWindow } = require('electron').remote;
-const { shell } = require('electron');
+const { shell, nativeImage } = require('electron');
 const electron = require('electron');
 const remote = electron.remote;
 const thisWindow = remote.getCurrentWindow();
 
 
 function minimizeWindow() {
-    /* Returns the BrowserWindow object which this web page belongs to */
-    thisWindow.hide();
+    thisWindow.minimize();
+}
+function closeWindow() {
+    thisWindow.close();
 }
 
 /* Statuses */
@@ -116,7 +118,8 @@ Object.freeze(statusIs);
 
 let __state = {
     developerMode: !electron.remote.app.isPackaged,
-    status: statusIs.RUNNING
+    status: statusIs.RUNNING,
+    basePath: __dirname,
 };
 
 
@@ -725,7 +728,7 @@ function startBreak(type = "short", forcedMode = '') {
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
         title: remote.app.getName() + " break",
-        icon: __dirname + "/assets/ico/tray.ico",
+        icon: getImage("/assets/ico/tray.ico", true),
         width: optWidth,
         height: optHeight,
         fullscreen: optFullScreen,
@@ -772,6 +775,13 @@ function getPathTo(filename) {
     if(filename.startsWith('/')) return __dirname + filename;
     return path.join(__dirname, filename);
 }
+/* Returns native image from path */
+/* Fixes: Image could not be loaded from ... */
+function getImage(assetPath, prefixPath = false) {
+    if(prefixPath) assetPath = path.join(__state.basePath, assetPath);
+    return nativeImage.createFromPath(assetPath);
+}
+
 
 /* Handle change in options */
 $(function() {

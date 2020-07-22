@@ -1,7 +1,7 @@
 
 // Modules to control application lifecycle (main process)
 
-const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, Notification, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, nativeImage, Notification, ipcMain } = require('electron');
 const path = require('path');
 
 /* Read config JSON */
@@ -13,8 +13,8 @@ let __state = {
   developerMode: !app.isPackaged,
   isTimerRunning: 1,
   basePath: __dirname,
-  icoTray: getPathTo(config.icons.find(i => i.id==='tray').asset),
-  icoTrayPaused: getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
+  icoTrayPath: getPathTo(config.icons.find(i => i.id==='tray').asset),
+  icoTrayPathPaused: getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
   urlFallback: "https://think.dj/refreshie/",
 }
 
@@ -63,7 +63,7 @@ function createMainWindow () {
     resizable: false,
     skipTaskbar: false,
     title: config.name,
-    icon: __state.icoTray,
+    icon: getImage(__state.icoTrayPath),
     backgroundColor: 'rgba(255,255,255,0)',
     transparent: false,
     hasShadow: true,
@@ -92,8 +92,16 @@ function createMainWindow () {
 
   /* Subscribe to events */
   /* App Ready */
-  mainWindow.on('minimize', function() {
+  mainWindow.on('minimize', function(e) {
+    e.preventDefault();
+    mainWindow.setSkipTaskbar(true);
     mainWindow.hide();
+    //tray = createTray();
+  });
+  mainWindow.on('restore', function(e) {
+    mainWindow.show();
+    mainWindow.setSkipTaskbar(false);
+    //tray.destroy();
   });
   /* Close */
   mainWindow.on('close', function(e) {
@@ -101,6 +109,7 @@ function createMainWindow () {
       e.preventDefault();
       mainWindow.hide();
     }
+    return false;
   });
   /* Quit */
   mainWindow.on('closed', function() {
@@ -163,7 +172,7 @@ app.on('remote-require', function () {
 
 function setTrayMenu() {
 
-  mainTray = new Tray(__state.icoTray);
+  mainTray = new Tray(getImage(__state.icoTrayPath));
   mainTray.setToolTip(config.name);
 
   let menuItems = [
@@ -254,21 +263,21 @@ function timerActions(action) {
     case 'start':
     case 'restart':
       __state.isTimerRunning = 1;
-      mainTray.setImage(__state.icoTray);
+      mainTray.setImage(getImage(__state.icoTrayPath));
       break;
     case 'stop':
     case 'pause':
     case 'paused':
       __state.isTimerRunning = 0;
-      mainTray.setImage(__state.icoTrayPaused);
+      mainTray.setImage(getImage(__state.icoTrayPathPaused));
       break;
     default:
     case 'toggle':
       /* Flip state, change TrayIco */
       __state.isTimerRunning = !!(1 - Number(__state.isTimerRunning));
       __state.isTimerRunning ?
-          mainTray.setImage(__state.icoTray) :
-          mainTray.setImage(__state.icoTrayPaused);
+          mainTray.setImage(getImage(__state.icoTrayPath)) :
+          mainTray.setImage(getImage(__state.icoTrayPathPaused));
       break;
   }
 }
@@ -393,6 +402,12 @@ let restartApp = () => {
   app.exit(0);
 }
 
+/* Returns native image from path */
+/* Fixes: Image could not be loaded from ... */
+function getImage(assetPath, prefixPath = false) {
+  if(prefixPath) assetPath = path.join(__state.basePath, assetPath);
+  return nativeImage.createFromPath(assetPath);
+}
 
 
 /* ================ INSTALL SEQUENCE ================ */

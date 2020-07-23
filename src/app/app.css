@@ -37,7 +37,7 @@ body {
     height: 100%;
     width: 100%;
     max-width: 800px;
-    max-height: 396px;
+    max-height: 390px;
     overflow: hidden;
     box-shadow: 1px 1px 20px rgba(0,0,0,0.18);
 }
@@ -45,8 +45,9 @@ body {
 .animated { transition: all 0.25s ease-out; }
 
 .app-container {
-    margin:0;
-    padding: 30px 15px 15px 30px;
+    margin: 0;
+    padding: 30px 15px 20px 25px;
+    box-shadow: none;
     border: 1px solid #b1b1b1;
     resize: none;
     border-radius: var(--app-border-radius);
@@ -133,10 +134,9 @@ h1 span.tagline {
 }
 
 h1.appHeading {
-    margin: -30px;
+    margin: -30px -30px 0;
     padding: 20px 25px;
     display: block;
-    margin-bottom: 15px;
     background: rgba(0,0,0,0.0);
     max-width: 97%;
     line-height: 1.1;
@@ -144,7 +144,7 @@ h1.appHeading {
     z-index: 0;
     transition:all 0.25s ease-out;
     pointer-events: all;
-    cursor: grab;
+    cursor: grab !important;
 }
 h1.appHeading:hover {
     background: rgba(0,0,0,0.04);
@@ -435,12 +435,16 @@ animation: spin .5s 1 linear;
     overflow: hidden;
     align-items: flex-start;
     justify-content: flex-start;
-    margin: 20px auto 0;
+    margin: 10px auto 0;
 }
 
 #content {
     width: 100%;
     min-width: 513px;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 250px;
+    max-height: 290px;
 }
 
 #content table {
@@ -790,7 +794,7 @@ xpush
 .second-opTable {
     margin-top: 15px;
 }
-.opTable tr:nth-child(2n) { background-color: #f7f7f7 }
+.opTable tr:nth-child(2n) { background-color: rgba(0,0,0,0.035) }
 .opTable tr {  }
 .opTable tr td {
     display: inline-block;
@@ -799,9 +803,10 @@ xpush
 }
 
 #app-settings {
-    height: 262px;
+    height: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
+    max-height: 275px;
 }
 
 /* Data Block */
@@ -902,9 +907,9 @@ a.faded {
 
 /* Updates' block */
 #uppdates-container {
-    height: 200px;
-    min-height: 140px;
-    max-height: 200px;
+    height: 100%;
+    min-height: 180px;
+    max-height: 236px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -921,7 +926,7 @@ a.faded {
     margin: 0;
     padding: 10px 10px 10px 15px;
 }
-#messageCenter li:nth-child(2n) {
+#messageCenter li:nth-child(2n+1) {
     background-color: rgba(0,0,0,0.035);
 }
 #messageCenter .title {
@@ -958,18 +963,34 @@ a.faded {
     align-content: center;
     justify-items: center;
 }
-
 #auth-img img {
-    width: 64px;
+    width: auto;
     height: 64px;
     border-radius: 5px;
     margin-right: 20px;
 }
-#auth-bio h3 {
-    margin: 0; padding: 0;
-    line-height: 12px;
+#auth-bio {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
 }
-
+#auth-bio a {
+    display: inline-block;
+    font-weight: 400;
+    margin: 0 6px;
+    font-size: 0.9rem;
+}
+#auth-bio h3, #auth-bio p {
+    margin: 0; padding: 0;
+    line-height: 24px;
+    display: block;
+    font-weight: 400;
+}
+#auth-bio h3 {
+    font-weight: 600;
+    margin: 0 0  5px;
+}
 
 /* Controls */
 
@@ -1088,6 +1109,31 @@ select:hover {
 }
 
 
+.tab-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.tab-horizontal a {
+    display: block;
+    padding: 5px 10px;
+    margin: 0 10px;
+    color: #555;
+    border-radius: var(--pill-border-radius);
+    font-weight: 500;
+    transition: all 0.25s ease-out;
+    cursor: pointer;
+}
+.tab-horizontal a:first-child {
+    margin-left: 0;
+}
+.tab-horizontal a.isActive {
+    background: var(--color-primary);
+    color: #FFF;
+}
 
 
 

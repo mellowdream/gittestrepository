@@ -23,5 +23,13 @@
   ],
   "assetsLongBreak": [
     { "img": "assets/images/do.walk.png", "title":"Take a walk" }
-  ]
+  ],
+  "companyInfo": {
+    "name" : "By Deepak Thomas",
+    "links": [
+      { "name": "@thinkdj", "url": "http://twitter.com/thinkdj", "title": "Catch me on twitter" },
+      { "name": "Mail", "url": "mailto:shout@think.dj?subject=RE[freshie]: ", "title": "Reach out" }
+    ],
+    "description": "Refreshie is a weekend pet project born from a need"
+  }
 }

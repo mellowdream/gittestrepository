@@ -36,12 +36,12 @@ function removeJSorCSS(filename, filetype) {
 $(document).ready( function() {
     let splashDelay = 4200;
     let elIntro = $("#intro");
-    /* IF first time OR Splash is enabled, show splash */
+    /* First timer OR splash-screen enabled => show splash */
     if( (parseInt(localStorage.opt_splash)>=1) || (parseInt(localStorage.timesOpened)<=1) ) {
         elIntro.css('display','flex').fadeIn(500).delay(splashDelay-1000).fadeOut(500);
     }
     activityAnimation(1000);
-    /* Auto-remove #intro from DOM after 6 seconds and unload unnecessary JS */
+    /* Auto-remove #intro from DOM and offload unnecessary JS */
     setTimeout(function() {
         removeJSorCSS("assets/js/splash.anim.js", "js");
         $("#script-splash-anim").empty().attr('src','').remove();
@@ -55,14 +55,17 @@ $(document).ready( function() {
 });
 
 /* TABS */
-$(document).on('click', '.isTab', function () {
+$(document).on('click', '.isTab, .isTabHT', function () {
     let target = $(this).attr('aria-controls');
+    let appender = $(this).attr('data-append')?$(this).attr('data-append'):'';
     if(!$(this).is(".isActive")) {
-        if( ("undefined"!==audioClick) && (parseInt(localStorage.opt_sounds)) ) audioClick.play();
-        $('.isHideable').hide();
+        /* Hide/show corresponding tabs */
+        $('.isHideable' + appender).hide();
         $("#" + target).fadeIn(200);
-        $('.isTab').removeClass('isActive').attr("aria-selected", "false");
+        $('.isTab' + appender).removeClass('isActive').attr("aria-selected", "false");
         $(this).attr('aria-selected', "true").addClass('isActive');
+        /* Sound? */
+        if( ("undefined"!==audioClick) && (parseInt(localStorage.opt_sounds)) ) audioClick.play();
     }
 });
 
@@ -920,19 +923,29 @@ jQuery(document).ready( function($) {
 
 } );
 
-jQuery(document).ready(
-    function() {
-        /* Branding */
-        $(".app-title").html(config.name);
-        $(".app-tagline").html(config.tagline)
-        $(".app-version").html(config.version)
-        /* Hooks */
-        $(".action-minimize").click( () => minimizeWindow() );
-        $(".action-notification").click( () => notifire() );
-        $(".action-quit").click( () => quitIt() );
-        $(".action-update").click( () => checkForUpdates() );
-    }
-);
+
+/* Rewrite HTML content from config */
+jQuery(document).ready( function() {
+
+    /* Branding */
+    $(".app-title").html(config.name);
+    $(".app-tagline").html(config.tagline)
+    $(".app-version").html(config.version)
+
+    /* Company Info */
+    $("#rw-co-name").html(config.companyInfo.name);
+    $("#rw-co-links").empty();
+    config.companyInfo.links.forEach( link => {
+        $("#rw-co-links").append(`<a href="${link.url}" target="_blank" rel="external" class="co-link" title="${link.title}">${link.name}</a>`);
+    });
+    $("#rw-co-description").html(config.companyInfo.description);
+
+    /* Hooks */
+    $(".action-minimize").click( () => minimizeWindow() );
+    $(".action-notification").click( () => notifire() );
+    $(".action-quit").click( () => quitIt() );
+    $(".action-update").click( () => checkForUpdates() );
+});
 
 
 
@@ -1005,10 +1018,8 @@ ipcRenderer.on('ipc-channel-main', function (event, args) {
 
 $(document).ready(function() {
 
-    //return;
-
-    const $updatesCached = true;
-    const $updatesCachedTTL = 24*5;
+    const $updatesCached = true; /* Server calls needs to be cached? */
+    const $updatesCachedTTL = 24*7; /* # of Hours; */
 
     // Set defaults in case Web fetch fails:
     let $updates = require('./../default.updates.json');
@@ -1041,14 +1052,12 @@ $(document).ready(function() {
         });
     });
 
-    /* Check if server response is valid JSON */
-    function tryParseJSON (jsonString) {
+    /* Check if server response is a valid JSON */
+    function tryParseJSON (resString) {
         try {
-            let obj = JSON.parse(jsonString);
+            let obj = JSON.parse(resString);
             // Handle non-exception-throwing cases:
-            // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-            // but... JSON.parse(null) returns null, and typeof null === "object",
-            // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+            // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking
             if (obj && typeof obj === "object") {
                 return obj;
             }

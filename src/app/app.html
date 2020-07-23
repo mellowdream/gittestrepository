@@ -294,27 +294,43 @@
 
             <div id="app-updates" class="hidden isHideable">
 
-                <div id="author">
-                    <div id="auth-img">
-                        <img src="assets/images/@thinkdj.jpg" alt="">
-                    </div>
-                    <div id="auth-bio">
-                        <h3>By Deepak Thomas
-                            <a href="#" title="Check me out on Twitter" class="" onclick="openURL('http://twitter.com/thinkdj')">@thinkdj</a>&nbsp;
-                            <a href="#" title="Reach out via email" class="action-notification col-dark"><span class="icon-envelope"></span></a>
-                        </h3>
-                        <p>
-                            <span class="app-title">Refreshie</span> is a weekend pet project born from a need. <br/>
-                            <a href="#" onclick="openURL('http://im.think.dj/introducing-refreshie/?from=app')">Read on &rarr;</a>
-                        </p>
-                    </div>
+                <div class="tab-horizontal">
+                    <a class="isTabHT isActive" aria-controls="author-info-updates" data-append="HT">About</a>
+                    <a class="isTabHT" id="a-updates" aria-controls="app-server-updates" data-append="HT">Updates</a>
                 </div>
 
-                <!-- UPDATES -->
-                <div id="uppdates-container">
-                    <ul id="messageCenter">
-                        <!-- update items would be injected here -->
-                    </ul>
+                <div id="content-tabs">
+                    <!-- Author -->
+                    <div id="author-info-updates" class="isHideableHT">
+                        <!-- Author Info block -->
+                        <div id="author">
+                            <div id="auth-img">
+                                <img src="assets/images/@thinkdj.jpg" alt="">
+                            </div>
+                            <div id="auth-bio">
+                                <h3>
+                                    <span id="rw-co-name">By Deepak Thomas</span>
+                                    <span id="rw-co-links">
+                                    <a href="http://twitter.com/thinkdj" target="_blank" rel="external" class="">@thinkdj</a>&nbsp;
+                                    <a href="#" title="Reach out via email" class="action-notification col-dark"><span class="icon-envelope"></span></a>
+                                </span>
+                                </h3>
+                                <p id="rw-co-description">
+                                    <span class="app-title">Refreshie</span> is a weekend pet project born from a need.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Server Updates JSON -->
+                    <div id="app-server-updates" class="isHideableHT hidden">
+                        <!-- UPDATES -->
+                        <div id="uppdates-container">
+                            <ul id="messageCenter">
+                                <!-- update items would be injected here -->
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
             </div>

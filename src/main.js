@@ -55,9 +55,10 @@ function createMainWindow () {
   }
 
   // Create the browser window.
+  // Changes you make to `width` and `height` here should be changed in app.css for #container too
   mainWindow = new BrowserWindow( {
     width: 800,
-    height: 396,
+    height: 390,
     useContentSize: false,
     alwaysOnTop: false,
     center: true,
@@ -127,6 +128,14 @@ function createMainWindow () {
   /* Open the DevTools? */
   /* modes: 'right' | 'bottom' | 'undocked' | 'detach' */
   if(__state.developerMode) mainWindow.webContents.openDevTools({ mode: "detach" } )
+
+  /* Open all external links in Browser `new-window` is fired when external links are clicked [links must have target="_blank"] */
+  mainWindow.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    if(url.startsWith('http')||url.includes('mailto:')) {
+      let o = shell.openExternal(url);
+    }
+  });
 
 }
 

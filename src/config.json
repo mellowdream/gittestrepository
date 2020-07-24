@@ -1,14 +1,13 @@
 {
   "name": "Refreshie",
+  "version": "2.1.1",
   "tagline": "Taking back control",
-  "description": "Taking back control",
+  "copyright": "Free for personal use",
   "url": "https://think.dj/refreshie/",
   "urlAbout": "https://think.dj/refreshie/?from=app-about",
-  "RESTendpointCompanyUpdates": "https://jsonplaceholder.typicode.com/posts",
   "urlAppUpdates": "https://think.dj/refreshie/?from=app-update",
   "RESTendpointAppUpdates": "https://jsonplaceholder.typicode.com/posts",
   "UrlContact": "mailto:shout@think.dj?subject=RE[freshie]: ",
-  "version": "2.1.1",
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
@@ -30,6 +29,8 @@
       { "name": "@thinkdj", "url": "http://twitter.com/thinkdj", "title": "Catch me on twitter" },
       { "name": "Mail", "url": "mailto:shout@think.dj?subject=RE[freshie]: ", "title": "Reach out" }
     ],
-    "description": "Refreshie is a weekend pet project born from a need"
-  }
+    "description": "Refreshie is a weekend pet project born from a need",
+    "RESTendpointCompanyUpdates": ""
+  },
+  "developerMode": true
 }

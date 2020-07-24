@@ -61,7 +61,7 @@ $(document).on('click', '.isTab, .isTabHT', function () {
     if(!$(this).is(".isActive")) {
         /* Hide/show corresponding tabs */
         $('.isHideable' + appender).hide();
-        $("#" + target).fadeIn(200);
+        $("#" + target).fadeIn(200).addClass('ani-fx');
         $('.isTab' + appender).removeClass('isActive').attr("aria-selected", "false");
         $(this).attr('aria-selected', "true").addClass('isActive');
         /* Sound? */
@@ -129,19 +129,18 @@ let __state = {
 };
 
 
-function autorunOSstart(launch) {
+function autorunOSstart(shouldLaunch) {
     let AutoLaunch = require('auto-launch');
     let appLauncher = new AutoLaunch({
         name: remote.app.getName(),
-        isHidden: false
+        isHidden: true
     });
-    if(!launch) {
-        appLauncher.disable();
-        console.log("AutoLaunch Disabled");
-    }
-    else {
+    if(shouldLaunch) {
         appLauncher.enable();
         console.log("AutoLaunch Enabled");
+    } else {
+        appLauncher.disable();
+        console.log("AutoLaunch Disabled");
     }
 }
 
@@ -225,13 +224,13 @@ function initAppSetDefaults() {
         count_longBreaks: 0,
         shortBreakType: "all",
         /* Options */
-        opt_lockPC: 0,
-        opt_alwaysOnTop: 1,
-        opt_sounds: 1,
-        opt_splash: 0,
-        opt_autoStart: 1,
-        opt_startMinimized: 1,
-        opt_allowSkips: 1,
+        opt_lockPC: 0, // lock PC after a long break?
+        opt_alwaysOnTop: 1, // break-screen should be always on top of all windows?
+        opt_sounds: 1, // click and break start sounds?
+        opt_splash: 0, // continue to show splash screen animation after first-run?
+        opt_autoStart: 1, // autostart with OS?
+        opt_startMinimized: 1, // automatically minimize to tray after first-run?
+        opt_allowSkips: 0,
         /* License */
         uLicense: "Register for free at http://think.dj/refreshie",
         uEmail: "Register for free at http://think.dj/refreshie",
@@ -284,6 +283,7 @@ function setStats() {
     /* Show `Thumbs-up Badge` after user has completed at-least one long break */
     if(count_longBreaks) {
         $("#stats").removeClass('virgo');
+        if(count_longBreaks>=42) $("#stats").addClass('star');
         $("#meta_welcome").hide();
         $("#meta_hoursSaved").show();
         $("#meta_hoursSaved_hours").html(h.simplePluralize('hour', count_longBreaks));
@@ -426,19 +426,21 @@ function reincarnate(id) {
 
     let $selector = "#" + id;
 
+    /* Remove all event handlers */
     $($selector).off();
-
     let elem = document.getElementById($selector);
     if(elem) elem.replaceWith(elem.cloneNode(true));
 
+    /* Delete node */
     if(($($selector).length)) {
         $($selector).remove();
     }
 
+    /* Re-create by appending */
     if(!($($selector).length))
-        $selector = $('<span id="'+id+'">_:_</span>').appendTo( $( $selector + 'Injectable' ) );
+        $selector = $('<span id="'+id+'"><span class="blink182">_:_</span></span>').appendTo( $( $selector + 'Injectable' ) );
 
-    $selector.hide().fadeIn(1250);
+    $selector.hide(0).fadeIn(1250);
 
 }
 
@@ -656,7 +658,7 @@ function initMainTimer() {
         console.log(`Break ${uniqueID}: LONG #${totalLongBreaks} @ ${secondsPassed}`);
         if (e.elapsed) {
             /* Restart */
-            setTimeout( () => {initMainTimer() }, parseInt(localStorage.shortBreakDuration)+1 );
+            setTimeout( () => {initMainTimer() }, parseInt(localStorage.shortBreakDuration) + 1 );
         }
         else { console.log("WTF?"); }
 
@@ -680,13 +682,20 @@ let breakCleanup = () => {
     breakModalWindow = null;
     if(parseInt(localStorage.breakOngoing)) {
         localStorage.breakOngoing = 0;
-        if("long" === localStorage.breakType) {
-            /* Lock PC? (WINDOWS ONLY) */
-            if (parseInt(localStorage.opt_lockPC)) {
-                ipcRenderer.send('synchronous-messages', 'lockPC');
-            }
-            /* Restart Long Break */
-            restart_longBreak();
+        switch(localStorage.breakType) {
+            case "long":
+                /* Lock PC? (WINDOWS ONLY) */
+                if (parseInt(localStorage.opt_lockPC)) {
+                    ipcRenderer.send('synchronous-messages', 'lockPC');
+                }
+                /* Restart Long Break */
+                restart_longBreak();
+                break;
+            case "short":
+                break;
+            case "demo":
+            default:
+                break;
         }
     }
     return true;
@@ -764,7 +773,7 @@ function startBreak(type = "short", forcedMode = '') {
     /* Load contents */
     breakModalWindow.loadFile(h.getPathTo('/app/break.html')).then( res => {} );
 
-    if(__state.developerMode) breakModalWindow.webContents.openDevTools({ mode: "detach" } );
+    if(__state.developerMode && config.developerMode) breakModalWindow.webContents.openDevTools({ mode: "detach" } );
     if(parseInt(localStorage.opt_alwaysOnTop)) {
         /* If AlwaysOnTop is always giving a blank screen for first run, uncomment below line */
         // makeAlwaysOnTop = setTimeout( () => breakModalWindow.setAlwaysOnTop(true), 500);
@@ -1016,55 +1025,89 @@ ipcRenderer.on('ipc-channel-main', function (event, args) {
 
 });
 
+/* Cache */
+const cacheKey = '__cache_updates';
+let ttlOld = localStorage.getItem(cacheKey + 'cachettl');
+// HTTP cache refreshed with new data?
+function HttpCacheRefreshed() {
+    return !(ttlOld === localStorage.getItem(cacheKey + 'cachettl'));
+}
+
 $(document).ready(function() {
+
+    updatesProcess('default.updates.json');
+
+    let $webURL = isset(config.companyInfo.RESTendpointCompanyUpdates)?config.companyInfo.RESTendpointCompanyUpdates:'';
+    if(!$webURL) return;
 
     const $updatesCached = true; /* Server calls needs to be cached? */
     const $updatesCachedTTL = 24*7; /* # of Hours; */
+
+    $.ajax( $webURL, {
+        localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or an obj that implements the Storage interface */
+        cacheTTL     : $updatesCachedTTL,
+        cacheKey     : cacheKey,
+        isCacheValid : true
+    })
+    .done( function(response) {
+        updatesProcess(response);
+    });
+
+});
+
+
+function updatesProcess(response) {
 
     // Set defaults in case Web fetch fails:
     let $updates = require('./../default.updates.json');
 
     let $updateSelector = $("#messageCenter");
 
-    let $webURL = config.RESTendpointCompanyUpdates;
-
-    $.ajax( $webURL, {
-        url          : $webURL,
-        localCache   : $updatesCached, /* Required. Either a boolean, in which case localStorage will be used, or an obj that implements the Storage interface */
-        cacheTTL     : $updatesCachedTTL,
-        cacheKey     : '__cache_updates',
-        isCacheValid : true
-    })
-    .done(function(response) {
-        console.log("Updates received from server", response);
-        response = tryParseJSON(response);
-        if(response) {
-            $updates = response;
-        }
-        $.each($updates, function(index, item) {
-            $updateSelector.append(`
+    response = tryDecodeJSON(response);
+    if(response) {
+        $updates = response;
+    }
+    /* Inject updates into HTML */
+    $updateSelector.empty();
+    $.each($updates, function(index, item) {
+        let linkString = (item.url)?
+            `<span class="link"><a href="${item.url}" target="_blank">${item.urlTitle||item.url}</a></span>`:
+            '';
+        $updateSelector.append(`
             <li>
-                <span class="title"><span class="icon icon-bells"></span> ${item.title}</span>
-                <span class="date">${item.date}</span>
-                <span class="desc">${item.body}</span>
+                <span class="title"><span class="icon icon-bells"></span> ${item.title||'title'}</span>
+                <span class="date">${item.date||'date'}</span>
+                <span class="desc">${item.body||'desc'}</span>
+                ${linkString}
             </li>
             `);
-        });
     });
 
-    /* Check if server response is a valid JSON */
-    function tryParseJSON (resString) {
-        try {
-            let obj = JSON.parse(resString);
+    /* Logic for showing update-highlighter */
+    if( (parseInt(localStorage.timesOpened)<=3) || HttpCacheRefreshed() ) {
+        $("#updatesCount").fadeIn(500); // Highlight? Display a `star` next to Updates menu item
+        if(HttpCacheRefreshed()) $("#a-updates").click(); // New data? Focus on Updates Tab
+    }
+}
+
+/* Check if server response is a valid JSON */
+function tryDecodeJSON (res) {
+    if(!res) return false;
+    if(typeof res === 'string') {
+        if(h.isJSON(res)) {
+            let obj = JSON.parse(res);
             // Handle non-exception-throwing cases:
             // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking
             if (obj && typeof obj === "object") {
                 return obj;
             }
         }
-        catch (e) { return false; }
+        // is string, but not JSON
         return false;
     }
-
-
-});
+    else if (typeof res === 'object') {
+        // Already JSON object
+        return res;
+    }
+    return false;
+}

@@ -52,7 +52,7 @@
             <li class="isTab" aria-controls="app-about"><a href="#"><i class="icon-sun"></i>Mode</a></li>
             <li class="isTab" aria-controls="app-settings"><a href="#"><i class="icon-cog"></i>Settings</a></li>
             <li class="isTab" aria-controls="app-stats"><a href="#"><i class="icon-heart"></i>Stats</a></li>
-            <li class="isTab" aria-controls="app-updates"><a href="#"><i class="icon-cloud-download"></i>Updates <em class="update-highlight" id="updatesCount">&bigstar;</em></a></li>
+            <li class="isTab" aria-controls="app-updates"><a href="#"><i class="icon-cloud-download"></i>Updates <em class="update-highlight hidden" id="updatesCount">&bigstar;</em></a></li>
         </ul>
 
         <div id="content">
@@ -79,34 +79,32 @@
                 http://lightningtgc.github.io/MProgress.js/
                 -->
 
-                <div class="animated dataBlock shortBreak">
-                    <div class="dbw">
-                        <div class="animated time">
-                            <span id="nextShortBreakInInjectable"><!-- Inject Time --></span>
+                <div class="dataBlocks">
+                    <!-- Next short break -->
+                    <div class="animated dataBlock shortBreak">
+                        <div class="dbw">
+                            <div class="animated time">
+                                <span id="nextShortBreakInInjectable"><!-- Inject Time --></span>
+                            </div>
+                            <div class="info">
+                                <p>to next short break</p>
+                                <p class="meta-time">@ <span id="nextShortBreakAt">12:30 pm</span></p>
+                            </div>
                         </div>
-                        <div class="info">
-                            <p>to next short break</p>
-                            <p class="meta-time">@ <span id="nextShortBreakAt">12:30 pm</span></p>
+                    </div>
+                    <!-- Next long break -->
+                    <div class="animated dataBlock">
+                        <div class="dbw">
+                            <div class="animated time">
+                                <span id="nextLongBreakInInjectable"><!-- Inject Time --></span>
+                            </div>
+                            <div class="info">
+                                <p>to next long break</p>
+                                <p class="meta-time">@ <span id="nextLongBreakAt">12:30 pm</span></p>
+                            </div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
                 </div>
-
-                <div class="animated dataBlock">
-                    <div class="dbw">
-                        <div class="animated time">
-                            <span id="nextLongBreakInInjectable"><!-- Inject Time --></span>
-                        </div>
-                        <div class="info">
-                            <p>to next long break</p>
-                            <p class="meta-time">@ <span id="nextLongBreakAt">12:30 pm</span></p>
-                        </div>
-                        <div class="clearfix"></div>
-
-                    </div>
-                </div>
-
-                <div class="clearfix"></div>
 
                 <p class="hblock-info">
                     <span>
@@ -138,34 +136,30 @@
 
                 <!--<h3 style="text-transform: uppercase; color: #777; font-size: 13px;">Geeky Stuff</h3>-->
 
-                <div class="dataBlock shortBreak">
-                    <div class="dbw">
-                        <div class="time">
-                            <span id="count_longBreaks">1</span>
+                <div class="dataBlocks">
+                    <div class="dataBlock shortBreak">
+                        <div class="dbw">
+                            <div class="time">
+                                <span id="count_longBreaks">1</span>
+                            </div>
+                            <div class="info">
+                                <p>Long Breaks</p>
+                                <p class="meta-time">Total</p>
+                            </div>
                         </div>
-                        <div class="info">
-                            <p>Long Breaks</p>
-                            <p class="meta-time">Total</p>
+                    </div>
+                    <div class="dataBlock">
+                        <div class="dbw">
+                            <div class="time">
+                                <span id="count_shortBreaks">2</span>
+                            </div>
+                            <div class="info">
+                                <p>Short Breaks</p>
+                                <p class="meta-time">Total</p>
+                            </div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
                 </div>
-
-                <div class="dataBlock">
-                    <div class="dbw">
-                        <div class="time">
-                            <span id="count_shortBreaks">2</span>
-                        </div>
-                        <div class="info">
-                            <p>Short Breaks</p>
-                            <p class="meta-time">Total</p>
-                        </div>
-                        <div class="clearfix"></div>
-
-                    </div>
-                </div>
-
-                <div class="clearfix"></div>
 
                 <ul class="ul-stats">
                     <li><span class="icon icon-trophy"></span>
@@ -178,9 +172,12 @@
                     </li>
                 </ul>
 
+                <!-- App version & update -->
                 <p class="hblock-update">
-                    v <b class="app-version">1.0</b> <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM
-                &bull; --><a href="#" class="btn-update action-update">Check for updates</a></small>
+                    <span>v <b class="app-version">1.0</b></span>
+                    <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM &bull; -->
+                        <a href="#" class="btn-update action-update">Check for updates</a>
+                    </small>
                 </p>
 
             </div>
@@ -320,6 +317,15 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- App version & update -->
+                        <p class="hblock-update">
+                            <span>v <b class="app-version">1.0</b></span>
+                            <small class="meta"><!--Last checked 14 Aug 2016 5:40 PM &bull; -->
+                                <a href="#" class="btn-update action-update">Check for updates</a>
+                            </small>
+                        </p>
+
                     </div>
 
                     <!-- Server Updates JSON -->
@@ -343,12 +349,11 @@
 
 </div>
 </body>
-
+<!-- Scripts-->
 <script src="assets/js/init.js"></script>
 <script src="assets/js/vendor/jquery.countdown.js"></script>
 <script src="assets/js/vendor/jquery-ajax-localstorage-cache.js"></script>
 <script src="assets/js/vendor/icheck.js"></script>
 <script src="assets/js/vendor/splash.anim.js" id="script-splash-anim"></script>
 <script src="app.js"></script>
-<!--<script src="assets/js/vex.combined.min.js"></script>-->
 </html>

@@ -127,7 +127,7 @@ function createMainWindow () {
 
   /* Open the DevTools? */
   /* modes: 'right' | 'bottom' | 'undocked' | 'detach' */
-  if(__state.developerMode) mainWindow.webContents.openDevTools({ mode: "detach" } )
+  if(__state.developerMode && config.developerMode) mainWindow.webContents.openDevTools({ mode: "detach" } )
 
   /* Open all external links in Browser `new-window` is fired when external links are clicked [links must have target="_blank"] */
   mainWindow.webContents.on('new-window', function(e, url) {
@@ -148,16 +148,16 @@ app.whenReady().then( () => {
   setTrayMenu(); // set the tray menu
   ipcSubscriptions(); // inter-process communication subscriptions
 
-  /* Handle SPECIAL CASES */
   app.on('activate', function () {
+
+    /* Handle SPECIAL CASES */
     // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0)  {
       createMainWindow();
     }
-    // Set icon on Mac
+    // MacOS-specific handlers
     if (h.platformIs('mac')) {
-      app.dock.setIcon(h.getImage(__state.appIcoPath));
-      //app.dock.hide();
+      setMacOS();
     }
   });
 
@@ -246,7 +246,7 @@ function setTrayMenu() {
   ];
 
   /* DEV MENU ITEM: Quick-reload app to see changes */
-  if(__state.developerMode) {
+  if(__state.developerMode && config.developerMode) {
     menuItems.push(
         {type: 'separator'},
         {
@@ -274,6 +274,24 @@ function setTrayMenu() {
 
 }
 
+function setMacOS() {
+
+  app.dock.setIcon(h.getImage(__state.appIcoPath));
+  //app.dock.hide();
+
+  /* Set "About" dialog (macOS only)  */
+  app.setAboutPanelOptions({
+    iconPath: __state.appIcoPath,
+    applicationName: config.name,
+    applicationVersion: config.version,
+    copyright: config.copyright,
+    //version: "",
+    //credits: "",
+    //authors: "",
+    //website: ""
+  });
+
+}
 
 function relaunchApp() {
   app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });

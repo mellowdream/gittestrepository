@@ -47,6 +47,14 @@ module.exports = {
         return term;
     },
 
+    isJSON: (str) => {
+        try {
+            return (JSON.parse(str) && !!str);
+        } catch (e) {
+            return false;
+        }
+    },
+
     isset: (variable) => {
         try {
             return typeof eval(variable) !== 'undefined';

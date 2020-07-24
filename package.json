@@ -136,7 +136,6 @@
   },
   "dependencies": {
     "auto-launch": "^5.0.5",
-    "electron-squirrel-startup": "^1.0.0",
     "jquery": "^3.5.1"
   },
   "config": {

@@ -3,8 +3,9 @@
  * Created by Deepak Thomas
  * Mod 0 on 3/23/2016 @ 6:56pm (creation)
  * Mod1 on 07/07/2016 @ 3:30pm | Mod2 on 08/07/2016 @ 10:00am (enhancements; bug fixes)
- * Mod3 on 10/09/2019 @ 3:00pm (enhancements: pause)
+ * Mod3 on 10/09/2019 @ 3:00pm (enhancements: pause/reset)
  * Mod4 on 12/07/2020 @ 4:00pm (Upgrade to Electron 9; Config; Security enhancements)
+ * Mod5 on 24/07/2020 @ 11:00am
  */
 
 /* Begin scoping function*/
@@ -446,7 +447,7 @@ function reincarnate(id) {
 
 /* Define state and text */
 let $state = statusIs.RUNNING;
-let $stateText = [ "Reset", "Stop" ]; /* "Paused", "Running" */
+let $stateText = [ "Restart", "Stop" ]; /* "Paused", "Running" */
 
 $("#button-action").text($stateText[statusIs.RUNNING]);
 
@@ -941,7 +942,13 @@ jQuery(document).ready( function() {
     $(".app-tagline").html(config.tagline)
     $(".app-version").html(config.version)
 
-    /* Company Info */
+    /* There is some Refreshie-specific code related to code-licensing in Updates/Author-info tab */
+    /* If this product is re-branded, hide this content */
+    if( ! (config.name==="Refreshie" && config.author.toString().includes('thinkdj')) ) {
+        $("#refreshie-stuff").hide();
+    }
+
+    /* Re-write Author Block / Company Info */
     $("#rw-co-name").html(config.companyInfo.name);
     $("#rw-co-links").empty();
     config.companyInfo.links.forEach( link => {

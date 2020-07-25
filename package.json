@@ -76,7 +76,7 @@
     },
     "win": {
       "publisherName": "thinkdj",
-      "icon": "./build/icon.png",
+      "icon": "./build/icon.ico",
       "target": [
         {
           "target": "portable"

@@ -8,6 +8,7 @@
   "urlAppUpdates": "https://think.dj/refreshie/?from=app-update",
   "RESTendpointAppUpdates": "https://jsonplaceholder.typicode.com/posts",
   "UrlContact": "mailto:shout@think.dj?subject=RE[freshie]: ",
+  "author": "@thinkdj",
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },

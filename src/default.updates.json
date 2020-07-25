@@ -1,39 +1,23 @@
 [
   {
-    "title" : "Refreshie v1.0",
-    "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates",
-    "urlTitle": "https://upp.to/",
-    "url": "https://upp.to/"
+    "title" : "Refreshie v2.1",
+    "date" : "24 July 2020",
+    "body" : "Improved code that understands PC lock/unlock and resets the breaks. You can also stop the breaks manually before you start a game or give a presentation without having to quit the app.",
+    "urlTitle": "Refreshie",
+    "url": "https://think.dj/refreshie"
+  },
+  {
+    "title" : "Source Code",
+    "date" : "20 July 2020",
+    "body" : "There has been an increasing demand for a white-labeled solution. Refreshie is now completely customizable. You may purchase the code & modify it for personal or commercial use",
+    "urlTitle": "Get the source code",
+    "url": "https://think.dj/refreshie"
   },
   {
     "title" : "Refreshie v1.0",
     "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates"
-  },
-  {
-    "title" : "Refreshie v1.0",
-    "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates"
-  },
-  {
-    "title" : "Refreshie v1.0",
-    "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates"
-  },
-  {
-    "title" : "Refreshie v1.0",
-    "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates"
-  },
-  {
-    "title" : "Refreshie v1.0",
-    "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates"
-  },
-  {
-    "title" : "Refreshie v1.0",
-    "date" : "20 July 2016",
-    "body" : "What started out as a hunt for a good fatigue-buster app ended as this app. Watch this space for lots more updates"
+    "body" : "What started out as a hunt for a good fatigue-buster app ended as Refreshie. Happy to launch v1",
+    "urlTitle": "Refreshie",
+    "url": "https://think.dj/refreshie"
   }
 ]

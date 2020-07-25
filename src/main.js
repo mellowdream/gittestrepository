@@ -26,6 +26,9 @@ let __state = {
 let mainWindow = null;
 let mainTray = null;
 
+// Disable GPU acceleration for better performance
+// WHY? https://github.com/electron/electron/issues/13368
+app.disableHardwareAcceleration();
 
 /* App: SINGLE INSTANCE */
 const gotTheLock = app.requestSingleInstanceLock();
@@ -220,13 +223,13 @@ function setTrayMenu() {
       type: 'separator'
     },
     {
-      label: 'Restart',
+      label: 'Restart Breaks',
       click: function () {
         sendToRenderer("restart");
       }
     },
     {
-      label: 'Pause/Resume',
+      label: 'Pause/Reset',
       click: function () {
         sendToRenderer("toggle");
       }

@@ -14,8 +14,10 @@
     { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
     { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.ico" }
   ],
-  "audioClickSound": "assets/sounds/plop.mp3",
-  "audioBreakStart": "assets/sounds/piano-smooth.mp3",
+  "audio": {
+    "click": "assets/sounds/plop.mp3",
+    "startBreak": "assets/sounds/piano-smooth.mp3"
+  },
   "assetsShortBreak": [
     { "img": "assets/images/do.look.png", "title": "Look around" },
     { "img": "assets/images/do.spine.png", "title": "Flex your back" },

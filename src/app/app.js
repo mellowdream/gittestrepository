@@ -16,9 +16,9 @@ const h = require('./../helpers.js');
 
 /* Audio Elements */
 let audioClick = document.createElement('audio');
-audioClick.setAttribute('src', config.audioClickSound);
+audioClick.setAttribute('src', config.audio.click);
 let audioStartBreak = document.createElement('audio');
-audioStartBreak.setAttribute('src', config.audioBreakStart);
+audioStartBreak.setAttribute('src', config.audio.startBreak);
 
 function removeJSorCSS(filename, filetype) {
     /* SRC: http://www.javascriptkit.com/javatutors/loadjavascriptcss2.shtml */

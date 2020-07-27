@@ -26,6 +26,7 @@
   ],
   "companyInfo": {
     "name" : "By Deepak Thomas",
+    "img": "assets/images/@thinkdj.jpg",
     "links": [
       { "name": "@thinkdj", "url": "http://twitter.com/thinkdj", "title": "Catch me on twitter" },
       { "name": "Mail", "url": "mailto:shout@think.dj?subject=RE[freshie]: ", "title": "Reach out" }

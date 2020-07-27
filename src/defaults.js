@@ -1,5 +1,4 @@
 
-
 let browserWindowDefaults = {
     useContentSize: false,
     alwaysOnTop: false,

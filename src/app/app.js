@@ -950,6 +950,7 @@ jQuery(document).ready( function() {
 
     /* Re-write Author Block / Company Info */
     $("#rw-co-name").html(config.companyInfo.name);
+    $("#rw-co-img").attr('src', config.companyInfo.img);
     $("#rw-co-links").empty();
     config.companyInfo.links.forEach( link => {
         $("#rw-co-links").append(`<a href="${link.url}" target="_blank" rel="external" class="co-link" title="${link.title}">${link.name}</a>`);

@@ -166,13 +166,13 @@ app.whenReady().then( () => {
 
   /* Power events */
   // Lock/unlock (Win/Mac)
-  powerMonitor.on("lock-screen", () => { timerActionsAuto('lock') } );
-  powerMonitor.on("unlock-screen", () => { timerActionsAuto('unlock') } );
+  powerMonitor.on('lock-screen', () => { timerActionsAuto('lock') } );
+  powerMonitor.on('unlock-screen', () => { timerActionsAuto('unlock') } );
   // Suspend/Resume (Win/Lin)
-  powerMonitor.on("suspend", () => { timerActionsAuto('lock') } );
-  powerMonitor.on("resume", () => { timerActionsAuto('unlock') } );
+  powerMonitor.on('suspend', () => { timerActionsAuto('lock') } );
+  powerMonitor.on('resume', () => { timerActionsAuto('unlock') } );
   // Shutdown (Mac/Lin)
-  powerMonitor.on("shutdown", () => { app.quit() } );
+  powerMonitor.on('shutdown', () => { app.quit() } );
 
 });
 

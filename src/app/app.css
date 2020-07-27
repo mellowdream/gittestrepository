@@ -1085,13 +1085,13 @@ a.faded {
     padding: 0;
     margin: 10px 0 0;
     color: #343a40;
-    opacity: 0.5;
 }
 #refreshie-stuff .img, #refreshie-stuff img {
     width: 24px;
     height: 24px;
     margin-right: 5px;
     object-fit: cover;
+    opacity: 0.25;
 }
 #refreshie-stuff img path {
     color: var(--color-primary);

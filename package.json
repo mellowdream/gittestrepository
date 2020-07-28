@@ -104,11 +104,11 @@
       "allowToChangeInstallationDirectory": false,
       "installerHeader": "./build/nsisInstallerHeader.bmp",
       "installerSidebar": "./build/nsisInstallerSidebar.bmp",
-      "uninstallerSidebar": "./build/nsisInstallerSidebar.bmp",
+      "uninstallerSidebar": "./build/nsisUninstallerSidebar.bmp",
       "uninstallDisplayName": "${productName}"
     },
     "portable": {
-      "artifactName": "Refreshie-Standalone.exe"
+      "artifactName": "Refreshie-Standalone-win-${version}.exe"
     },
     "appx": {
       "applicationId": "dj.think.refreshie",

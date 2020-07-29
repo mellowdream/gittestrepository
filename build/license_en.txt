@@ -1,5 +1,7 @@
 
-Refreshie is a fatigue-buster app that reminds you to take a break.
+Refreshie is a fatigue-buster app for your desktop, which reminds you to take an occasional break.
+
+https://refreshie.think.dj
 
 You may
 ------------------------------------------------
@@ -13,9 +15,9 @@ You may NOT
  - Charge others for a copy of this app
  - Modify the license of the app
  - Publish a modified version of the app
- - Use the app's assets (including, but not limited to Caricature designs, mascots, artwork and other creatives) for any other purpose
+ - Use the app's assets (including, but not limited to caricature designs, mascots, artwork and other creatives) for any other purpose
 
-PS: You may purchase an Extended License of the source code from the app's homepage for obtaining the complete source code, assets, and rights to modifying/sell/re-sell the derivative app.
+PS: You may purchase an Extended License from the app's homepage for obtaining the complete source code, assets, and rights to modifying/sell/re-sell the derivative app.
 More info is available at https://refreshie.think.dj
 
 ------------------------------------------------

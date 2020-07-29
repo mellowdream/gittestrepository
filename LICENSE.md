@@ -1,5 +1,7 @@
 
-Refreshie is a fatigue-buster app that reminds you to take a break.
+Refreshie is a fatigue-buster app for your desktop, which reminds you to take an occasional break.
+
+https://refreshie.think.dj
 
 You may
 ------------------------------------------------

@@ -1,10 +1,9 @@
 
-// Modules to control application lifecycle (main process)
+// Modules to control Application lifecycle (`main` process)
 
-const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, ipcMain } = require('electron');  //nativeImage, Notification,
-const path = require('path');
-
+const { app, BrowserWindow, Menu, Tray, shell, powerMonitor, ipcMain } = require('electron');  // unused: nativeImage, Notification,
 const h = require('./helpers.js');
+const path = require('path');
 
 
 /* Read config JSON */
@@ -33,15 +32,53 @@ app.disableHardwareAcceleration();
 /* App: SINGLE INSTANCE */
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
-  app.quit();
+  app.exit();
 } else {
+
+  // Second instance?
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus();
     }
   })
+
+  // app.whenReady() => This method will be called when Electron/Core has finished initialization,
+  // and is ready to create browser windows. Some APIs can only be used after this event occurs.
+  app.whenReady().then( () => {
+
+    /* CORE */
+    createMainWindow(); // create the main process' window
+    setTrayMenu(); // set the tray menu
+    ipcSubscriptions(); // inter-process communication subscriptions
+
+    app.on('activate', function () {
+
+      /* Handle SPECIAL CASES */
+      // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
+      if (BrowserWindow.getAllWindows().length === 0)  {
+        createMainWindow();
+      }
+      // MacOS-specific handlers
+      if (h.platformIs('mac')) {
+        setMacOS();
+      }
+    });
+
+    /* Power events */
+    // Lock/unlock (Win/Mac)
+    powerMonitor.on('lock-screen', () => { timerActionsAuto('lock') } );
+    powerMonitor.on('unlock-screen', () => { timerActionsAuto('unlock') } );
+    // Suspend/Resume (Win/Lin)
+    powerMonitor.on('suspend', () => { timerActionsAuto('lock') } );
+    powerMonitor.on('resume', () => { timerActionsAuto('unlock') } );
+    // Shutdown (Mac/Lin)
+    powerMonitor.on('shutdown', () => { app.quit() } );
+
+  });
+
 }
+
 
 /* INSTALL: HANDLE SQUIRREL INSTALLER */
 // this should be placed at top of main.js to handle setup events like install/uninstall
@@ -102,13 +139,18 @@ function createMainWindow () {
   /* App Ready */
   mainWindow.on('minimize', function(e) {
     e.preventDefault();
-    mainWindow.setSkipTaskbar(true);
+    mainWindow.setSkipTaskbar(false);
     mainWindow.hide();
     //tray = createTray();
   });
-  mainWindow.on('restore', function(e) {
-    mainWindow.show();
+  /* Show / Restore */
+  mainWindow.on('show', function() {
     mainWindow.setSkipTaskbar(false);
+    //mainWindow.show();
+  });
+  mainWindow.on('restore', function(e) {
+    mainWindow.setSkipTaskbar(false);
+    mainWindow.show();
     //tray.destroy();
   });
   /* Close */
@@ -116,7 +158,7 @@ function createMainWindow () {
     if(!__state.forceQuit) {
       e.preventDefault();
       mainWindow.hide();
-      return false;
+      mainWindow.setSkipTaskbar(false);
     }
   });
   /* Quit */
@@ -125,7 +167,7 @@ function createMainWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     // delete mainMenu; delete mainTray; delete mainWindow;
-    app.quit();
+    //app.quit();
   });
 
   /* Open the DevTools? */
@@ -142,39 +184,6 @@ function createMainWindow () {
 
 }
 
-// app.whenReady() => This method will be called when Electron/Core has finished initialization,
-// and is ready to create browser windows. Some APIs can only be used after this event occurs.
-app.whenReady().then( () => {
-
-  /* CORE */
-  createMainWindow(); // create the main process' window
-  setTrayMenu(); // set the tray menu
-  ipcSubscriptions(); // inter-process communication subscriptions
-
-  app.on('activate', function () {
-
-    /* Handle SPECIAL CASES */
-    // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0)  {
-      createMainWindow();
-    }
-    // MacOS-specific handlers
-    if (h.platformIs('mac')) {
-      setMacOS();
-    }
-  });
-
-  /* Power events */
-  // Lock/unlock (Win/Mac)
-  powerMonitor.on('lock-screen', () => { timerActionsAuto('lock') } );
-  powerMonitor.on('unlock-screen', () => { timerActionsAuto('unlock') } );
-  // Suspend/Resume (Win/Lin)
-  powerMonitor.on('suspend', () => { timerActionsAuto('lock') } );
-  powerMonitor.on('resume', () => { timerActionsAuto('unlock') } );
-  // Shutdown (Mac/Lin)
-  powerMonitor.on('shutdown', () => { app.quit() } );
-
-});
 
 // Power-saver mode disabler
 // const { powerSaveBlocker } = require('electron');
@@ -428,14 +437,28 @@ function showMainWindow() {
 // code. You can also put them in separate files and require them here.
 
 /* FUNCTIONS */
+
 /* Lock Workstation */
 let lockPC = () => {
+  // win
   if(h.platformIs('windows')) {
     const command = "rundll32.exe user32.dll, LockWorkStation";
     const commandBackup = __state.basePath + "/app/assets/bin/w.exe quiet lock";
     return require('child_process').exec(command);
   }
+  // mac
+  else if (h.platformIs('mac')) {
+    const command = "/System/Library/CoreServices/Menu\\ Extras/User.menu/Contents/Resources/CGSession -suspend";
+    return require('child_process').exec(command);
+  }
+  // linux
+  else if (h.platformIs('linux')) {
+    const command = "gnome-screensaver-command -l";
+    return require('child_process').exec(command);
+  }
 }
+
+/* Restart the app */
 let restartApp = () => {
   const exec = require('child_process').exec;
   exec(process.argv.join(' ')); /* Execute the command that was used to run the app*/

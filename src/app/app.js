@@ -685,8 +685,8 @@ let breakCleanup = () => {
         localStorage.breakOngoing = 0;
         switch(localStorage.breakType) {
             case "long":
-                /* Lock PC? (WINDOWS ONLY) */
-                if (parseInt(localStorage.opt_lockPC)) {
+                /* Lock PC? */
+                if ( parseInt(localStorage.opt_lockPC) && (!parseInt(localStorage.skippedLastBreak)) ) {
                     ipcRenderer.send('synchronous-messages', 'lockPC');
                 }
                 /* Restart Long Break */

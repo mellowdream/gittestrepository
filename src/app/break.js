@@ -11,8 +11,10 @@ thisWindow.center();
 
 let isDemoBreak = () => ["demo"].includes(localStorage.breakType);
 
-function closeThis() {
+localStorage.skippedLastBreak = 0;
+function skipThisBreak() {
     if(!isDemoBreak()) localStorage.skippedCount++;
+    localStorage.skippedLastBreak = 1;
     breakCleanup();
 }
 
@@ -28,7 +30,7 @@ jQuery(document).ready(
         $(".app-title").html(config.name);
         $(".app-tagline").html(config.tagline)
         /* Hooks */
-        $(".action-close").click(() => closeThis());
+        $(".action-close").click(() => skipThisBreak());
     }
 );
 

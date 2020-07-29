@@ -448,11 +448,13 @@ let lockPC = () => {
   }
   // mac
   else if (h.platformIs('mac')) {
+    sendToRenderer('stop'); // lock the timer/pc until we have powerMonitor working for this OS
     const command = "/System/Library/CoreServices/Menu\\ Extras/User.menu/Contents/Resources/CGSession -suspend";
     return require('child_process').exec(command);
   }
   // linux
   else if (h.platformIs('linux')) {
+    sendToRenderer('stop'); // lock the timer/pc until we have powerMonitor working for this OS
     const command = "gnome-screensaver-command -l";
     return require('child_process').exec(command);
   }

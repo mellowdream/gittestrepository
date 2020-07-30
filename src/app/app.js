@@ -125,8 +125,6 @@ let __state = {
     status: statusIs.RUNNING,
     basePath: __dirname,
     appIcoPath: h.getPathTo(config.icons.find(i => i.id==='app').asset),
-    icoTrayPath: h.getPathTo(config.icons.find(i => i.id==='tray').asset),
-    icoTrayPathPaused: h.getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
 };
 
 
@@ -211,19 +209,20 @@ const isset = (variable) => {
 function initAppSetDefaults() {
 
     let defaultSettings = {
-        /* Defaults */
+        /* App Setting Defaults */
         firstTouch: new Date(Date.now()),
         longBreakInterval: 60 * minutes,
         shortBreakInterval: 20 * minutes,
         shortBreakDuration: 20 * seconds,
         timesOpened: 0,
-        skippedCount: 0,
         breakOngoing: 0,
-        breakType: 'short',
+        skippedLastBreak: 0,
         mode: 'monk',
+        breakType: 'short',
+        shortBreakType: 'all',
+        count_skipped: 0,
         count_shortBreaks: 0,
         count_longBreaks: 0,
-        shortBreakType: "all",
         /* Options */
         opt_lockPC: 0, // lock PC after a long break?
         opt_alwaysOnTop: 1, // break-screen should be always on top of all windows?
@@ -301,7 +300,7 @@ function setStats() {
     $("#count_longBreaks").text(kFormatter(localStorage.count_longBreaks));
     $("#count_opened").text(h.simplePluralize('time', localStorage.timesOpened, true));
 
-    let skippedText = parseInt(localStorage.skippedCount);
+    let skippedText = parseInt(localStorage.count_skipped);
     if(!skippedText) skippedText = "none of the";
     else skippedText = skippedText + " of ";
     $("#count_skipped").text(skippedText);
@@ -309,7 +308,7 @@ function setStats() {
     $("#firstTouch").text(localStorage.firstTouch);
 
     let totalBreaks = parseInt(localStorage.count_shortBreaks) + parseInt(localStorage.count_longBreaks);
-    let percSkips = Math.round( parseInt(localStorage.skippedCount)/( totalBreaks )*100 ) || 0;
+    let percSkips = Math.round( parseInt(localStorage.count_skipped)/( totalBreaks )*100 ) || 0;
     let percSkipsText;
 
     let skipPercAllowed = 15;
@@ -739,9 +738,7 @@ function startBreak(type = "short", forcedMode = '') {
     /* Create break Window */
     breakModalWindow = new BrowserWindow({
         title: remote.app.getName() + " break",
-        icon: h.platformIs('windows')?
-                h.getImage(__state.icoTrayPath):
-                h.getImage(__state.appIcoPath),
+        icon: h.getImage(__state.appIcoPath),
         width: optWidth,
         height: optHeight,
         fullscreen: optFullScreen,

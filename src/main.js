@@ -29,12 +29,20 @@ let mainTray = null;
 // WHY? https://github.com/electron/electron/issues/13368
 app.disableHardwareAcceleration();
 
+/* MAC */
+if(h.platformIs('mac')) {
+  app.dock.hide();
+}
+// Quit the app when the window is closed
+app.on('window-all-closed', () => {
+  app.exit()
+})
+
 /* App: SINGLE INSTANCE */
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.exit();
 } else {
-
   // Second instance?
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     if (mainWindow) {
@@ -42,43 +50,41 @@ if (!gotTheLock) {
       mainWindow.focus();
     }
   })
-
-  // app.whenReady() => This method will be called when Electron/Core has finished initialization,
-  // and is ready to create browser windows. Some APIs can only be used after this event occurs.
-  app.whenReady().then( () => {
-
-    /* CORE */
-    createMainWindow(); // create the main process' window
-    setTrayMenu(); // set the tray menu
-    ipcSubscriptions(); // inter-process communication subscriptions
-
-    app.on('activate', function () {
-
-      /* Handle SPECIAL CASES */
-      // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
-      if (BrowserWindow.getAllWindows().length === 0)  {
-        createMainWindow();
-      }
-      // MacOS-specific handlers
-      if (h.platformIs('mac')) {
-        setMacOS();
-      }
-    });
-
-    /* Power events */
-    // Lock/unlock (Win/Mac)
-    powerMonitor.on('lock-screen', () => { timerActionsAuto('lock') } );
-    powerMonitor.on('unlock-screen', () => { timerActionsAuto('unlock') } );
-    // Suspend/Resume (Win/Lin)
-    powerMonitor.on('suspend', () => { timerActionsAuto('lock') } );
-    powerMonitor.on('resume', () => { timerActionsAuto('unlock') } );
-    // Shutdown (Mac/Lin)
-    powerMonitor.on('shutdown', () => { app.quit() } );
-
-  });
-
 }
 
+// app.whenReady() => This method will be called when Electron/Core has finished initialization,
+// and is ready to create browser windows. Some APIs can only be used after this event occurs.
+app.whenReady().then( () => {
+
+  /* CORE */
+  createMainWindow(); // create the main process' window
+  setTrayMenu(); // set the tray menu
+  ipcSubscriptions(); // inter-process communication subscriptions
+
+  app.on('activate', function () {
+
+    /* Handle SPECIAL CASES */
+    // On macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0)  {
+      createMainWindow();
+    }
+    // MacOS-specific handlers
+    if (h.platformIs('mac')) {
+      setMacOS();
+    }
+  });
+
+  /* Power events */
+  // Lock/unlock (Win/Mac)
+  powerMonitor.on('lock-screen', () => { timerActionsAuto('lock') } );
+  powerMonitor.on('unlock-screen', () => { timerActionsAuto('unlock') } );
+  // Suspend/Resume (Win/Lin)
+  powerMonitor.on('suspend', () => { timerActionsAuto('lock') } );
+  powerMonitor.on('resume', () => { timerActionsAuto('unlock') } );
+  // Shutdown (Mac/Lin)
+  powerMonitor.on('shutdown', () => { app.quit() } );
+
+});
 
 /* INSTALL: HANDLE SQUIRREL INSTALLER */
 // this should be placed at top of main.js to handle setup events like install/uninstall
@@ -106,7 +112,7 @@ function createMainWindow () {
     maximizable: false,
     minimizable: true,
     resizable: false,
-    skipTaskbar: h.platformIs('linux'), // true only for linux
+    skipTaskbar: !h.platformIs('linux'), // true only for linux
     title: config.name,
     icon: h.getImage(__state.appIcoPath),
     backgroundColor: 'rgba(255,255,255,0)',
@@ -129,6 +135,7 @@ function createMainWindow () {
       experimentalFeatures: false,
       allowRunningInsecureContent: false,
       preload: h.getPathTo('/preload.js'), // use a preload script?
+      backgroundThrottling: false, // Prevents renderer process code from not running when window is hidden
     }
   })
 
@@ -136,29 +143,25 @@ function createMainWindow () {
   mainWindow.loadFile( h.getPathTo( 'app/app.html' ) ).then( res => {} );
 
   /* Subscribe to events */
-  /* App Ready */
-  mainWindow.on('minimize', function(e) {
-    e.preventDefault();
-    mainWindow.setSkipTaskbar(false);
-    mainWindow.hide();
-    //tray = createTray();
-  });
+  /* We will override all events to either of: hide/show (rest will be configured from taskbar icon) */
   /* Show / Restore */
-  mainWindow.on('show', function() {
-    mainWindow.setSkipTaskbar(false);
-    //mainWindow.show();
+  mainWindow.on('show', function(e) {
+    e.preventDefault();
+    showMainWindow();
   });
   mainWindow.on('restore', function(e) {
-    mainWindow.setSkipTaskbar(false);
-    mainWindow.show();
-    //tray.destroy();
+    e.preventDefault();
+    showMainWindow();
   });
-  /* Close */
+  /* Minimize / Close */
+  mainWindow.on('minimize', function(e) {
+    e.preventDefault();
+    mainWindow.hide();
+  });
   mainWindow.on('close', function(e) {
     if(!__state.forceQuit) {
       e.preventDefault();
       mainWindow.hide();
-      mainWindow.setSkipTaskbar(false);
     }
   });
   /* Quit */
@@ -167,7 +170,7 @@ function createMainWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     // delete mainMenu; delete mainTray; delete mainWindow;
-    //app.quit();
+    app.quit();
   });
 
   /* Open the DevTools? */
@@ -194,9 +197,9 @@ function createMainWindow () {
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on('window-all-closed', function () {
-  if (!h.platformIs('mac')) app.quit()
-})
+//app.on('window-all-closed', function () {
+//  if (h.platformIs('mac')) app.quit()
+//})
 
 // Emitted when remote.require() is called in the renderer process of webContents
 app.on('remote-require', function () {
@@ -252,7 +255,7 @@ function setTrayMenu() {
       label: 'Quit',
       accelerator: 'Command+Q',
       click: function () {
-        app.exit(0);
+        app.exit();
       }
     }
   ];
@@ -277,10 +280,11 @@ function setTrayMenu() {
   /* Events */
   /* Show mainWindow on click/double-click of theTray */
   mainTray.on('click',function() {
-    mainWindowVisibility('show');
+    // if(h.platformIs('windows') && !mainWindow.isVisible()) mainWindowVisibility('show');
+    mainTray.popUpContextMenu();
   });
   mainTray.on('double-click',function() {
-    /* Windows-only */
+    /* Mac and Windows only */
     mainWindowVisibility('toggle');
   });
 
@@ -412,7 +416,7 @@ function sendToRenderer(message, channel='ipc-channel-main') {
 
 /* Handle main window visibility */
 function mainWindowVisibility(state) {
-  let windowVisible = (mainWindow.isVisible() && !mainWindow.isMinimized());
+  let windowIsVisible = (mainWindow.isVisible() && !mainWindow.isMinimized());
   switch(state) {
     case 'show':
       showMainWindow();
@@ -422,15 +426,18 @@ function mainWindowVisibility(state) {
       break;
     case 'toggle':
     default:
-      if(windowVisible) mainWindow.hide()
+      if(windowIsVisible) mainWindow.hide()
       else { showMainWindow(); }
       break;
   }
 }
 function showMainWindow() {
-  let isMinimized = mainWindow.isMinimized(), isVisible = mainWindow.isVisible();
-  if(!isVisible) mainWindow.show();
-  if(isMinimized) mainWindow.restore();
+  if(!mainWindow.isVisible()) mainWindow.show();
+  if(mainWindow.isMinimized()) mainWindow.restore();
+}
+function hideMainWindow() {
+  if(mainWindow.isVisible()) mainWindow.hide();
+  if(!mainWindow.isMinimized()) mainWindow.minimize();
 }
 
 // In this file you can include the rest of your app's specific main process

@@ -13,7 +13,7 @@ let isDemoBreak = () => ["demo"].includes(localStorage.breakType);
 
 localStorage.skippedLastBreak = 0;
 function skipThisBreak() {
-    if(!isDemoBreak()) localStorage.skippedCount++;
+    if(!isDemoBreak()) localStorage.count_skipped++;
     localStorage.skippedLastBreak = 1;
     breakCleanup();
 }

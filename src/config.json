@@ -3,16 +3,16 @@
   "version": "2.1.1",
   "tagline": "Taking back control",
   "copyright": "Free for personal use",
-  "url": "https://think.dj/refreshie/",
-  "urlAbout": "https://think.dj/refreshie/?from=app-about",
-  "urlAppUpdates": "https://think.dj/refreshie/?from=app-update",
-  "RESTendpointAppUpdates": "https://jsonplaceholder.typicode.com/posts",
+  "url": "https://refreshie.think.dj/",
+  "urlAbout": "https://refreshie.think.dj/?from=app-about",
+  "urlAppUpdates": "https://refreshie.think.dj/?from=app-update",
+  "RESTendpointAppUpdates": "https://refreshie.think.dj/releases/",
   "UrlContact": "mailto:shout@think.dj?subject=RE[freshie]: ",
   "author": "@thinkdj",
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },
-    { "id": "tray", "asset": "/app/assets/ico/tray.ico" },
-    { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.ico" }
+    { "id": "tray", "asset": "/app/assets/ico/tray.png" },
+    { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.png" }
   ],
   "audio": {
     "click": "assets/sounds/plop.mp3",

@@ -26,6 +26,10 @@
   "assetsLongBreak": [
     { "img": "assets/images/do.walk.png", "title":"Take a walk" }
   ],
+  "splashScreen": {
+    "imgMainLogo": "assets/images/logo.png",
+    "subText": "&copy; 2016-2020 @thinkdj"
+  },
   "companyInfo": {
     "name" : "For MetaMorphoSys (by @thinkdj)",
     "img": "assets-mms/logo.png",

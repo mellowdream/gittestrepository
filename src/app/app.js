@@ -945,6 +945,10 @@ jQuery(document).ready( function() {
         $("#refreshie-stuff").hide();
     }
 
+    /* Rewrite splash screen */
+    $("#rw-splash-img").attr('src', config.splashScreen.imgMainLogo);
+    $("#rw-splash-copyright").html(config.splashScreen.subText);
+
     /* Re-write Author Block / Company Info */
     $("#rw-co-name").html(config.companyInfo.name);
     $("#rw-co-img").attr('src', config.companyInfo.img);

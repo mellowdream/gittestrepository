@@ -6,7 +6,11 @@
 #author-info-updates, .break-meta-container {
     position: relative;
 }
-
+.watermark img { height: 42px !important; }
+.p-mms {
+    padding-right: 149px !important;
+    background: #fff;
+}
 /* =========================================== */
 /* Butterfly Animation  */
 /* Tweaked from Tim's codepen https://codepen.io/timohausmann/pen/agusv */

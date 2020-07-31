@@ -1,9 +1,9 @@
 {
   "name": "refreshie",
   "productName": "Refreshie",
-  "version": "2.2.0",
+  "version": "3.1.0",
   "description": "Refreshie: Fatigue-buster desktop app for taking back control",
-  "homepage": "https://refreshie.think.dj/",
+  "homepage": "https://refreshie.think.dj/?from=corporate&id=mms",
   "license": "Attribution-NonCommercial-NoDerivatives 4.0 International",
   "main": "src/main.js",
   "author": {
@@ -57,7 +57,7 @@
           "path": "/Applications"
         }
       ],
-      "artifactName": "Refreshie-Installer-${version}.${ext}",
+      "artifactName": "Refreshie-MMS-Installer-${version}.${ext}",
       "title": "${productName} ${version}",
       "background": "./build/background.png",
       "icon": "./build/icon.icns"
@@ -91,7 +91,7 @@
       ]
     },
     "nsis": {
-      "artifactName": "Refreshie-Installer-${version}.${ext}",
+      "artifactName": "Refreshie-MMS-Installer-${version}.${ext}",
       "shortcutName": "Refreshie",
       "license": "LICENSE.md",
       "runAfterFinish": true,
@@ -108,14 +108,14 @@
       "uninstallDisplayName": "${productName}"
     },
     "portable": {
-      "artifactName": "Refreshie-Standalone-win-${version}.exe"
+      "artifactName": "Refreshie-MMS-Standalone-win-${version}.exe"
     },
     "appx": {
       "applicationId": "dj.think.refreshie",
       "backgroundColor": "#ee5a24",
       "identityName": "dj.think.refreshie",
       "publisherDisplayName": "thinkdj",
-      "artifactName": "Refreshie-Installer-appx-${version}.${ext}"
+      "artifactName": "Refreshie-MMS-Installer-appx-${version}.${ext}"
     },
     "removePackageScripts": true,
     "compression": "maximum",

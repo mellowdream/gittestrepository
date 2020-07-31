@@ -16,11 +16,24 @@ let __state = {
   isTimerRunning: 1,
   basePath: __dirname,
   appIcoPath: h.getPathTo(config.icons.find(i => i.id==='app').asset),
-  icoTrayPath: h.getPathTo(config.icons.find(i => i.id==='tray').asset),
-  icoTrayPathPaused: h.getPathTo(config.icons.find(i => i.id==='tray.paused').asset),
+  icoTrayPath: getTrayIcon('tray'),
+  icoTrayPathPaused: getTrayIcon('tray.paused'),
   urlFallback: "https://think.dj/refreshie/",
 }
 
+function getTrayIcon(id) {
+
+  /* Find the icon using id passed from the config array */
+  let icoPath = config.icons.find(i => i.id===id).asset;
+
+  /* Is the platform windows, and should we use *.ico instead of *.png? [Better quality on windows] */
+  if(h.platformIs('windows') && config.icons.find(i => i.id==='use.ico.for.windows').value) {
+    let pos = icoPath.lastIndexOf(".");
+    icoPath = icoPath.substr(0, pos < 0 ? icoPath.length : pos) + ".ico";
+  }
+
+  return h.getPathTo(icoPath);
+}
 
 let mainWindow = null;
 let mainTray = null;

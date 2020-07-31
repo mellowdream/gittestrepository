@@ -12,7 +12,8 @@
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },
     { "id": "tray", "asset": "/app/assets/ico/tray.png" },
-    { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.png" }
+    { "id": "tray.paused", "asset": "/app/assets/ico/tray.paused.png" },
+    { "id": "use.ico.for.windows", "value": true, "desc": "Replace *.png with *.ico for tray & paused icon?" }
   ],
   "audio": {
     "click": "assets/sounds/plop.mp3",

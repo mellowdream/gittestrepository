@@ -226,11 +226,11 @@ function initAppSetDefaults() {
         /* Options */
         opt_lockPC: 0, // lock PC after a long break?
         opt_alwaysOnTop: 1, // break-screen should be always on top of all windows?
-        opt_sounds: 1, // click and break start sounds?
+        opt_sounds: 1, // click and start-break sounds?
         opt_splash: 0, // continue to show splash screen animation after first-run?
         opt_autoStart: 1, // autostart with OS?
         opt_startMinimized: 1, // automatically minimize to tray after first-run?
-        opt_allowSkips: 0,
+        opt_allowSkips: 1,
         /* License */
         uLicense: "Register for free at http://think.dj/refreshie",
         uEmail: "Register for free at http://think.dj/refreshie",

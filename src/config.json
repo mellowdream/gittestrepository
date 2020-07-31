@@ -7,7 +7,7 @@
   "urlAbout": "https://refreshie.think.dj/?from=app-about",
   "urlAppUpdates": "https://refreshie.think.dj/?from=app-update",
   "RESTendpointAppUpdates": "https://refreshie.think.dj/releases/",
-  "UrlContact": "mailto:shout@think.dj?subject=RE[freshie]: ",
+  "UrlContact": "mailto:think.dj@gmail.com?subject=RE[freshie]: ",
   "author": "@thinkdj",
   "icons": [
     { "id": "app", "asset": "/app/assets/ico/icon.512.png" },
@@ -31,10 +31,10 @@
     "subText": "For MetaMorphoSys Technologies"
   },
   "breakScreen": {
-    "imgWatermark": ""
+    "imgWatermark": "assets-mms/logo.light.png"
   },
   "companyInfo": {
-    "name" : "For MetaMorphoSys Technologies",
+    "name" : "Refreshie for MetaMorphoSys",
     "img": "assets-mms/logo.png",
     "links": [
       { "name": "Homepage", "url": "https://metamorphtech.com/?from=refreshie", "title": "Our homepage" },

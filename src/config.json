@@ -30,6 +30,9 @@
     "imgMainLogo": "assets/images/logo.png",
     "subText": "&copy; 2016-2020 @thinkdj"
   },
+  "breakScreen": {
+    "imgWatermark": ""
+  },
   "companyInfo": {
     "name" : "By Deepak Thomas",
     "img": "assets/images/@thinkdj.jpg",

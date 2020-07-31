@@ -159,17 +159,17 @@ function createMainWindow () {
   /* We will override all events to either of: hide/show (rest will be configured from taskbar icon) */
   /* Show / Restore */
   mainWindow.on('show', function(e) {
-    e.preventDefault();
-    showMainWindow();
+    //e.preventDefault();
+    //showMainWindow();
   });
   mainWindow.on('restore', function(e) {
-    e.preventDefault();
-    showMainWindow();
+    //e.preventDefault();
+    //showMainWindow();
   });
   /* Minimize / Close */
   mainWindow.on('minimize', function(e) {
-    e.preventDefault();
-    mainWindow.hide();
+    //e.preventDefault();
+    //mainWindow.hide();
   });
   mainWindow.on('close', function(e) {
     if(!__state.forceQuit) {
@@ -293,12 +293,14 @@ function setTrayMenu() {
   /* Events */
   /* Show mainWindow on click/double-click of theTray */
   mainTray.on('click',function() {
-    // if(h.platformIs('windows') && !mainWindow.isVisible()) mainWindowVisibility('show');
-    mainTray.popUpContextMenu();
+    mainWindowVisibility('show');
   });
   mainTray.on('double-click',function() {
     /* Mac and Windows only */
     mainWindowVisibility('toggle');
+  });
+  mainTray.on('right-click',function() {
+    mainTray.popUpContextMenu();
   });
 
 }
@@ -445,8 +447,8 @@ function mainWindowVisibility(state) {
   }
 }
 function showMainWindow() {
-  if(!mainWindow.isVisible()) mainWindow.show();
   if(mainWindow.isMinimized()) mainWindow.restore();
+  if(!mainWindow.isVisible()) mainWindow.show();
   mainWindow.focus();
 }
 function hideMainWindow() {

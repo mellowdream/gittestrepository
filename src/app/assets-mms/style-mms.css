@@ -1,0 +1,140 @@
+
+/* Custom */
+#author { background: transparent }
+
+/* For placing butterfly */
+#author-info-updates, .break-meta-container {
+    position: relative;
+}
+
+/* =========================================== */
+/* Butterfly Animation  */
+/* Tweaked from Tim's codepen https://codepen.io/timohausmann/pen/agusv */
+/* =========================================== */
+
+.butterfly {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.05); /* body background */
+
+    bottom: 112px; right: 70px; left: auto;top: auto;
+
+    width: 0.2em;
+    height: 0.3em;
+    border-radius: 20px;
+
+    animation: fly 2.5s infinite alternate ease-in-out;
+    animation-delay: 0.25s;
+
+    transition: 1s ease-out top, 1s ease-out left;
+    font-size: 40px;
+}
+
+@keyframes fly {
+    0% {
+        transform: rotate(-10deg) translate(0, 10px);
+    }
+    50% {
+        transform: rotate(0deg) translate(0, -10px);
+    }
+    100% {
+        transform: rotate(10deg) translate(0, 10px);
+    }
+}
+
+.butterfly:after {
+    content: '';
+    position: absolute;
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 0.5em;
+    width: 1em;
+    height: 1em;
+    top: -0.47em;
+    left: -0.37em;
+    transform: rotate(10deg) scale(0.75);
+}
+
+.butterfly i {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background: #188EF4;
+}
+
+.butterfly i:after {
+    content: '';
+    position: absolute;
+    background: hsla(207, 90%, 95%, 0.425);
+    /*border-radius: 0.1em;*/
+    border-radius: 0 50% 46%;
+    width: 1em;
+    height: 1em;
+    top: 0;
+    left: 0;
+    box-shadow: inset 0 0 15px 1px rgba(24, 142, 244, 0.44);
+    transform: rotate(10deg) skew(25deg);
+}
+
+.butterfly i:nth-child(2):after,
+.butterfly i:nth-child(4):after {
+    transform: scale(0.66) rotate(10deg) skew(25deg);
+}
+
+.butterfly i:nth-child(1) { /* big wing left */
+    left: 0;
+    top: 0;
+    animation: i1 0.25s infinite alternate ease-in;
+}
+
+.butterfly i:nth-child(3) { /* big wing right */
+    right: 0;
+    top: 0;
+    animation: i3 0.25s infinite alternate ease-in;
+}
+
+.butterfly i:nth-child(2) { /* small wing left */
+    left: 5px;
+    bottom: 10px;
+    animation: i2 0.25s infinite alternate ease-in;
+}
+
+.butterfly i:nth-child(4) { /* small wing right */
+    right: 5px;
+    bottom: 10px;
+    animation: i4 0.25s infinite alternate ease-in;
+}
+
+@keyframes i1 { /* big wing left */
+    from {
+        transform: rotate(160deg);
+    }
+    to {
+        transform: rotate(200deg);
+    }
+}
+
+@keyframes i3 { /* big wing right */
+    from {
+        transform: rotate(290deg);
+    }
+    to {
+        transform: rotate(250deg);
+    }
+}
+
+@keyframes i2 { /* small wing left */
+    from {
+        transform: rotate(110deg);
+    }
+    to {
+        transform: rotate(70deg);
+    }
+}
+
+@keyframes i4 { /* small wing right */
+    from {
+        transform: rotate(-20deg);
+    }
+    to {
+        transform: rotate(20deg);
+    }
+}

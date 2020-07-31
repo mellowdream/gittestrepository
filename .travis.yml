@@ -21,6 +21,7 @@ branches:
   only:
     - master
     - prod
+    - /^release-.*$/
 
 # =============================
 # JOBS

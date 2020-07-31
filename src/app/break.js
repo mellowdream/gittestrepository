@@ -28,7 +28,8 @@ jQuery(document).ready(
     function() {
         /* Branding */
         $(".app-title").html(config.name);
-        $(".app-tagline").html(config.tagline)
+        $(".app-tagline").html(config.tagline);
+        if(config.breakScreen && config.breakScreen.imgWatermark) $('.watermark').append(`<img src='${config.breakScreen.imgWatermark}' alt="" />`)
         /* Hooks */
         $(".action-close").click(() => skipThisBreak());
     }

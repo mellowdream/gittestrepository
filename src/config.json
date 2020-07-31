@@ -30,6 +30,9 @@
     "imgMainLogo": "assets-mms/logo.png",
     "subText": "For MetaMorphoSys Technologies"
   },
+  "breakScreen": {
+    "imgWatermark": ""
+  },
   "companyInfo": {
     "name" : "For MetaMorphoSys Technologies",
     "img": "assets-mms/logo.png",

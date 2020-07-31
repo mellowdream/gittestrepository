@@ -7,7 +7,7 @@ let browserWindowDefaults = {
     maximizable: false,
     minimizable: true,
     resizable: false,
-    skipTaskbar: false,
+    skipTaskbar: true,
     backgroundColor: 'rgba(255,255,255,0)',
     transparent: false,
     hasShadow: true,

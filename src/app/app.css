@@ -997,7 +997,7 @@ a.faded {
     justify-items: center;
     padding: 0;
     margin: 0;
-    background-color: #fffcf0;
+    background-color: #f9f0ff8f;
     border-radius: var(--app-border-radius);
 }
 #auth-img {

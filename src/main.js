@@ -434,6 +434,7 @@ function mainWindowVisibility(state) {
 function showMainWindow() {
   if(!mainWindow.isVisible()) mainWindow.show();
   if(mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.focus();
 }
 function hideMainWindow() {
   if(mainWindow.isVisible()) mainWindow.hide();

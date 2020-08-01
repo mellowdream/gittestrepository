@@ -17,8 +17,10 @@ const h = require('./../helpers.js');
 /* Audio Elements */
 let audioClick = document.createElement('audio');
 audioClick.setAttribute('src', config.audio.click);
-let audioStartBreak = document.createElement('audio');
-audioStartBreak.setAttribute('src', config.audio.startBreak);
+let audioBreakStart = document.createElement('audio');
+audioBreakStart.setAttribute('src', config.audio.breakStart);
+let audioBreakEnd = document.createElement('audio');
+audioBreakEnd.setAttribute('src', config.audio.breakEnd);
 
 function removeJSorCSS(filename, filetype) {
     /* SRC: http://www.javascriptkit.com/javatutors/loadjavascriptcss2.shtml */
@@ -66,7 +68,7 @@ $(document).on('click', '.isTab, .isTabHT', function () {
         $('.isTab' + appender).removeClass('isActive').attr("aria-selected", "false");
         $(this).attr('aria-selected', "true").addClass('isActive');
         /* Sound? */
-        if( ("undefined"!==audioClick) && (parseInt(localStorage.opt_sounds)) ) audioClick.play();
+        if( (audioClick) && (parseInt(localStorage.opt_sounds)) ) audioClick.play();
     }
 });
 
@@ -678,10 +680,11 @@ function restart_longBreak() {
 }
 
 let breakCleanup = () => {
-    // alert("Cleanup on Aisle 4");
+    console.log("breakCleanup()");
     breakModalWindow = null;
     if(parseInt(localStorage.breakOngoing)) {
         localStorage.breakOngoing = 0;
+        if( (audioBreakEnd) && (parseInt(localStorage.opt_sounds)) ) audioBreakEnd.play();
         switch(localStorage.breakType) {
             case "long":
                 /* Lock PC? */
@@ -733,7 +736,7 @@ function startBreak(type = "short", forcedMode = '') {
     localStorage.breakType!==type? localStorage.breakType=type : null;
     localStorage.isFullscreen = optFullScreen;
 
-    if( ("undefined"!==audioStartBreak) && (parseInt(localStorage.opt_sounds)) ) audioStartBreak.play();
+    if( (audioBreakStart) && (parseInt(localStorage.opt_sounds)) ) audioBreakStart.play();
 
     /* Create break Window */
     breakModalWindow = new BrowserWindow({

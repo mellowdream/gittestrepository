@@ -1,9 +1,11 @@
 
+How to generate icons ?
 
 Upload a 512 or 1024px logo to https://appiconmaker.co/
-USE THE FOLLOWING: 
 
-icon = 16x16 OR 20x20
-@2x: 32x32
-@3x: 48x48
-@4x: 64x64
+Then, use the following:
+
+icon: 16x16 OR 20x20
+icon@2x: 32x32
+icon@3x: 48x48
+icon@4x: 64x64

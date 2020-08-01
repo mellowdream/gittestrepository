@@ -17,7 +17,8 @@
   ],
   "audio": {
     "click": "assets/sounds/plop.mp3",
-    "startBreak": "assets/sounds/piano-smooth.mp3"
+    "breakStart": "assets/sounds/piano-smooth.mp3",
+    "breakEnd": "assets/sounds/return.mp3"
   },
   "assetsShortBreak": [
     { "img": "assets/images/do.look.png", "title": "Look around" },

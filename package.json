@@ -50,7 +50,6 @@
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mas.plist",
-      "provisioningProfile": "embedded.provisionprofile",
       "target" : [
         "dmg",
         "mas",

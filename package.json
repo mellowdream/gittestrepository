@@ -42,6 +42,19 @@
       "output": "dist",
       "buildResources": "build"
     },
+    "mac": {
+      "artifactName": "Refreshie-Installer-${version}.${ext}",
+      "title": "${productName} ${version}",
+      "background": "./build/background.png",
+      "icon": "./build/icon.icns",
+      "entitlements": "build/entitlements.mac.plist",
+      "category": "public.app-category.productivity",
+      "target" : [
+        "dmg",
+        "mas",
+        "pkg"
+      ]
+    },
     "dmg": {
       "contents": [
         {

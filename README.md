@@ -4,7 +4,7 @@
 
 ## Resources
 
-Check [https://think.dj/refreshie](https://think.dj/refreshie) for more info
+Check [https://refreshie.think.dj/](https://refreshie.think.dj/) for more info
 
 ## License
 

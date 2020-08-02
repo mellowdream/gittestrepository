@@ -12,9 +12,7 @@
     "url": "https://think.dj/"
   },
   "keywords": [
-    "refreshie",
-    "fatugue buster",
-    "desktop app"
+    "refreshie", "fatugue buster", "desktop app", "20-20-20", "eye strain", "productivity"
   ],
   "scripts": {
     "start": "electron-forge start",

@@ -1,0 +1,8 @@
+
+
+Default entitlements from 
+https://github.com/electron/electron-osx-sign
+
+
+EDIT THESE FILES AND MOVE TO ./../  [build]
+And set correct paths in package.json

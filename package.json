@@ -45,8 +45,12 @@
     "mac": {
       "artifactName": "Refreshie-Installer-${version}.${ext}",
       "icon": "./build/icon.icns",
-      "entitlements": "build/entitlements.mac.plist",
       "category": "public.app-category.productivity",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mas.plist",
+      "provisioningProfile": "embedded.provisionprofile",
       "target" : [
         "dmg",
         "mas",
@@ -79,7 +83,7 @@
       ],
       "executableName": "Refreshie",
       "icon": "./build/linux/",
-      "category": "Utility",
+      "category": "Productivity",
       "synopsis": "A fatigue-buster app for Linux that occasionally reminds you to take a break",
       "description": "Refreshie, the nifty little desktop app runs silently in the background and alerts you to take a break when you've been stressing out for too long"
     },

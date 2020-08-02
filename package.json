@@ -52,7 +52,6 @@
       "entitlementsInherit": "build/entitlements.mas.plist",
       "target" : [
         "dmg",
-        "mas",
         "pkg"
       ]
     },
